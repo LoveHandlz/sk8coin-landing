@@ -18,14 +18,15 @@
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: 'Orbitron', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
+   body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
 
     header {
       background: rgba(10,19,47,0.95);
