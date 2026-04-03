@@ -18,15 +18,14 @@
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-   body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-main {
-  flex: 1;
-}
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Orbitron', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
 
     header {
       background: rgba(10,19,47,0.95);
@@ -167,37 +166,16 @@ main {
       font-weight: 900;
       margin-bottom: 0.8rem;
     }
-footer {
-  background: rgba(10,19,47,0.98);
-  border-top: 1px solid var(--card-border);
-  padding: 3rem 1.5rem 3rem;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  line-height: 1.8;
-  margin-top: auto;           /* This pushes footer to bottom */
-}
 
-.footer-content {
-  max-width: 880px;
-  margin: 0 auto;
-}
-
-footer strong {
-  color: white;
-  font-size: 1.2rem;
-}
-
-/* Make the whole page use flex so footer sticks to bottom */
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-main {
-  flex: 1;                    /* This makes main grow and pushes footer down */
-}
+    footer {
+      background: rgba(10,19,47,0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1rem 2.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
 
     /* ==================== MOBILE IMPROVEMENTS ==================== */
     @media (max-width: 768px) {
@@ -318,26 +296,26 @@ main {
         </div>
       </div>
 
-    <a href="https://discord.gg/https://discord.gg/jfmuKVqw" target="_blank" class="menu-item" style="text-decoration: none; color: inherit;">
-  <div class="card-content">
-    <div class="menu-icon"><i class="fab fa-discord"></i></div>
-    <div class="menu-title">DISCORD</div>
-    <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
-  </div>
-</a>
+      <div class="menu-item" onclick="alert('Discord sync...')">
+        <div class="card-content">
+          <div class="menu-icon"><i class="fab fa-discord"></i></div>
+          <div class="menu-title">DISCORD</div>
+          <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-<footer>
-  <div class="footer-content">
+  <footer>
     <p>
-      <strong>SK8COIN is more than a token — it's a revolution.</strong><br><br>
+      <strong>SK8COIN is more than a token — it's a revolution.</strong><br>
       We are reclaiming skate culture from corporate control and gatekeepers. 
       By putting boards, parts, tricks, and community ownership directly on the blockchain, 
       we empower every skater to own their style, earn from their creativity, 
-      and build the future of street culture without middlemen.<br><br>
+      and build the future of street culture without middlemen. 
       This is Skate2Earn. This is independence. This is the SK8COIN movement.
     </p>
-  </div>
-</footer>
+  </footer>
 
   <script>
     document.querySelectorAll('.menu-item').forEach(item => {
