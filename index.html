@@ -166,16 +166,37 @@
       font-weight: 900;
       margin-bottom: 0.8rem;
     }
+footer {
+  background: rgba(10,19,47,0.98);
+  border-top: 1px solid var(--card-border);
+  padding: 3rem 1.5rem 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-top: auto;           /* This pushes footer to bottom */
+}
 
-    footer {
-      background: rgba(10,19,47,0.95);
-      border-top: 1px solid var(--card-border);
-      padding: 3rem 1rem 2.5rem;
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
+.footer-content {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+footer strong {
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* Make the whole page use flex so footer sticks to bottom */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;                    /* This makes main grow and pushes footer down */
+}
 
     /* ==================== MOBILE IMPROVEMENTS ==================== */
     @media (max-width: 768px) {
