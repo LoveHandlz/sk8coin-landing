@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
-  <style>
+ <style>
     :root {
       --bg-deep: #0a132f;
       --bg-panel: #0f1a47;
@@ -15,7 +15,6 @@
       --text-primary: #e0f7ff;
       --text-secondary: #a5d8ff;
       --card-border: rgba(0, 240, 255, 0.14);
-      --frame-shadow: 0 6px 20px rgba(0,0,0,0.45);
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -25,10 +24,11 @@
       font-family: 'Orbitron', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.5;
     }
 
     header {
-      background: rgba(10,19,47,0.88);
+      background: rgba(10,19,47,0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--card-border);
       position: fixed;
@@ -40,88 +40,89 @@
     .header-inner {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .logo {
-      height: clamp(48px, 7vw, 72px);          /* responsive height */
+      height: clamp(42px, 8vw, 68px);
       width: auto;
-      display: block;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(255,45,85,0.5));
     }
 
     nav ul {
       display: flex;
-      gap: 2.4rem;
+      gap: 1.4rem;
       list-style: none;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     nav a {
       color: var(--text-secondary);
       text-decoration: none;
       font-weight: 600;
-      font-size: 1.05rem;
+      font-size: 1rem;
       transition: color 0.25s;
     }
-
-    nav a:hover { color: white; }
 
     .wallet-btn {
       background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
       color: #000;
       font-weight: bold;
-      padding: 0.75rem 1.6rem;
+      padding: 0.7rem 1.4rem;
       border-radius: 50px;
       border: none;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 14px rgba(0,240,255,0.25);
-    }
-
-    .wallet-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,240,255,0.4);
+      font-size: 0.95rem;
+      white-space: nowrap;
     }
 
     main {
-      padding-top: 110px;
+      padding-top: 100px;
       max-width: 1440px;
       margin: 0 auto;
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-      padding-bottom: 180px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 100px;
     }
 
     .hero {
       text-align: center;
-      margin-bottom: 5rem;
+      margin-bottom: 4rem;
     }
 
     .hero h1 {
-      font-size: clamp(4.2rem, 9vw, 7.2rem);
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
       background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 0.8rem;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
     }
 
     .stats-row {
       display: flex;
       justify-content: center;
-      gap: 3.5rem;
+      gap: 2rem;
       flex-wrap: wrap;
-      margin: 1.8rem 0 3rem;
+      margin: 1.5rem 0 3rem;
       color: var(--text-secondary);
-      font-size: 1.05rem;
     }
 
     .stat-value {
-      font-size: 2.4rem;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
       font-weight: 900;
       color: var(--accent-cyan);
       display: block;
@@ -129,8 +130,8 @@
 
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 2.2rem 1.8rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
     }
 
     .menu-item {
@@ -140,86 +141,80 @@
       overflow: hidden;
       cursor: pointer;
       transition: all 0.35s ease;
-      box-shadow: var(--frame-shadow);
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
     }
 
     .menu-item:hover {
-      transform: translateY(-10px);
+      transform: translateY(-8px);
       box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
-      border-color: transparent;
     }
 
     .card-content {
-      padding: 2.2rem 1.8rem;
+      padding: 2rem 1.4rem;
       text-align: center;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     .menu-icon {
-      font-size: 5.8rem;
-      margin-bottom: 1.3rem;
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
       color: var(--accent-cyan);
       filter: drop-shadow(0 0 12px currentColor);
     }
 
     .menu-title {
-      font-size: 2.1rem;
+      font-size: 1.75rem;
       font-weight: 900;
-      margin-bottom: 0.9rem;
-      color: white;
-    }
-
-    .menu-desc {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      line-height: 1.55;
+      margin-bottom: 0.8rem;
     }
 
     footer {
-      background: rgba(10,19,47,0.92);
+      background: rgba(10,19,47,0.95);
       border-top: 1px solid var(--card-border);
-      padding: 3rem 1.5rem 2.5rem;
+      padding: 3rem 1rem 2.5rem;
       text-align: center;
       color: var(--text-secondary);
-      font-size: 1.05rem;
+      font-size: 1rem;
       line-height: 1.7;
-      position: relative;
-      margin-top: -1px;
     }
 
-    footer p {
-      max-width: 920px;
-      margin: 0 auto;
-    }
-
-    footer strong {
-      color: white;
-      font-weight: 700;
-    }
-
-    @media (max-width: 1024px) {
-      .menu-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-    }
-
+    /* ==================== MOBILE IMPROVEMENTS ==================== */
     @media (max-width: 768px) {
-      .logo { height: clamp(44px, 9vw, 60px); }
-      nav ul { gap: 1.4rem; font-size: 0.95rem; flex-wrap: wrap; justify-content: center; }
-      .hero h1 { font-size: clamp(3.4rem, 8vw, 5rem); }
-      .stats-row { gap: 2rem; font-size: 0.95rem; }
-      .stat-value { font-size: 2rem; }
-      .menu-grid { gap: 1.8rem; }
-      .card-content { padding: 1.8rem 1.4rem; }
-      .menu-icon { font-size: 5rem; }
-      .menu-title { font-size: 1.9rem; }
-      footer { padding: 2.5rem 1rem 2rem; font-size: 0.98rem; }
+      .header-inner {
+        padding: 0 0.8rem;
+      }
+      nav ul {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      .hero {
+        margin-bottom: 3rem;
+      }
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.6rem;
+      }
+      .card-content {
+        padding: 1.8rem 1.2rem;
+      }
+      .menu-icon {
+        font-size: 4.2rem;
+      }
+      .stats-row {
+        gap: 1.5rem;
+      }
     }
-  </style>
+
+    @media (max-width: 480px) {
+      nav ul {
+        gap: 0.8rem;
+        justify-content: center;
+      }
+      .hero p {
+        font-size: 1rem;
+        padding: 0 10px;
+      }
+    }
+</style>
 </head>
 <body>
 
