@@ -4,13 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- CSP for Vercel + WAXJS (allows unsafe-eval which the library needs) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
+  <!-- Strong CSP for Vercel + WAXJS -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; 
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; 
+    style-src 'self' 'unsafe-inline' https:; 
+    img-src 'self' https: data:; 
+    connect-src 'self' https: wss:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
-  <!-- Reliable WAXJS source -->
+  <!-- WAXJS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
 
  <style>
@@ -192,6 +196,7 @@
 </head>
 <body>
 
+  <!-- Your full body content (header + main + footer) stays the same as you sent -->
   <header>
     <div class="header-inner">
       <a href="https://www.sk8coin.io/" class="logo-link">
@@ -228,7 +233,6 @@
     </section>
 
     <div class="menu-grid">
-      <!-- Your menu items remain unchanged -->
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
         <div class="card-content">
           <div class="menu-icon">🛠️</div>
@@ -296,7 +300,7 @@
 
     function initWax() {
       if (typeof waxjs === "undefined") {
-        console.error("WaxJS library failed to load");
+        console.error("WaxJS failed to load");
         return;
       }
       wax = new waxjs.WaxJS({
@@ -332,7 +336,7 @@
       setTimeout(() => {
         initWax();
         document.getElementById('connect-wallet-btn').addEventListener('click', connectWallet);
-      }, 800);
+      }, 1000);
 
       document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('mouseenter', () => {
