@@ -4,14 +4,199 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Strong CSP for Vercel -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
+  <!-- Strong CSP for Vercel + WAXJS -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; 
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; 
+    style-src 'self' 'unsafe-inline' https:; 
+    img-src 'self' https: data:; 
+    connect-src 'self' https: wss:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
+  
+  <!-- WAXJS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
+
+ <style>
+    :root {
+      --bg-deep: #0a132f;
+      --bg-panel: #0f1a47;
+      --accent-red: #ff2d55;
+      --accent-orange: #ff9500;
+      --accent-cyan: #00f0ff;
+      --text-primary: #e0f7ff;
+      --text-secondary: #a5d8ff;
+      --card-border: rgba(0, 240, 255, 0.14);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Orbitron', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(10,19,47,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 0;
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      height: clamp(42px, 8vw, 68px);
+      width: auto;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.4rem;
+      list-style: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.25s;
+    }
+
+    .wallet-btn {
+      background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
+      color: #000;
+      font-weight: bold;
+      padding: 0.7rem 1.4rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    main {
+      padding-top: 100px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 100px;
+    }
+
+    .hero { text-align: center; margin-bottom: 4rem; }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 3rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .menu-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+    }
+
+    .card-content { padding: 2rem 1.4rem; text-align: center; }
+
+    .menu-icon {
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
+      color: var(--accent-cyan);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .menu-title { font-size: 1.75rem; font-weight: 900; margin-bottom: 0.8rem; }
+
+    footer {
+      background: rgba(10,19,47,0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1rem 2.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 0.8rem; }
+      nav ul { gap: 1rem; font-size: 0.9rem; }
+      .hero { margin-bottom: 3rem; }
+      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      .card-content { padding: 1.8rem 1.2rem; }
+      .menu-icon { font-size: 4.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner { flex-direction: column; align-items: center; gap: 0.8rem; }
+      nav ul { order: 3; width: 100%; justify-content: center; margin-top: 0.5rem; }
+      .wallet-btn { order: 2; width: 100%; max-width: 280px; }
+    }
+</style>
 </head>
 <body>
 
+  <!-- Your full body content (header + main + footer) stays the same as you sent -->
   <header>
     <div class="header-inner">
       <a href="https://www.sk8coin.io/" class="logo-link">
@@ -109,40 +294,27 @@
     </p>
   </footer>
 
-  <!-- WAXJS Library -->
-  <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
-
   <script>
     let wax = null;
     let userAccount = null;
 
-    // Wait longer and check multiple times
     function initWax() {
-      if (typeof waxjs !== "undefined") {
-        wax = new waxjs.WaxJS({
-          rpcEndpoint: 'https://wax.greymass.com'
-        });
-        console.log("✅ WaxJS loaded successfully");
-      } else {
-        console.error("WaxJS still not available");
+      if (typeof waxjs === "undefined") {
+        console.error("WaxJS failed to load");
+        return;
       }
+      wax = new waxjs.WaxJS({
+        rpcEndpoint: 'https://wax.greymass.com'
+      });
     }
 
     async function connectWallet() {
       const btn = document.getElementById('connect-wallet-btn');
-      
       try {
         btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
 
         if (!wax) initWax();
-
-        if (!wax) {
-          alert("Wallet library is still loading. Please refresh the page.");
-          btn.innerHTML = 'CONNECT WALLET';
-          btn.disabled = false;
-          return;
-        }
 
         const user = await wax.login();
         userAccount = user.account;
@@ -161,13 +333,11 @@
     }
 
     window.addEventListener('load', function() {
-      setTimeout(initWax, 600);
-      setTimeout(initWax, 1500); // Second attempt
+      setTimeout(() => {
+        initWax();
+        document.getElementById('connect-wallet-btn').addEventListener('click', connectWallet);
+      }, 1000);
 
-      const btn = document.getElementById('connect-wallet-btn');
-      btn.addEventListener('click', connectWallet);
-
-      // Menu hover
       document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('mouseenter', () => {
           item.style.transform = 'translateY(-10px)';
