@@ -6,8 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
-  <style>
-    /* Your existing CSS stays exactly the same - I kept it short here for space */
+ <style>
     :root {
       --bg-deep: #0a132f;
       --bg-panel: #0f1a47;
@@ -26,14 +25,170 @@
       font-family: 'Orbitron', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.5;
     }
 
-    /* ... (keep all your existing styles for header, hero, menu, footer, mobile) ... */
-  </style>
+    header {
+      background: rgba(10,19,47,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 0;
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      height: clamp(42px, 8vw, 68px);
+      width: auto;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.4rem;
+      list-style: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.25s;
+    }
+
+    .wallet-btn {
+      background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
+      color: #000;
+      font-weight: bold;
+      padding: 0.7rem 1.4rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    main {
+      padding-top: 100px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 100px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 3rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .menu-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+    }
+
+    .card-content {
+      padding: 2rem 1.4rem;
+      text-align: center;
+    }
+
+    .menu-icon {
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
+      color: var(--accent-cyan);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .menu-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+    }
+
+    footer {
+      background: rgba(10,19,47,0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1rem 2.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 0.8rem; }
+      nav ul { gap: 1rem; font-size: 0.9rem; }
+      .hero { margin-bottom: 3rem; }
+      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      .card-content { padding: 1.8rem 1.2rem; }
+      .menu-icon { font-size: 4.2rem; }
+    }
+</style>
 </head>
 <body>
-
-  <!-- Your header, main, and footer content stays the same -->
 
   <header>
     <div class="header-inner">
@@ -56,9 +211,82 @@
     </div>
   </header>
 
-  <!-- Rest of your main and footer here... -->
+  <main>
+    <section class="hero">
+      <h1>SKATE2EARN</h1>
+      <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
+        Collect, build & earn on-chain — tokenized GameFi meets street culture. 
+      </p>
 
-  <!-- WAXJS Library -->
+      <div class="stats-row">
+        <div class="stat"><span class="stat-value">12.4k</span> Collectors</div>
+        <div class="stat"><span class="stat-value">8.7k+</span> NFTs Minted</div>
+        <div class="stat"><span class="stat-value">420k</span> Volume</div>
+      </div>
+    </section>
+
+    <div class="menu-grid">
+      <div class="menu-item" onclick="alert('Opening Skate Builder...')">
+        <div class="card-content">
+          <div class="menu-icon">🛠️</div>
+          <div class="menu-title">BUILD & MINT</div>
+          <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="alert('continue to neftblocks...')">
+        <div class="card-content">
+          <div class="menu-icon">🛒</div>
+          <div class="menu-title">PARTS MARKET</div>
+          <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
+        <div class="card-content">
+          <div class="menu-icon">🛹</div>
+          <div class="menu-title">SKATE SHOP</div>
+          <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="alert('Profile Hub...')">
+        <div class="card-content">
+          <div class="menu-icon">💰</div>
+          <div class="menu-title">GET $SKATE</div>
+          <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon">📖</div>
+          <div class="menu-title">METAZINE</div>
+          <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon"><i class="fab fa-discord"></i></div>
+          <div class="menu-title">DISCORD</div>
+          <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <strong>SK8COIN is more than a token — it's a revolution.</strong><br>
+      We are reclaiming skate culture from corporate control and gatekeepers. 
+      By putting boards, parts, tricks, and community ownership directly on the blockchain, 
+      we empower every skater to own their style, earn from their creativity, 
+      and build the future of street culture without middlemen. 
+      This is Skate2Earn. This is independence. This is the SK8COIN movement.
+    </p>
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
 
   <script>
@@ -73,6 +301,7 @@
 
     async function connectWallet() {
       const btn = document.getElementById('connect-wallet-btn');
+      
       try {
         btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
@@ -84,23 +313,23 @@
 
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
         btn.innerHTML = `✅ ${userAccount}`;
-        alert(`✅ Wallet connected!\n\nAccount: ${userAccount}`);
+        
+        alert(`✅ Wallet connected successfully!\n\nAccount: ${userAccount}`);
 
       } catch (error) {
         console.error(error);
         btn.innerHTML = 'CONNECT WALLET';
         btn.disabled = false;
-        alert('Connection failed or cancelled.');
+        alert('Connection cancelled or failed. Please try again.');
       }
     }
 
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
       setTimeout(() => {
         initWax();
         document.getElementById('connect-wallet-btn').addEventListener('click', connectWallet);
-      }, 800);
+      }, 1000);
 
-      // Menu hover effects...
       document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('mouseenter', () => {
           item.style.transform = 'translateY(-10px)';
