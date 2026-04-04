@@ -52,7 +52,10 @@
       gap: 1rem;
     }
 
-    .logo { height: clamp(42px, 8vw, 68px); width: auto; }
+    .logo {
+      height: clamp(42px, 8vw, 68px);
+      width: auto;
+    }
 
     nav ul {
       display: flex;
@@ -83,28 +86,115 @@
     }
 
     .wallet-status {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #22ff88;
       margin-top: 4px;
-      text-align: center;
-      width: 100%;
     }
 
-    /* Rest of your styles (same as before) */
-    main { padding-top: 100px; max-width: 1440px; margin: 0 auto; padding: 0 1rem 100px; }
-    .hero { text-align: center; margin-bottom: 4rem; }
-    .hero h1 { font-size: clamp(2.8rem, 8.5vw, 6.5rem); background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; }
-    .menu-item { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.35s; }
-    .menu-item:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan); }
-    .card-content { padding: 2rem 1.4rem; text-align: center; }
-    .menu-icon { font-size: 4.8rem; margin-bottom: 1.2rem; color: var(--accent-cyan); }
-    .menu-title { font-size: 1.75rem; font-weight: 900; margin-bottom: 0.8rem; }
+    main {
+      padding-top: 100px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 100px;
+    }
 
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 3rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .menu-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+    }
+
+    .card-content {
+      padding: 2rem 1.4rem;
+      text-align: center;
+    }
+
+    .menu-icon {
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
+      color: var(--accent-cyan);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .menu-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+    }
+
+    footer {
+      background: rgba(10,19,47,0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1rem 2.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* Mobile */
     @media (max-width: 768px) {
       .header-inner { padding: 0 0.8rem; }
       nav ul { gap: 1rem; font-size: 0.9rem; }
-      .menu-grid { grid-template-columns: 1fr; }
+      .hero { margin-bottom: 3rem; }
+      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      .card-content { padding: 1.8rem 1.2rem; }
+      .menu-icon { font-size: 4.2rem; }
     }
 
     @media (max-width: 480px) {
@@ -155,7 +245,6 @@
     </section>
 
     <div class="menu-grid">
-      <!-- Your menu items (unchanged) -->
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
         <div class="card-content">
           <div class="menu-icon">🛠️</div>
@@ -219,7 +308,6 @@
 
   <script>
     let userAccount = null;
-
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
@@ -239,13 +327,13 @@
 
         window.open('https://mycloudwallet.com/', '_blank');
 
-        // Simulate successful connection (you can improve this later)
+        // Simulate connection (we'll make this real later)
         setTimeout(() => {
-          userAccount = "yourname.wam";   // Replace with real account later
+          userAccount = "yourname.wam";   // Change this later to real account
           btn.innerHTML = `✅ ${userAccount}`;
           btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
           statusDiv.innerHTML = "🟢 Wallet Connected";
-        }, 2500);
+        }, 2000);
       }
     });
 
