@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@waxio/waxjs@1.0.0/dist-web/waxjs.js"></script>
+  
  <style>
     :root {
       --bg-deep: #0a132f;
@@ -239,7 +241,7 @@
     </nav>
 
     <!-- Wallet Button - Forced to top right -->
-    <button class="wallet-btn">CONNECT WALLET</button>
+    <button id="connect-wallet-btn" class="wallet-btn">CONNECT WALLET</button>
 
   </div>
 </header>
@@ -320,7 +322,56 @@
     </p>
   </footer>
 
-  <script>
+<script>
+  // === WAX WALLET CONNECTION ===
+  let wax = null;
+  let userAccount = null;
+
+  // Initialize WaxJS
+  function initWax() {
+    wax = new waxjs.WaxJS({
+      rpcEndpoint: 'https://wax.greymass.com'   // Reliable public WAX RPC
+    });
+  }
+
+  // Connect wallet function
+  async function connectWallet() {
+    const btn = document.getElementById('connect-wallet-btn');
+    
+    try {
+      btn.innerHTML = 'CONNECTING...';
+      btn.disabled = true;
+
+      if (!wax) initWax();
+
+      // This opens the WAX Cloud Wallet login popup
+      const user = await wax.login();
+      userAccount = user.account;
+
+      // Success! Update button
+      btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+      btn.innerHTML = `✅ ${userAccount}`;
+      
+      console.log('✅ Wallet connected:', userAccount);
+      alert(`Wallet connected successfully!\n\nAccount: ${userAccount}\n\nYou can now use the rest of the site.`);
+
+    } catch (error) {
+      console.error(error);
+      btn.innerHTML = 'CONNECT WALLET';
+      btn.disabled = false;
+      alert('Connection cancelled or failed. Please try again.');
+    }
+  }
+
+  // Auto-initialize when page loads
+  window.onload = function() {
+    initWax();
+
+    // Attach click listener to wallet button
+    const btn = document.getElementById('connect-wallet-btn');
+    btn.addEventListener('click', connectWallet);
+
+    // Keep your existing menu hover script
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('mouseenter', () => {
         item.style.transform = 'translateY(-10px)';
@@ -331,6 +382,7 @@
         item.style.boxShadow = '0 6px 20px rgba(0,0,0,0.45)';
       });
     });
-  </script>
+  };
+</script>
 </body>
 </html>
