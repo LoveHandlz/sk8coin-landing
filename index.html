@@ -226,7 +226,6 @@
     </section>
 
     <div class="menu-grid">
-      <!-- Your menu items here (same as before) -->
       <div class="menu-item" onclick="alert('Opening Skate Builder...')">
         <div class="card-content">
           <div class="menu-icon">🛠️</div>
@@ -288,22 +287,17 @@
     </p>
   </footer>
 
-  <!-- Direct reliable WAXJS script -->
-  <script src="https://raw.githubusercontent.com/worldwide-asset-exchange/waxjs/develop/dist-web/waxjs.js"></script>
+  <!-- Reliable WAXJS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
 
   <script>
     let wax = null;
     let userAccount = null;
 
     function initWax() {
-      if (typeof waxjs === "undefined") {
-        console.error("WaxJS not loaded");
-        return false;
-      }
       wax = new waxjs.WaxJS({
         rpcEndpoint: 'https://wax.greymass.com'
       });
-      return true;
     }
 
     async function connectWallet() {
@@ -337,9 +331,9 @@
 
         const btn = document.getElementById('connect-wallet-btn');
         btn.addEventListener('click', connectWallet);
-      }, 1200);
+      }, 1000);
 
-      // Menu hover
+      // Menu hover effects
       document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('mouseenter', () => {
           item.style.transform = 'translateY(-10px)';
