@@ -20,231 +20,36 @@
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: 'Orbitron', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
+  <body>
 
-    header {
-      background: rgba(10,19,47,0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--card-border);
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1rem 0;
-    }
+  <header>
+    <div class="header-inner">
+      
+      <!-- Logo -->
+      <a href="https://www.sk8coin.io/" class="logo-link">
+        <img 
+          src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" 
+          alt="SK8COIN Logo" 
+          class="logo">
+      </a>
 
-    .header-inner {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+      <!-- Navigation -->
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Market</a></li>
+          <li><a href="#">Builder</a></li>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">Metazine</a></li>
+          <li><a href="#">Discord</a></li>
+        </ul>
+      </nav>
 
-    .logo {
-      height: clamp(42px, 8vw, 68px);
-      width: auto;
-    }
+      <!-- Wallet Button -->
+      <button id="connect-wallet-btn" class="wallet-btn">CONNECT WALLET</button>
 
-    nav ul {
-      display: flex;
-      gap: 1.4rem;
-      list-style: none;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    nav a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: color 0.25s;
-    }
-
-    .wallet-btn {
-      background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
-      color: #000;
-      font-weight: bold;
-      padding: 0.7rem 1.4rem;
-      border-radius: 50px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.95rem;
-      white-space: nowrap;
-    }
-
-    main {
-      padding-top: 100px;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      padding-bottom: 100px;
-    }
-
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      line-height: 1.1;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      color: var(--text-secondary);
-    }
-
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin: 1.5rem 0 3rem;
-      color: var(--text-secondary);
-    }
-
-    .stat-value {
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      font-weight: 900;
-      color: var(--accent-cyan);
-      display: block;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.8rem;
-    }
-
-    .menu-item {
-      background: var(--bg-panel);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.35s ease;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
-    }
-
-    .menu-item:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
-    }
-
-    .card-content {
-      padding: 2rem 1.4rem;
-      text-align: center;
-    }
-
-    .menu-icon {
-      font-size: 4.8rem;
-      margin-bottom: 1.2rem;
-      color: var(--accent-cyan);
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-
-    .menu-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      margin-bottom: 0.8rem;
-    }
-
-    footer {
-      background: rgba(10,19,47,0.95);
-      border-top: 1px solid var(--card-border);
-      padding: 3rem 1rem 2.5rem;
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    /* ==================== MOBILE IMPROVEMENTS ==================== */
-    @media (max-width: 768px) {
-      .header-inner {
-        padding: 0 0.8rem;
-      }
-      nav ul {
-        gap: 1rem;
-        font-size: 0.9rem;
-      }
-      .hero {
-        margin-bottom: 3rem;
-      }
-      .menu-grid {
-        grid-template-columns: 1fr;
-        gap: 1.6rem;
-      }
-      .card-content {
-        padding: 1.8rem 1.2rem;
-      }
-      .menu-icon {
-        font-size: 4.2rem;
-      }
-      .stats-row {
-        gap: 1.5rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      nav ul {
-        gap: 0.8rem;
-        justify-content: center;
-      }
-      .hero p {
-        font-size: 1rem;
-        padding: 0 10px;
-      }
-    }
-</style>
-<header>
-  <div class="header-inner">
-    
-    <!-- Logo -->
-    <a href="https://www.sk8coin.io/" class="logo-link">
-      <img 
-        src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" 
-        alt="SK8COIN Logo" 
-        class="logo">
-    </a>
-
-    <!-- Navigation -->
-    <nav>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Market</a></li>
-        <li><a href="#">Builder</a></li>
-        <li><a href="#">Shop</a></li>
-        <li><a href="#">Metazine</a></li>
-        <li><a href="#">Discord</a></li>
-      </ul>
-    </nav>
-
-    <!-- Wallet Button - Forced to top right -->
-    <button id="connect-wallet-btn" class="wallet-btn">CONNECT WALLET</button>
-
-  </div>
-</header>
+    </div>
+  </header>
 
   <main>
     <section class="hero">
@@ -256,7 +61,7 @@
       <div class="stats-row">
         <div class="stat"><span class="stat-value">12.4k</span> Collectors</div>
         <div class="stat"><span class="stat-value">8.7k+</span> NFTs Minted</div>
-        <div class="stat"><span class="stat-value">420k</span>  Volume</div>
+        <div class="stat"><span class="stat-value">420k</span> Volume</div>
       </div>
     </section>
 
@@ -293,22 +98,22 @@
         </div>
       </div>
 
- <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
-  <div class="card-content">
-    <div class="menu-icon">📖</div>
-    <div class="menu-title">METAZINE</div>
-    <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
-  </div>
-</div>
-</a>
+      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon">📖</div>
+          <div class="menu-title">METAZINE</div>
+          <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+        </div>
+      </div>
 
-   <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
-  <div class="card-content">
-    <div class="menu-icon"><i class="fab fa-discord"></i></div>
-    <div class="menu-title">DISCORD</div>
-    <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
-  </div>
-</div>
+      <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon"><i class="fab fa-discord"></i></div>
+          <div class="menu-title">DISCORD</div>
+          <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer>
@@ -322,67 +127,64 @@
     </p>
   </footer>
 
-<script>
-  // === WAX WALLET CONNECTION ===
-  let wax = null;
-  let userAccount = null;
+  <script>
+    // === WAX WALLET CONNECTION ===
+    let wax = null;
+    let userAccount = null;
 
-  // Initialize WaxJS
-  function initWax() {
-    wax = new waxjs.WaxJS({
-      rpcEndpoint: 'https://wax.greymass.com'   // Reliable public WAX RPC
-    });
-  }
-
-  // Connect wallet function
-  async function connectWallet() {
-    const btn = document.getElementById('connect-wallet-btn');
-    
-    try {
-      btn.innerHTML = 'CONNECTING...';
-      btn.disabled = true;
-
-      if (!wax) initWax();
-
-      // This opens the WAX Cloud Wallet login popup
-      const user = await wax.login();
-      userAccount = user.account;
-
-      // Success! Update button
-      btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-      btn.innerHTML = `✅ ${userAccount}`;
-      
-      console.log('✅ Wallet connected:', userAccount);
-      alert(`Wallet connected successfully!\n\nAccount: ${userAccount}\n\nYou can now use the rest of the site.`);
-
-    } catch (error) {
-      console.error(error);
-      btn.innerHTML = 'CONNECT WALLET';
-      btn.disabled = false;
-      alert('Connection cancelled or failed. Please try again.');
+    function initWax() {
+      wax = new waxjs.WaxJS({
+        rpcEndpoint: 'https://wax.greymass.com'
+      });
     }
-  }
 
-  // Auto-initialize when page loads
-  window.onload = function() {
-    initWax();
+    async function connectWallet() {
+      const btn = document.getElementById('connect-wallet-btn');
+      
+      try {
+        btn.innerHTML = 'CONNECTING...';
+        btn.disabled = true;
 
-    // Attach click listener to wallet button
-    const btn = document.getElementById('connect-wallet-btn');
-    btn.addEventListener('click', connectWallet);
+        if (!wax) initWax();
 
-    // Keep your existing menu hover script
-    document.querySelectorAll('.menu-item').forEach(item => {
-      item.addEventListener('mouseenter', () => {
-        item.style.transform = 'translateY(-10px)';
-        item.style.boxShadow = '0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px #00f0ff';
-      });
-      item.addEventListener('mouseleave', () => {
-        item.style.transform = 'translateY(0)';
-        item.style.boxShadow = '0 6px 20px rgba(0,0,0,0.45)';
+        const user = await wax.login();
+        userAccount = user.account;
+
+        btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+        btn.innerHTML = `✅ ${userAccount}`;
+        
+        console.log('✅ Wallet connected:', userAccount);
+        alert(`Wallet connected successfully!\n\nAccount: ${userAccount}`);
+
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        btn.innerHTML = 'CONNECT WALLET';
+        btn.disabled = false;
+        alert('Connection failed or was cancelled. Please try again.');
+      }
+    }
+
+    // Run when page is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      initWax();
+
+      const btn = document.getElementById('connect-wallet-btn');
+      if (btn) {
+        btn.addEventListener('click', connectWallet);
+      }
+
+      // Menu hover effects
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          item.style.transform = 'translateY(-10px)';
+          item.style.boxShadow = '0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px #00f0ff';
+        });
+        item.addEventListener('mouseleave', () => {
+          item.style.transform = 'translateY(0)';
+          item.style.boxShadow = '0 6px 20px rgba(0,0,0,0.45)';
+        });
       });
     });
-  };
-</script>
+  </script>
 </body>
 </html>
