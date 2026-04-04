@@ -287,8 +287,8 @@
     </p>
   </footer>
 
-  <!-- WAX Library loaded here (important!) -->
-  <script src="https://unpkg.com/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
+  <!-- WAX Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
 
   <script>
     let wax = null;
@@ -296,12 +296,13 @@
 
     function initWax() {
       if (typeof waxjs === "undefined") {
-        console.error("WaxJS library not loaded yet");
-        return;
+        console.error("❌ WaxJS still not loaded");
+        return false;
       }
       wax = new waxjs.WaxJS({
         rpcEndpoint: 'https://wax.greymass.com'
       });
+      return true;
     }
 
     async function connectWallet() {
@@ -311,7 +312,14 @@
         btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
 
-        if (!wax) initWax();
+        if (!wax) {
+          if (!initWax()) {
+            alert("Wallet library is still loading. Please refresh the page and try again.");
+            btn.innerHTML = 'CONNECT WALLET';
+            btn.disabled = false;
+            return;
+          }
+        }
 
         const user = await wax.login();
         userAccount = user.account;
@@ -319,22 +327,25 @@
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
         btn.innerHTML = `✅ ${userAccount}`;
         
-        alert(`✅ Wallet connected successfully!\n\nAccount: ${userAccount}`);
+        alert(`✅ Successfully connected!\n\nAccount: ${userAccount}`);
 
       } catch (error) {
-        console.error("Wallet connection error:", error);
+        console.error(error);
         btn.innerHTML = 'CONNECT WALLET';
         btn.disabled = false;
-        alert('Connection failed or cancelled. Please try again.');
+        alert('Connection cancelled or failed. Please try again.');
       }
     }
 
-    // Initialize when page fully loads
+    // Initialize after full page load
     window.addEventListener('load', function() {
-      initWax();
+      // Small delay to ensure library loads
+      setTimeout(() => {
+        initWax();
 
-      const btn = document.getElementById('connect-wallet-btn');
-      btn.addEventListener('click', connectWallet);
+        const btn = document.getElementById('connect-wallet-btn');
+        btn.addEventListener('click', connectWallet);
+      }, 800);
 
       // Menu hover effects
       document.querySelectorAll('.menu-item').forEach(item => {
