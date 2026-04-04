@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
+  <!-- CSP for Vercel -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
@@ -85,21 +86,116 @@
       white-space: nowrap;
     }
 
-    /* Rest of your styles... (I'm keeping it short here) */
-    main { padding-top: 100px; max-width: 1440px; margin: 0 auto; padding: 0 1rem 100px; }
-    .hero { text-align: center; margin-bottom: 4rem; }
-    .hero h1 { font-size: clamp(2.8rem, 8.5vw, 6.5rem); background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; }
-    .menu-item { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.35s; }
-    .menu-item:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan); }
-    .card-content { padding: 2rem 1.4rem; text-align: center; }
-    .menu-icon { font-size: 4.8rem; margin-bottom: 1.2rem; color: var(--accent-cyan); }
-    .menu-title { font-size: 1.75rem; font-weight: 900; margin-bottom: 0.8rem; }
+    main {
+      padding-top: 100px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 100px;
+    }
 
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 3rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .menu-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+    }
+
+    .card-content {
+      padding: 2rem 1.4rem;
+      text-align: center;
+    }
+
+    .menu-icon {
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
+      color: var(--accent-cyan);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .menu-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+    }
+
+    footer {
+      background: rgba(10,19,47,0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1rem 2.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* Mobile */
     @media (max-width: 768px) {
       .header-inner { padding: 0 0.8rem; }
-      .menu-grid { grid-template-columns: 1fr; }
-      .wallet-btn { width: 100%; max-width: 280px; }
+      nav ul { gap: 1rem; font-size: 0.9rem; }
+      .hero { margin-bottom: 3rem; }
+      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      .card-content { padding: 1.8rem 1.2rem; }
+      .menu-icon { font-size: 4.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner { flex-direction: column; align-items: center; gap: 0.8rem; }
+      nav ul { order: 3; width: 100%; justify-content: center; margin-top: 0.5rem; }
+      .wallet-btn { order: 2; width: 100%; max-width: 280px; }
     }
 </style>
 </head>
@@ -126,8 +222,6 @@
     </div>
   </header>
 
-  <!-- Your main and footer content here (same as before) -->
-
   <main>
     <section class="hero">
       <h1>SKATE2EARN</h1>
@@ -143,7 +237,6 @@
     </section>
 
     <div class="menu-grid">
-      <!-- Your menu items -->
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
         <div class="card-content">
           <div class="menu-icon">🛠️</div>
@@ -152,8 +245,45 @@
         </div>
       </div>
 
-      <!-- ... rest of your menu items ... -->
+      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon">🛒</div>
+          <div class="menu-title">PARTS MARKET</div>
+          <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+        </div>
+      </div>
 
+      <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
+        <div class="card-content">
+          <div class="menu-icon">🛹</div>
+          <div class="menu-title">SKATE SHOP</div>
+          <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="alert('Profile Hub...')">
+        <div class="card-content">
+          <div class="menu-icon">💰</div>
+          <div class="menu-title">GET $SKATE</div>
+          <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon">📖</div>
+          <div class="menu-title">METAZINE</div>
+          <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
+        <div class="card-content">
+          <div class="menu-icon"><i class="fab fa-discord"></i></div>
+          <div class="menu-title">DISCORD</div>
+          <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -169,16 +299,19 @@
   </footer>
 
   <script>
+    // Simple & Reliable Wallet Button
     document.getElementById('connect-wallet-btn').addEventListener('click', function() {
       const btn = this;
+      const originalText = btn.innerHTML;
+      
       btn.innerHTML = 'OPENING WALLET...';
       btn.disabled = true;
 
-      // Opens WAX Cloud Wallet directly (most reliable method)
       window.open('https://mycloudwallet.com/', '_blank');
 
+      // Reset button after 3 seconds
       setTimeout(() => {
-        btn.innerHTML = 'CONNECT WALLET';
+        btn.innerHTML = originalText;
         btn.disabled = false;
       }, 3000);
     });
