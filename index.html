@@ -177,43 +177,72 @@
       line-height: 1.7;
     }
 
-    /* ==================== MOBILE IMPROVEMENTS ==================== */
-    @media (max-width: 768px) {
-      .header-inner {
-        padding: 0 0.8rem;
-      }
-      nav ul {
-        gap: 1rem;
-        font-size: 0.9rem;
-      }
-      .hero {
-        margin-bottom: 3rem;
-      }
-      .menu-grid {
-        grid-template-columns: 1fr;
-        gap: 1.6rem;
-      }
-      .card-content {
-        padding: 1.8rem 1.2rem;
-      }
-      .menu-icon {
-        font-size: 4.2rem;
-      }
-      .stats-row {
-        gap: 1.5rem;
-      }
-    }
+   /* ==================== MOBILE IMPROVEMENTS ==================== */
+@media (max-width: 992px) {
+  .header-inner {
+    gap: 1rem;
+  }
+  
+  .wallet-btn {
+    margin-left: auto;           /* Keeps it on the right */
+    padding: 0.65rem 1.2rem;
+    font-size: 0.92rem;
+  }
+}
 
-    @media (max-width: 480px) {
-      nav ul {
-        gap: 0.8rem;
-        justify-content: center;
-      }
-      .hero p {
-        font-size: 1rem;
-        padding: 0 10px;
-      }
-    }
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0.8rem 1rem;
+  }
+
+  nav ul {
+    gap: 1.1rem;
+    font-size: 0.92rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .logo {
+    height: clamp(38px, 8vw, 55px);
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+  }
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+  .card-content {
+    padding: 1.8rem 1.2rem;
+  }
+  .menu-icon {
+    font-size: 4.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  nav ul {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .wallet-btn {
+    order: 2;
+    width: 100%;
+    max-width: 280px;
+  }
+}
 </style>
 <header>
   <div class="header-inner">
