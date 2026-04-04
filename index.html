@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
+  <script src="https://cdn.jsdelivr.net/npm/@waxio/waxjs@1.7.1/dist-web/waxjs.js"></script>
+
  <style>
     :root {
       --bg-deep: #0a132f;
@@ -52,10 +54,7 @@
       gap: 1rem;
     }
 
-    .logo {
-      height: clamp(42px, 8vw, 68px);
-      width: auto;
-    }
+    .logo { height: clamp(42px, 8vw, 68px); width: auto; }
 
     nav ul {
       display: flex;
@@ -91,110 +90,20 @@
       margin-top: 4px;
     }
 
-    main {
-      padding-top: 100px;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      padding-bottom: 100px;
-    }
+    main { padding-top: 100px; max-width: 1440px; margin: 0 auto; padding: 0 1rem 100px; }
+    .hero { text-align: center; margin-bottom: 4rem; }
+    .hero h1 { font-size: clamp(2.8rem, 8.5vw, 6.5rem); background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; }
+    .menu-item { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.35s; }
+    .menu-item:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan); }
+    .card-content { padding: 2rem 1.4rem; text-align: center; }
+    .menu-icon { font-size: 4.8rem; margin-bottom: 1.2rem; color: var(--accent-cyan); }
+    .menu-title { font-size: 1.75rem; font-weight: 900; margin-bottom: 0.8rem; }
 
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      line-height: 1.1;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      color: var(--text-secondary);
-    }
-
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin: 1.5rem 0 3rem;
-      color: var(--text-secondary);
-    }
-
-    .stat-value {
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      font-weight: 900;
-      color: var(--accent-cyan);
-      display: block;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.8rem;
-    }
-
-    .menu-item {
-      background: var(--bg-panel);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.35s ease;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
-    }
-
-    .menu-item:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
-    }
-
-    .card-content {
-      padding: 2rem 1.4rem;
-      text-align: center;
-    }
-
-    .menu-icon {
-      font-size: 4.8rem;
-      margin-bottom: 1.2rem;
-      color: var(--accent-cyan);
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-
-    .menu-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      margin-bottom: 0.8rem;
-    }
-
-    footer {
-      background: rgba(10,19,47,0.95);
-      border-top: 1px solid var(--card-border);
-      padding: 3rem 1rem 2.5rem;
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    /* Mobile */
     @media (max-width: 768px) {
       .header-inner { padding: 0 0.8rem; }
       nav ul { gap: 1rem; font-size: 0.9rem; }
-      .hero { margin-bottom: 3rem; }
-      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
-      .card-content { padding: 1.8rem 1.2rem; }
-      .menu-icon { font-size: 4.2rem; }
+      .menu-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 480px) {
@@ -245,6 +154,7 @@
     </section>
 
     <div class="menu-grid">
+      <!-- Your menu items -->
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
         <div class="card-content">
           <div class="menu-icon">🛠️</div>
@@ -307,35 +217,41 @@
   </footer>
 
   <script>
+    let wax = null;
     let userAccount = null;
+
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
-    btn.addEventListener('click', function() {
-      if (userAccount) {
-        // Disconnect
-        if (confirm("Disconnect wallet?")) {
-          userAccount = null;
-          btn.innerHTML = "CONNECT WALLET";
-          btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
-          statusDiv.innerHTML = "";
-        }
-      } else {
-        // Connect
-        btn.innerHTML = 'OPENING WALLET...';
+    function initWax() {
+      if (typeof waxjs !== "undefined") {
+        wax = new waxjs.WaxJS({ rpcEndpoint: 'https://wax.greymass.com' });
+      }
+    }
+
+    async function connectWallet() {
+      try {
+        btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
 
-        window.open('https://mycloudwallet.com/', '_blank');
+        if (!wax) initWax();
 
-        // Simulate connection (we'll make this real later)
-        setTimeout(() => {
-          userAccount = "yourname.wam";   // Change this later to real account
-          btn.innerHTML = `✅ ${userAccount}`;
-          btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-          statusDiv.innerHTML = "🟢 Wallet Connected";
-        }, 2000);
+        const user = await wax.login();
+        userAccount = user.account;
+
+        btn.innerHTML = `✅ ${userAccount}`;
+        btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+        statusDiv.innerHTML = "🟢 Wallet Connected";
+
+      } catch (error) {
+        console.error(error);
+        btn.innerHTML = 'CONNECT WALLET';
+        btn.disabled = false;
+        alert('Connection cancelled or failed. Please try again.');
       }
-    });
+    }
+
+    btn.addEventListener('click', connectWallet);
 
     // Menu hover effects
     document.querySelectorAll('.menu-item').forEach(item => {
