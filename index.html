@@ -96,7 +96,7 @@
     }
 
     main {
-      padding-top: 160px;   /* INCREASED from 100px to 160px for ample space */
+      padding-top: 160px;
       max-width: 1440px;
       margin: 0 auto;
       padding-left: 1rem;
@@ -244,6 +244,89 @@
       font-size: 0.95rem;
     }
 
+    /* NEW: PRESET BUTTONS */
+    .preset-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .preset-btn {
+      background: linear-gradient(135deg, #ff9500, #ff2d55);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+    }
+
+    .preset-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 20px rgba(255, 149, 0, 0.5);
+    }
+
+    /* THANK YOU MODAL */
+    #thank-you-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 19, 47, 0.95);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      animation: modalFade 0.4s ease;
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, #0f1a47, #1a2a5e);
+      border: 3px solid #00f0ff;
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      text-align: center;
+      max-width: 460px;
+      box-shadow: 0 0 60px rgba(0, 240, 255, 0.6);
+      animation: modalPop 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .modal-content h2 {
+      font-size: 2.8rem;
+      background: linear-gradient(90deg, #ff9500, #00f0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content p {
+      font-size: 1.3rem;
+      color: #e0f7ff;
+      margin-bottom: 2rem;
+    }
+
+    .close-modal {
+      margin-top: 1.5rem;
+      background: #222;
+      color: #fff;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    @keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalPop { 
+      0% { transform: scale(0.6); }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
     footer {
       background: rgba(10,19,47,0.95);
       border-top: 1px solid var(--card-border);
@@ -255,11 +338,9 @@
     }
 
     @media (max-width: 768px) {
-      main { padding-top: 140px; }   /* Slightly less on mobile but still safe */
+      main { padding-top: 140px; }
       .header-inner { padding: 0 0.8rem; }
       nav ul { gap: 1rem; font-size: 0.9rem; }
-      .hero { margin-bottom: 3rem; }
-      .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
     }
 
     @media (max-width: 480px) {
@@ -297,7 +378,7 @@
   </header>
 
   <main>
-    <!-- HOME PAGE -->
+    <!-- HOME PAGE (unchanged) -->
     <div id="home-content">
       <section class="hero">
         <h1>SKATE2EARN</h1>
@@ -389,6 +470,16 @@
           <label>Amount to Donate (SOL)</label>
           <input id="donate-amount" type="number" value="0.05" step="0.001" min="0.001">
 
+          <!-- PRESET DONATION BUTTONS -->
+          <div class="preset-buttons">
+            <button class="preset-btn" onclick="setPresetAmount(0.01)">0.01 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(0.05)">0.05 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(0.1)">0.10 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(0.25)">0.25 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(0.5)">0.50 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(1)">1.00 SOL</button>
+          </div>
+
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
 
@@ -404,6 +495,17 @@
       </div>
     </div>
   </main>
+
+  <!-- THANK YOU POPUP (videogame style) -->
+  <div id="thank-you-modal">
+    <div class="modal-content">
+      <h2>💎 TREASURE UNLOCKED! 💎</h2>
+      <p style="font-size:2.2rem; margin:1rem 0;">THANK YOU SKATER! 🛹</p>
+      <p>Your donation just powered the revolution.<br>Real impact. Real community.</p>
+      
+      <button onclick="closeThankYouModal()" class="close-modal">KEEP SKATING →</button>
+    </div>
+  </div>
 
   <footer>
     <p>
@@ -430,6 +532,9 @@
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
+    // VIDEOGAME TREASURE CHEST SOUND (Zelda-style classic)
+    const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
+
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
     }
@@ -444,16 +549,13 @@
 
     async function updateWalletUI() {
       if (!publicKey) return;
-
       statusDiv.innerHTML = `<span style="color:#ff9500;">Loading SOL balance...</span>`;
-
       setTimeout(async () => {
         try {
           connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
           const pubkeyObj = new solanaWeb3.PublicKey(publicKey);
           const balanceLamports = await connection.getBalance(pubkeyObj);
           const balanceSOL = (balanceLamports / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-
           statusDiv.innerHTML = `
             <span style="display:block; margin-bottom:6px;">
               🟢 <strong>${shortenAddress(publicKey)}</strong> • <strong>${balanceSOL} SOL</strong>
@@ -462,7 +564,6 @@
             <button onclick="disconnectWallet()" style="background:#222; color:#fff; border:none; padding:4px 10px; border-radius:50px; font-size:0.75rem; cursor:pointer;">Disconnect</button>
           `;
         } catch (e) {
-          console.error(e);
           statusDiv.innerHTML = `<span style="color:#ff2d55;">⚠️ Balance failed — tap Refresh</span>`;
         }
       }, 600);
@@ -484,23 +585,16 @@
         window.open('https://phantom.app/', '_blank');
         return;
       }
-
       try {
         btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
-
         const resp = await provider.connect();
         publicKey = resp.publicKey.toString();
-
         btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-
         await updateWalletUI();
-
         provider.on('disconnect', disconnectWallet);
-
       } catch (err) {
-        console.error(err);
         btn.innerHTML = 'CONNECT WALLET';
         btn.disabled = false;
         statusDiv.innerHTML = "";
@@ -508,6 +602,12 @@
       }
     }
 
+    // SET PRESET AMOUNT
+    window.setPresetAmount = function(amount) {
+      document.getElementById('donate-amount').value = amount;
+    };
+
+    // SEND DONATION + THANK YOU POPUP + SOUND
     window.sendDonation = async function () {
       if (!provider || !publicKey) {
         alert("Please connect your Phantom wallet first (top right) 👆");
@@ -550,8 +650,13 @@
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
-        alert(`🎉 DONATION SUCCESSFUL!\n\nAmount: ${amount} SOL\nTx: ${signature}\n\nThank you for powering the skate revolution! 🛹\n\nView on Solscan: https://solscan.io/tx/${signature}`);
+        // SUCCESS: Play treasure chest sound + show epic popup
+        successSound.currentTime = 0;
+        successSound.play().catch(() => {});
 
+        document.getElementById('thank-you-modal').style.display = 'flex';
+
+        // Refresh balance
         setTimeout(updateWalletUI, 3000);
 
       } catch (err) {
@@ -582,6 +687,11 @@
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
       if (page === 'donate') updateDonateWalletInfo();
+    };
+
+    // Close thank you modal
+    window.closeThankYouModal = function() {
+      document.getElementById('thank-you-modal').style.display = 'none';
     };
 
     btn.addEventListener('click', async () => {
