@@ -130,7 +130,6 @@
       box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
     }
 
-    /* DONATE PAGE */
     #donate-content { padding-top: 40px; }
 
     .donation-card {
@@ -188,63 +187,6 @@
       font-size: 0.9rem;
       color: var(--accent-cyan);
       margin: 8px 0 16px;
-    }
-
-    /* ISOLATED & SMALLER POPUP - FIXED */
-    #thank-you-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 19, 47, 0.97);
-      z-index: 99999;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(8px);
-    }
-
-    .modal-content {
-      background: linear-gradient(180deg, #0f1a47, #1e2f6b);
-      border: 4px solid #00f0ff;
-      border-radius: 30px;
-      padding: 2.2rem 2rem;   /* reduced padding */
-      text-align: center;
-      max-width: 420px;       /* smaller overall size */
-      box-shadow: 0 0 80px rgba(0, 240, 255, 0.85);
-      animation: modalPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    }
-
-    .modal-content h2 {
-      font-size: 2.6rem;      /* smaller title */
-      background: linear-gradient(90deg, #ff9500, #00f0ff, #ff2d55);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(255,149,0,0.8);
-      margin-bottom: 0.8rem;
-    }
-
-    .modal-content p {
-      font-size: 1.25rem;     /* smaller text */
-      color: #e0f7ff;
-      margin: 0.8rem 0 1.5rem;
-      line-height: 1.4;
-    }
-
-    .close-modal {
-      background: linear-gradient(135deg, #00f0ff, #a78bfa);
-      color: #000;
-      font-weight: 900;
-      border: none;
-      padding: 14px 36px;
-      border-radius: 50px;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    @keyframes modalPop {
-      0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
-      70% { transform: scale(1.12) rotate(5deg); }
-      100% { transform: scale(1) rotate(0); opacity: 1; }
     }
 
     footer {
@@ -359,16 +301,6 @@
       </div>
     </div>
   </main>
-
-  <!-- ISOLATED SMALLER POPUP -->
-  <div id="thank-you-modal">
-    <div class="modal-content">
-      <h2>💎 TREASURE UNLOCKED! 💎</h2>
-      <p>YOU JUST POWERED<br>THE SKATE REVOLUTION 🛹🔥</p>
-      <p style="font-size:1.3rem;">Legendary move, skater.<br>The whole crew feels this one.</p>
-      <button onclick="closeThankYouModal()" class="close-modal">KEEP SKATING →</button>
-    </div>
-  </div>
 
   <footer>
     <p><strong>SK8COIN is more than a token — it's a revolution.</strong><br>We are reclaiming skate culture from corporate control and gatekeepers...</p>
@@ -488,21 +420,23 @@
         const signature = await conn.sendRawTransaction(signedTx.serialize(), { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
-        triggerSuccess();
+        // Smaller success message (no popup)
+        successSound.currentTime = 0;
+        successSound.play().catch(() => {});
+        alert("💎 TREASURE UNLOCKED! 💎\n\nYOU JUST POWERED THE SKATE REVOLUTION 🛹🔥\n\nLegendary move, skater.\nThe whole crew feels this one.");
+
+        setTimeout(updateWalletUI, 3000);
       } catch (err) {
         if (err.message && err.message.includes("block height exceeded")) {
-          triggerSuccess(); return;
+          successSound.currentTime = 0;
+          successSound.play().catch(() => {});
+          alert("💎 TREASURE UNLOCKED! 💎\n\nYOU JUST POWERED THE SKATE REVOLUTION 🛹🔥\n\nLegendary move, skater.\nThe whole crew feels this one.");
+          setTimeout(updateWalletUI, 3000);
+          return;
         }
         alert("Transaction failed: " + (err.message || err));
       }
     };
-
-    function triggerSuccess() {
-      successSound.currentTime = 0;
-      successSound.play().catch(() => {});
-      document.getElementById('thank-you-modal').style.display = 'flex';
-      setTimeout(updateWalletUI, 3000);
-    }
 
     window.copyTreasuryAddress = function () {
       navigator.clipboard.writeText("5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc").then(() => {
@@ -519,10 +453,6 @@
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
       if (page === 'donate') { updateDonateWalletInfo(); updateAllUSD(); }
-    };
-
-    window.closeThankYouModal = function() {
-      document.getElementById('thank-you-modal').style.display = 'none';
     };
 
     btn.addEventListener('click', async () => {
