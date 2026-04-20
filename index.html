@@ -190,9 +190,9 @@
       margin: 8px 0 16px;
     }
 
-    /* FIXED POPUP - NO MORE BODY LEAK */
+    /* CLEAN POPUP - FIXED (no body leak) */
     #thank-you-modal {
-      display: none !important;
+      display: none;
       position: fixed;
       inset: 0;
       background: rgba(10, 19, 47, 0.97);
@@ -283,7 +283,7 @@
   </header>
 
   <main>
-    <!-- HOME PAGE (unchanged) -->
+    <!-- HOME PAGE (unchanged - last known working base) -->
     <div id="home-content">
       <section class="hero">
         <h1>SKATE2EARN</h1>
@@ -319,7 +319,7 @@
       </div>
     </div>
 
-    <!-- DONATE PAGE (USD prices + presets unchanged) -->
+    <!-- DONATE PAGE (USD prices + 3 presets - unchanged) -->
     <div id="donate-content" style="display: none;">
       <div class="donate-hero">
         <h1>DONATE NOW</h1>
@@ -359,7 +359,7 @@
     </div>
   </main>
 
-  <!-- CLEAN POPUP (now 100% isolated) -->
+  <!-- POPUP - NOW FIXED AND ISOLATED (no body leak) -->
   <div id="thank-you-modal">
     <div class="modal-content">
       <h2>💎 TREASURE UNLOCKED! 💎</h2>
