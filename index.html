@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
+  <!-- BUFFER POLYFILL (required for @solana/web3.js in browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+  
+  <!-- SOLANA WEB3.JS (official CDN - latest v1.x IIFE build) -->
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
  <style>
     :root {
       --bg-deep: #0a132f;
@@ -306,13 +312,20 @@
   </footer>
 
   <script>
+    // === BUFFER POLYFILL (must run before any web3.js code) ===
+    if (typeof window.Buffer === 'undefined') {
+      window.Buffer = window.buffer.Buffer;
+      console.log('%c✅ Buffer polyfill loaded for Solana web3.js', 'color:#00f0ff; font-weight:bold');
+    }
+
     let publicKey = null;
     let provider = null;
+    let connection = null;
 
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
-    // Helper to shorten wallet address
+    // Helper to shorten address
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
     }
@@ -321,18 +334,129 @@
     function getProvider() {
       if ('phantom' in window) {
         const solanaProvider = window.phantom?.solana;
-        if (solanaProvider?.isPhantom) {
-          return solanaProvider;
-        }
+        if (solanaProvider?.isPhantom) return solanaProvider;
       }
       return null;
     }
 
+    // Fetch and display SOL balance + action buttons (no layout change)
+    async function updateWalletUI() {
+      if (!publicKey || !connection) return;
+
+      try {
+        const pubkeyObj = new solanaWeb3.PublicKey(publicKey);
+        const balanceLamports = await connection.getBalance(pubkeyObj);
+        const balanceSOL = (balanceLamports / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
+
+        // Rich status with balance + action buttons (still inside original #wallet-status div)
+        statusDiv.innerHTML = `
+          <span style="display:block; margin-bottom:6px;">
+            🟢 <strong>${shortenAddress(publicKey)}</strong> • <strong>${balanceSOL} SOL</strong>
+          </span>
+          <button onclick="signLoginMessage()" 
+                  style="background:linear-gradient(135deg,#00f0ff,#a78bfa); color:#000; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; margin-right:6px; cursor:pointer;">
+            🔑 Sign Login
+          </button>
+          <button onclick="sendDemoSOL()" 
+                  style="background:linear-gradient(135deg,#ff9500,#ff2d55); color:#000; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; cursor:pointer;">
+            💸 Send 0.01 SOL
+          </button>
+          <button onclick="disconnectWallet()" 
+                  style="background:#222; color:#fff; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; margin-left:6px; cursor:pointer;">
+            Disconnect
+          </button>
+        `;
+      } catch (e) {
+        console.error(e);
+        statusDiv.innerHTML = `<span style="color:#ff2d55;">⚠️ Balance error</span>`;
+      }
+    }
+
+    // SIGN MESSAGE FOR LOGIN (legit Web3 authentication proof)
+    window.signLoginMessage = async function () {
+      if (!provider || !publicKey) return;
+
+      const timestamp = Date.now();
+      const messageText = `SK8COIN Login - ${timestamp}`;
+      const message = new TextEncoder().encode(messageText);
+
+      try {
+        const signed = await provider.signMessage(message);
+        const signatureHex = Array.from(signed.signature)
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        console.log('%c🔑 SK8COIN Login Signature', 'color:#00f0ff; font-size:13px');
+        console.log('Message:', messageText);
+        console.log('Signature (hex):', signatureHex);
+        console.log('Public Key:', publicKey);
+
+        alert(`✅ SIGNED SUCCESSFULLY!\n\nMessage: ${messageText}\n\nSignature (copy for backend):\n${signatureHex}\n\n✅ You can now send this to your server for verification.`);
+      } catch (err) {
+        console.error(err);
+        if (err.code === 4001) alert("User rejected signing.");
+        else alert("Sign message failed.");
+      }
+    };
+
+    // SEND SOL DEMO (full web3 transaction using Phantom)
+    window.sendDemoSOL = async function () {
+      if (!provider || !publicKey) return;
+
+      const recipient = prompt("💸 Enter recipient wallet address (mainnet):", "Enter a valid Solana address here");
+      if (!recipient) return;
+
+      const amountStr = prompt("Amount in SOL (demo uses 0.01 by default):", "0.01");
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Invalid amount!");
+        return;
+      }
+
+      if (!confirm(`⚠️ REAL TRANSACTION ON MAINNET\n\nSend ${amount} SOL to ${recipient}?\n\nPhantom will ask you to approve.`)) return;
+
+      try {
+        const fromPubkey = new solanaWeb3.PublicKey(publicKey);
+        const toPubkey = new solanaWeb3.PublicKey(recipient);
+
+        // Use mainnet
+        const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
+
+        const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash();
+
+        const tx = new solanaWeb3.Transaction().add(
+          solanaWeb3.SystemProgram.transfer({
+            fromPubkey: fromPubkey,
+            toPubkey: toPubkey,
+            lamports: Math.floor(amount * solanaWeb3.LAMPORTS_PER_SOL)
+          })
+        );
+
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = fromPubkey;
+
+        // Phantom signs + sends
+        const signedTx = await provider.signTransaction(tx);
+        const rawTx = signedTx.serialize();
+
+        const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
+        await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
+
+        alert(`✅ TRANSACTION SENT!\n\nAmount: ${amount} SOL\nTx Signature: ${signature}\n\nView on Solscan: https://solscan.io/tx/${signature}`);
+        console.log('%c✅ Tx successful:', 'color:#22ff88', `https://solscan.io/tx/${signature}`);
+
+        // Refresh balance after send
+        setTimeout(updateWalletUI, 3000);
+      } catch (err) {
+        console.error(err);
+        alert("Transaction failed: " + (err.message || err));
+      }
+    };
+
     async function connectWallet() {
       provider = getProvider();
-
       if (!provider) {
-        alert("Phantom wallet not found! Please install Phantom from https://phantom.app/");
+        alert("Phantom wallet not found!\n\nInstall it here → https://phantom.app/");
         window.open('https://phantom.app/', '_blank');
         return;
       }
@@ -344,68 +468,63 @@
         const resp = await provider.connect();
         publicKey = resp.publicKey.toString();
 
-        // Update UI
+        // Create connection once
+        connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
+
+        // Update button
         btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-        statusDiv.innerHTML = "🟢 Phantom Connected";
 
-        // Optional: Listen for disconnect
-        provider.on('disconnect', () => {
-          disconnectWallet();
-        });
+        // Full wallet UI with balance + buttons
+        await updateWalletUI();
+
+        // Listen for disconnect
+        provider.on('disconnect', () => disconnectWallet());
 
       } catch (err) {
         console.error(err);
         btn.innerHTML = 'CONNECT WALLET';
         btn.disabled = false;
         statusDiv.innerHTML = "";
-        if (err.code === 4001) {
-          alert("Connection rejected by user.");
-        } else {
-          alert("Failed to connect to Phantom wallet.");
-        }
+        alert(err.code === 4001 ? "Connection rejected." : "Failed to connect Phantom.");
       }
     }
 
     function disconnectWallet() {
-      if (provider) {
-        provider.disconnect().catch(() => {});
-      }
+      if (provider) provider.disconnect().catch(() => {});
       publicKey = null;
+      connection = null;
       btn.innerHTML = "CONNECT WALLET";
       btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
       statusDiv.innerHTML = "";
     }
 
-    // Button click handler
+    // Button handler
     btn.addEventListener('click', async () => {
       if (publicKey) {
-        if (confirm("Disconnect Phantom wallet?")) {
-          disconnectWallet();
-        }
+        if (confirm("Disconnect wallet?")) disconnectWallet();
       } else {
         await connectWallet();
       }
     });
 
-    // Auto-detect if already connected (Phantom remembers trusted sites)
+    // Auto-connect if Phantom already trusted
     window.addEventListener('load', async () => {
       provider = getProvider();
       if (provider && provider.isConnected) {
         try {
           const resp = await provider.connect({ onlyIfTrusted: true });
           publicKey = resp.publicKey.toString();
+          connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
 
           btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
           btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-          statusDiv.innerHTML = "🟢 Phantom Connected";
-        } catch (e) {
-          // User not trusted yet → do nothing
-        }
+          await updateWalletUI();
+        } catch (e) {}
       }
     });
 
-    // Menu hover effects (kept from original)
+    // Keep original menu hover effects
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('mouseenter', () => {
         item.style.transform = 'translateY(-10px)';
