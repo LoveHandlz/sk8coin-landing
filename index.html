@@ -9,10 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
-  <!-- BUFFER POLYFILL -->
   <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
-  
-  <!-- SOLANA WEB3.JS -->
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
  <style>
@@ -99,7 +96,7 @@
     }
 
     main {
-      padding-top: 100px;
+      padding-top: 160px;   /* INCREASED from 100px to 160px for ample space */
       max-width: 1440px;
       margin: 0 auto;
       padding-left: 1rem;
@@ -184,7 +181,7 @@
       margin-bottom: 0.8rem;
     }
 
-    /* DONATE PAGE STYLES (exact same as before) */
+    /* DONATE PAGE STYLES */
     #donate-content {
       padding-top: 40px;
     }
@@ -211,11 +208,6 @@
       max-width: 620px;
       margin: 0 auto;
       box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
-      transition: all 0.3s ease;
-    }
-
-    .donation-card:hover {
-      box-shadow: 0 20px 45px rgba(0, 240, 255, 0.3);
     }
 
     .address-box {
@@ -263,12 +255,11 @@
     }
 
     @media (max-width: 768px) {
+      main { padding-top: 140px; }   /* Slightly less on mobile but still safe */
       .header-inner { padding: 0 0.8rem; }
       nav ul { gap: 1rem; font-size: 0.9rem; }
       .hero { margin-bottom: 3rem; }
       .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
-      .card-content { padding: 1.8rem 1.2rem; }
-      .menu-icon { font-size: 4.2rem; }
     }
 
     @media (max-width: 480px) {
@@ -306,7 +297,7 @@
   </header>
 
   <main>
-    <!-- HOME PAGE (100% original layout) -->
+    <!-- HOME PAGE -->
     <div id="home-content">
       <section class="hero">
         <h1>SKATE2EARN</h1>
@@ -372,7 +363,7 @@
       </div>
     </div>
 
-    <!-- DONATE PAGE (exactly the same as before) -->
+    <!-- DONATE PAGE -->
     <div id="donate-content" style="display: none;">
       <div class="donate-hero">
         <h1>DONATE NOW</h1>
@@ -426,7 +417,6 @@
   </footer>
 
   <script>
-    // BUFFER POLYFILL
     if (typeof window.Buffer === 'undefined') {
       window.Buffer = window.buffer.Buffer;
     }
@@ -435,7 +425,6 @@
     let provider = null;
     let connection = null;
 
-    // FASTER PUBLIC RPC (fixes balance loading issues on mainnet)
     const RPC_URL = "https://solana-rpc.publicnode.com";
 
     const btn = document.getElementById('connect-wallet-btn');
@@ -453,7 +442,6 @@
       return null;
     }
 
-    // IMPROVED BALANCE (now using faster RPC + retry)
     async function updateWalletUI() {
       if (!publicKey) return;
 
@@ -507,7 +495,7 @@
         btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
 
-        await updateWalletUI();   // balance now loads reliably
+        await updateWalletUI();
 
         provider.on('disconnect', disconnectWallet);
 
@@ -520,7 +508,6 @@
       }
     }
 
-    // DONATION FUNCTION (uses same fast RPC)
     window.sendDonation = async function () {
       if (!provider || !publicKey) {
         alert("Please connect your Phantom wallet first (top right) 👆");
@@ -565,7 +552,7 @@
 
         alert(`🎉 DONATION SUCCESSFUL!\n\nAmount: ${amount} SOL\nTx: ${signature}\n\nThank you for powering the skate revolution! 🛹\n\nView on Solscan: https://solscan.io/tx/${signature}`);
 
-        setTimeout(updateWalletUI, 3000); // refresh balance after donation
+        setTimeout(updateWalletUI, 3000);
 
       } catch (err) {
         console.error(err);
@@ -591,14 +578,12 @@
       el.innerHTML = `<span style="color:#22ff88;">🟢 Connected • ${shortenAddress(publicKey)}</span>`;
     }
 
-    // PAGE NAVIGATION
     window.navigateTo = function (page) {
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
       if (page === 'donate') updateDonateWalletInfo();
     };
 
-    // Button handler
     btn.addEventListener('click', async () => {
       if (publicKey) {
         if (confirm("Disconnect wallet?")) disconnectWallet();
@@ -607,7 +592,6 @@
       }
     });
 
-    // Auto-connect
     window.addEventListener('load', async () => {
       provider = getProvider();
       if (provider && provider.isConnected) {
@@ -619,7 +603,7 @@
           await updateWalletUI();
         } catch (e) {}
       }
-      navigateTo('home');   // start on home page
+      navigateTo('home');
     });
   </script>
 </body>
