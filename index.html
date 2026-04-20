@@ -306,36 +306,106 @@
   </footer>
 
   <script>
-    let userAccount = null;
+    let publicKey = null;
+    let provider = null;
 
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
-    btn.addEventListener('click', function() {
-      if (userAccount) {
-        if (confirm("Disconnect wallet?")) {
-          userAccount = null;
-          btn.innerHTML = "CONNECT WALLET";
-          btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
-          statusDiv.innerHTML = "";
+    // Helper to shorten wallet address
+    function shortenAddress(addr) {
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+
+    // Get Phantom provider
+    function getProvider() {
+      if ('phantom' in window) {
+        const solanaProvider = window.phantom?.solana;
+        if (solanaProvider?.isPhantom) {
+          return solanaProvider;
         }
-      } else {
-        btn.innerHTML = 'OPENING WALLET...';
+      }
+      return null;
+    }
+
+    async function connectWallet() {
+      provider = getProvider();
+
+      if (!provider) {
+        alert("Phantom wallet not found! Please install Phantom from https://phantom.app/");
+        window.open('https://phantom.app/', '_blank');
+        return;
+      }
+
+      try {
+        btn.innerHTML = 'CONNECTING...';
         btn.disabled = true;
 
-        window.open('https://mycloudwallet.com/', '_blank');
+        const resp = await provider.connect();
+        publicKey = resp.publicKey.toString();
 
-        // Simulate connection for now (we'll improve this later)
-        setTimeout(() => {
-          userAccount = "yourname.wam";   // This will be replaced with real account later
-          btn.innerHTML = `✅ ${userAccount}`;
-          btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
-          statusDiv.innerHTML = "🟢 Wallet Connected";
-        }, 1800);
+        // Update UI
+        btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
+        btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+        statusDiv.innerHTML = "🟢 Phantom Connected";
+
+        // Optional: Listen for disconnect
+        provider.on('disconnect', () => {
+          disconnectWallet();
+        });
+
+      } catch (err) {
+        console.error(err);
+        btn.innerHTML = 'CONNECT WALLET';
+        btn.disabled = false;
+        statusDiv.innerHTML = "";
+        if (err.code === 4001) {
+          alert("Connection rejected by user.");
+        } else {
+          alert("Failed to connect to Phantom wallet.");
+        }
+      }
+    }
+
+    function disconnectWallet() {
+      if (provider) {
+        provider.disconnect().catch(() => {});
+      }
+      publicKey = null;
+      btn.innerHTML = "CONNECT WALLET";
+      btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
+      statusDiv.innerHTML = "";
+    }
+
+    // Button click handler
+    btn.addEventListener('click', async () => {
+      if (publicKey) {
+        if (confirm("Disconnect Phantom wallet?")) {
+          disconnectWallet();
+        }
+      } else {
+        await connectWallet();
       }
     });
 
-    // Menu hover effects
+    // Auto-detect if already connected (Phantom remembers trusted sites)
+    window.addEventListener('load', async () => {
+      provider = getProvider();
+      if (provider && provider.isConnected) {
+        try {
+          const resp = await provider.connect({ onlyIfTrusted: true });
+          publicKey = resp.publicKey.toString();
+
+          btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
+          btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+          statusDiv.innerHTML = "🟢 Phantom Connected";
+        } catch (e) {
+          // User not trusted yet → do nothing
+        }
+      }
+    });
+
+    // Menu hover effects (kept from original)
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('mouseenter', () => {
         item.style.transform = 'translateY(-10px)';
