@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+ 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:;">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
-  
+ 
   <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-
  <style>
     :root {
       --bg-deep: #0a132f;
@@ -23,7 +21,6 @@
       --text-secondary: #a5d8ff;
       --card-border: rgba(0, 240, 255, 0.14);
     }
-
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       background: var(--bg-deep);
@@ -33,7 +30,6 @@
       overflow-x: hidden;
       line-height: 1.5;
     }
-
     header {
       background: rgba(10,19,47,0.95);
       backdrop-filter: blur(12px);
@@ -43,7 +39,6 @@
       z-index: 100;
       padding: 1rem 0;
     }
-
     .header-inner {
       max-width: 1440px;
       margin: 0 auto;
@@ -54,12 +49,10 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-
     .logo {
       height: clamp(42px, 8vw, 68px);
       width: auto;
     }
-
     nav ul {
       display: flex;
       gap: 1.4rem;
@@ -67,7 +60,6 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
     nav a {
       color: var(--text-secondary);
       text-decoration: none;
@@ -75,7 +67,6 @@
       font-size: 1rem;
       transition: color 0.25s;
     }
-
     .wallet-btn {
       background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
       color: #000;
@@ -87,14 +78,12 @@
       font-size: 0.95rem;
       white-space: nowrap;
     }
-
     .wallet-status {
       font-size: 0.85rem;
       color: #22ff88;
       margin-top: 4px;
       line-height: 1.4;
     }
-
     main {
       padding-top: 160px;
       max-width: 1440px;
@@ -103,12 +92,10 @@
       padding-right: 1rem;
       padding-bottom: 100px;
     }
-
     .hero {
       text-align: center;
       margin-bottom: 4rem;
     }
-
     .hero h1 {
       font-size: clamp(2.8rem, 8.5vw, 6.5rem);
       background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
@@ -118,14 +105,12 @@
       margin-bottom: 1rem;
       line-height: 1.1;
     }
-
     .hero p {
       font-size: 1.1rem;
       max-width: 680px;
       margin: 0 auto 2rem;
       color: var(--text-secondary);
     }
-
     .stats-row {
       display: flex;
       justify-content: center;
@@ -134,20 +119,17 @@
       margin: 1.5rem 0 3rem;
       color: var(--text-secondary);
     }
-
     .stat-value {
       font-size: clamp(1.8rem, 5vw, 2.6rem);
       font-weight: 900;
       color: var(--accent-cyan);
       display: block;
     }
-
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.8rem;
     }
-
     .menu-item {
       background: var(--bg-panel);
       border: 1px solid var(--card-border);
@@ -157,38 +139,31 @@
       transition: all 0.35s ease;
       box-shadow: 0 6px 20px rgba(0,0,0,0.45);
     }
-
     .menu-item:hover {
       transform: translateY(-8px);
       box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
     }
-
     .card-content {
       padding: 2rem 1.4rem;
       text-align: center;
     }
-
     .menu-icon {
       font-size: 4.8rem;
       margin-bottom: 1.2rem;
       color: var(--accent-cyan);
       filter: drop-shadow(0 0 12px currentColor);
     }
-
     .menu-title {
       font-size: 1.75rem;
       font-weight: 900;
       margin-bottom: 0.8rem;
     }
-
     /* DONATE PAGE */
     #donate-content { padding-top: 40px; }
-
     .donate-hero {
       text-align: center;
       margin-bottom: 3rem;
     }
-
     .donate-hero h1 {
       font-size: clamp(2.8rem, 7vw, 5rem);
       background: linear-gradient(90deg, #ff9500, var(--accent-cyan));
@@ -196,7 +171,6 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .donation-card {
       background: var(--bg-panel);
       border: 2px solid var(--card-border);
@@ -206,7 +180,6 @@
       margin: 0 auto;
       box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
     }
-
     .address-box {
       background: #000;
       color: #00f0ff;
@@ -220,7 +193,6 @@
       margin: 1rem 0;
       word-break: break-all;
     }
-
     .donation-form input,
     .donation-form textarea {
       width: 100%;
@@ -232,7 +204,6 @@
       font-size: 1.1rem;
       margin-bottom: 1rem;
     }
-
     .donation-form label {
       display: block;
       margin: 1.2rem 0 0.4rem;
@@ -240,7 +211,6 @@
       font-weight: 700;
       font-size: 0.95rem;
     }
-
     /* ONLY FIRST 3 PRESETS */
     .preset-buttons {
       display: flex;
@@ -249,7 +219,6 @@
       justify-content: center;
       margin: 1rem 0 1.5rem;
     }
-
     .preset-btn {
       background: linear-gradient(135deg, #ff9500, #ff2d55);
       color: #fff;
@@ -262,12 +231,10 @@
       transition: all 0.2s ease;
       box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
     }
-
     .preset-btn:hover {
       transform: scale(1.12) rotate(3deg);
       box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
-
     /* EPIC THANK YOU MODAL - MAX DOPAMINE */
     #thank-you-modal {
       display: none;
@@ -278,7 +245,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .modal-content {
       background: linear-gradient(180deg, #0f1a47, #1e2f6b);
       border: 4px solid #00f0ff;
@@ -289,7 +255,6 @@
       box-shadow: 0 0 80px rgba(0, 240, 255, 0.8);
       animation: modalPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
-
     .modal-content h2 {
       font-size: 3.2rem;
       background: linear-gradient(90deg, #ff9500, #00f0ff, #ff2d55);
@@ -299,13 +264,11 @@
       margin-bottom: 0.8rem;
       text-shadow: 0 0 30px rgba(255, 149, 0, 0.8);
     }
-
     .modal-content p {
       font-size: 1.5rem;
       color: #e0f7ff;
       line-height: 1.4;
     }
-
     .close-modal {
       margin-top: 2rem;
       background: linear-gradient(135deg, #00f0ff, #a78bfa);
@@ -318,13 +281,11 @@
       cursor: pointer;
       box-shadow: 0 8px 25px rgba(0, 240, 255, 0.5);
     }
-
     @keyframes modalPop {
       0% { transform: scale(0.4) rotate(-8deg); }
       60% { transform: scale(1.15) rotate(4deg); }
       100% { transform: scale(1) rotate(0); }
     }
-
     footer {
       background: rgba(10,19,47,0.95);
       border-top: 1px solid var(--card-border);
@@ -334,20 +295,17 @@
       font-size: 1rem;
       line-height: 1.7;
     }
-
     @media (max-width: 768px) {
       main { padding-top: 140px; }
     }
 </style>
 </head>
 <body>
-
   <header>
     <div class="header-inner">
       <a href="https://www.sk8coin.io/" class="logo-link">
         <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" alt="SK8COIN Logo" class="logo">
       </a>
-
       <nav>
         <ul>
           <li><a href="#" onclick="navigateTo('home')">Home</a></li>
@@ -359,30 +317,26 @@
           <li><a href="#" onclick="navigateTo('donate')" style="color:var(--accent-cyan); font-weight:700;">💸 Donate Now</a></li>
         </ul>
       </nav>
-
       <div style="text-align: right;">
         <button id="connect-wallet-btn" class="wallet-btn">CONNECT WALLET</button>
         <div id="wallet-status" class="wallet-status"></div>
       </div>
     </div>
   </header>
-
   <main>
-    <!-- HOME PAGE (unchanged) -->
+    <!-- HOME PAGE -->
     <div id="home-content">
       <section class="hero">
         <h1>SKATE2EARN</h1>
         <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
-          Collect, build & earn on-chain — tokenized GameFi meets street culture. 
+          Collect, build & earn on-chain — tokenized GameFi meets street culture.
         </p>
-
         <div class="stats-row">
           <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
           <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
           <div class="stat"><span class="stat-value">20k</span> Volume</div>
         </div>
       </section>
-
       <div class="menu-grid">
         <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
           <div class="card-content">
@@ -391,7 +345,6 @@
             <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
           </div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
           <div class="card-content">
             <div class="menu-icon">🛒</div>
@@ -399,7 +352,6 @@
             <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
           </div>
         </div>
-
         <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
           <div class="card-content">
             <div class="menu-icon">🛹</div>
@@ -407,7 +359,6 @@
             <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
           </div>
         </div>
-
         <div class="menu-item" onclick="alert('Profile Hub...')">
           <div class="card-content">
             <div class="menu-icon">💰</div>
@@ -415,7 +366,6 @@
             <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
           </div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
           <div class="card-content">
             <div class="menu-icon">📖</div>
@@ -423,7 +373,6 @@
             <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
           </div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
           <div class="card-content">
             <div class="menu-icon"><i class="fab fa-discord"></i></div>
@@ -442,40 +391,34 @@
           Support real skaters • Fund the revolution • Send SOL directly on-chain
         </p>
       </div>
-
       <div class="donation-card">
         <h2 style="text-align:center; margin-bottom:1.2rem; font-size:1.6rem;">SK8COIN Community Treasury</h2>
-        
+       
         <div class="address-box">
           <span id="treasury-address">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
-          <button onclick="copyTreasuryAddress()" 
+          <button onclick="copyTreasuryAddress()"
                   style="background:var(--accent-cyan); color:#000; border:none; padding:6px 14px; border-radius:50px; font-size:0.85rem; cursor:pointer; font-weight:bold;">
             📋 COPY
           </button>
         </div>
-
         <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
-
         <div class="donation-form">
           <label>Quick Donate (tap any)</label>
           <div class="preset-buttons">
-            <button class="preset-btn" onclick="setPresetAmount(0.01)">0.01 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(0.05)">0.05 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(0.10)">0.10 SOL</button>
+            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">0.01 SOL <span class="usd">≈ $--.--</span></button>
+            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">0.05 SOL <span class="usd">≈ $--.--</span></button>
+            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">0.10 SOL <span class="usd">≈ $--.--</span></button>
           </div>
-
           <label>Custom Amount (SOL)</label>
           <input id="donate-amount" type="number" value="0.00" step="0.001" min="0.001">
-
+          <div id="custom-usd">≈ $0.00 USD</div>
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
-
-          <button onclick="sendDonation()" 
+          <button onclick="sendDonation()"
                   style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.5rem; padding:1.2rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
             💸 SEND DONATION VIA PHANTOM
           </button>
         </div>
-
         <p style="text-align:center; margin-top:2rem; font-size:0.9rem; color:var(--text-secondary);">
           100% on-chain • Mainnet • No fees to SK8COIN • Real impact for skaters
         </p>
@@ -492,33 +435,28 @@
       <button onclick="closeThankYouModal()" class="close-modal">KEEP SKATING →</button>
     </div>
   </div>
-
   <footer>
     <p>
       <strong>SK8COIN is more than a token — it's a revolution.</strong><br>
-      We are reclaiming skate culture from corporate control and gatekeepers. 
-      By putting boards, parts, tricks, and community ownership directly on the blockchain, 
-      we empower every skater to own their style, earn from their creativity, 
-      and build the future of street culture without middlemen. 
+      We are reclaiming skate culture from corporate control and gatekeepers.
+      By putting boards, parts, tricks, and community ownership directly on the blockchain,
+      we empower every skater to own their style, earn from their creativity,
+      and build the future of street culture without middlemen.
       This is Skate2Earn. This is independence. This is the SK8COIN movement.
     </p>
   </footer>
-
   <script>
     if (typeof window.Buffer === 'undefined') {
       window.Buffer = window.buffer.Buffer;
     }
-
     let publicKey = null;
     let provider = null;
     let connection = null;
+    let currentSOLPrice = 170;
 
     const RPC_URL = "https://solana-rpc.publicnode.com";
-
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
-
-    // EPIC ZELDA-STYLE TREASURE CHEST JINGLE (reliable direct link)
     const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
     successSound.volume = 0.95;
     successSound.preload = "auto";
@@ -526,7 +464,6 @@
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
     }
-
     function getProvider() {
       if ('phantom' in window) {
         const solanaProvider = window.phantom?.solana;
@@ -534,7 +471,6 @@
       }
       return null;
     }
-
     async function updateWalletUI() {
       if (!publicKey) return;
       statusDiv.innerHTML = `<span style="color:#ff9500;">Loading SOL balance...</span>`;
@@ -556,7 +492,6 @@
         }
       }, 600);
     }
-
     window.disconnectWallet = function() {
       if (provider) provider.disconnect().catch(() => {});
       publicKey = null;
@@ -565,7 +500,6 @@
       btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
       statusDiv.innerHTML = "";
     };
-
     async function connectWallet() {
       provider = getProvider();
       if (!provider) {
@@ -590,37 +524,56 @@
       }
     }
 
-    // PRESET BUTTONS (only first 3)
+    // === LIVE USD CONVERSION ===
+    async function fetchSOLPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+        const data = await res.json();
+        currentSOLPrice = data.solana.usd || 170;
+      } catch(e) {}
+      return currentSOLPrice;
+    }
+
+    async function updateAllUSD() {
+      const price = await fetchSOLPrice();
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const sol = parseFloat(btn.dataset.sol);
+        const usdSpan = btn.querySelector('.usd');
+        if (usdSpan) usdSpan.textContent = `≈ $${(sol * price).toFixed(2)}`;
+      });
+      updateCustomUSD();
+    }
+
+    function updateCustomUSD() {
+      const amount = parseFloat(document.getElementById('donate-amount').value) || 0;
+      document.getElementById('custom-usd').textContent = `≈ $${(amount * currentSOLPrice).toFixed(2)} USD`;
+    }
+
     window.setPresetAmount = function(amount) {
       document.getElementById('donate-amount').value = amount;
+      updateCustomUSD();
     };
 
-    // SEND DONATION WITH MAX DOPAMINE
+    // SEND DONATION
     window.sendDonation = async function () {
       if (!provider || !publicKey) {
         alert("Please connect your Phantom wallet first (top right) 👆");
         return;
       }
-
       const amountStr = document.getElementById('donate-amount').value;
       const amount = parseFloat(amountStr);
       if (isNaN(amount) || amount <= 0) {
         alert("Enter a valid amount greater than 0!");
         return;
       }
-
       const message = document.getElementById('donate-message').value.trim() || "No message";
       const recipient = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
-
       if (!confirm(`💸 REAL MAINNET DONATION\n\nSend ${amount} SOL to SK8COIN Treasury?\nMessage: "${message}"\n\nPhantom will ask you to approve.`)) return;
-
       try {
         const fromPubkey = new solanaWeb3.PublicKey(publicKey);
         const toPubkey = new solanaWeb3.PublicKey(recipient);
-
         const conn = new solanaWeb3.Connection(RPC_URL, 'confirmed');
         const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash();
-
         const tx = new solanaWeb3.Transaction().add(
           solanaWeb3.SystemProgram.transfer({
             fromPubkey: fromPubkey,
@@ -628,46 +581,27 @@
             lamports: Math.floor(amount * solanaWeb3.LAMPORTS_PER_SOL)
           })
         );
-
         tx.recentBlockhash = blockhash;
         tx.feePayer = fromPubkey;
-
         const signedTx = await provider.signTransaction(tx);
         const rawTx = signedTx.serialize();
-
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
-
-        // SUCCESS → MAX DOPAMINE
         triggerSuccess();
-
       } catch (err) {
         console.error(err);
-
-        // SPECIAL CASE: block height expired (very common) → still give full dopamine reward
         if (err.message && err.message.includes("block height exceeded")) {
           triggerSuccess();
           return;
         }
-
-        // Normal error
         alert("Transaction failed: " + (err.message || err));
       }
     };
 
-    // MAX DOPAMINE FUNCTION
     function triggerSuccess() {
-      // Play the treasure chest jingle (now forced to work after user gesture)
       successSound.currentTime = 0;
-      successSound.play().catch(() => {
-        // Fallback in case browser is strict
-        console.log("%c🎵 Treasure sound played (browser autoplay protected)", "color:#00f0ff;font-weight:bold");
-      });
-
-      // Show the insane popup
+      successSound.play().catch(() => {});
       document.getElementById('thank-you-modal').style.display = 'flex';
-
-      // Refresh balance
       setTimeout(updateWalletUI, 3000);
     }
 
@@ -692,7 +626,10 @@
     window.navigateTo = function (page) {
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
-      if (page === 'donate') updateDonateWalletInfo();
+      if (page === 'donate') {
+        updateDonateWalletInfo();
+        updateAllUSD();
+      }
     };
 
     window.closeThankYouModal = function() {
@@ -719,6 +656,9 @@
         } catch (e) {}
       }
       navigateTo('home');
+      // Live update for custom amount
+      const input = document.getElementById('donate-amount');
+      if (input) input.addEventListener('input', updateCustomUSD);
     });
   </script>
 </body>
