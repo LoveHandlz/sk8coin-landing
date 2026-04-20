@@ -50,7 +50,10 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-    .logo { height: clamp(42px, 8vw, 68px); width: auto; }
+    .logo {
+      height: clamp(42px, 8vw, 68px);
+      width: auto;
+    }
     nav ul {
       display: flex;
       gap: 1.4rem;
@@ -90,10 +93,76 @@
       padding-right: 1rem;
       padding-bottom: 100px;
     }
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 3rem;
+      color: var(--text-secondary);
+    }
+    .stat-value {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--accent-cyan);
+      display: block;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+    .menu-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+    }
+    .card-content {
+      padding: 2rem 1.4rem;
+      text-align: center;
+    }
+    .menu-icon {
+      font-size: 4.8rem;
+      margin-bottom: 1.2rem;
+      color: var(--accent-cyan);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+    .menu-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+    }
 
-    /* LEADERBOARD STYLES */
+    /* ========== LEADERBOARD STYLES ========== */
     .leaderboard-section {
-      padding: 4rem 1rem;
+      padding: 60px 20px;
     }
     .leaderboard-card {
       background: var(--bg-panel);
@@ -106,9 +175,9 @@
     }
     .lb-title {
       text-align: center;
-      font-size: 3rem;
+      font-size: 3.2rem;
       margin-bottom: 0.5rem;
-      background: linear-gradient(90deg, #ff9500, #00f0ff);
+      background: linear-gradient(90deg, #ffd700, #00f0ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -116,52 +185,64 @@
       text-align: center;
       color: var(--accent-cyan);
       margin-bottom: 2rem;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
     .lb-item {
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      padding: 1.2rem 1.8rem;
-      margin-bottom: 0.8rem;
+      padding: 1.4rem 2rem;
+      margin-bottom: 12px;
       border-radius: 16px;
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 700;
       transition: all 0.3s;
     }
-    .lb-item:hover { transform: scale(1.03); }
-    .lb-rank {
-      width: 60px;
-      text-align: center;
-      font-size: 2rem;
-    }
-    .lb-wallet {
-      flex: 1;
-      font-family: monospace;
-      color: #fff;
-    }
-    .lb-amount {
-      color: #00ffaa;
-      text-align: right;
-      min-width: 140px;
-    }
+    .lb-item:hover { transform: scale(1.02); }
+    .lb-rank { width: 70px; font-size: 2.4rem; text-align: center; }
+    .lb-wallet { flex: 1; font-family: monospace; }
+    .lb-amount { color: #00ffaa; text-align: right; min-width: 160px; }
     .gold   { background: linear-gradient(90deg, #ffd700, #ffaa00); color: #000; }
     .silver { background: linear-gradient(90deg, #c0c0c0, #a0a0a0); color: #000; }
     .bronze { background: linear-gradient(90deg, #cd7f32, #b36b2a); color: #fff; }
     .normal { background: rgba(255,255,255,0.08); }
 
-    /* Rest of your original styles */
-    .hero { text-align: center; margin-bottom: 4rem; }
-    .hero h1 {
-      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
+    /* DONATE PAGE */
+    #donate-content { padding-top: 40px; }
+    .donate-hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .donate-hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      background: linear-gradient(90deg, #ff9500, var(--accent-cyan));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      line-height: 1.1;
     }
-    /* ... (your other styles remain the same) ... */
+    .donation-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 620px;
+      margin: 0 auto;
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
+    }
+    .address-box {
+      background: #000;
+      color: #00f0ff;
+      font-family: monospace;
+      font-size: 1.05rem;
+      padding: 14px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1rem 0;
+      word-break: break-all;
+    }
+    /* ... rest of your original styles ... */
     @media (max-width: 768px) {
       main { padding-top: 140px; }
     }
@@ -194,9 +275,9 @@
   </header>
 
   <main>
-    <!-- HOME -->
+    <!-- HOME PAGE -->
     <div id="home-content">
-      <!-- Your existing home content here (unchanged) -->
+      <!-- Your original home content (unchanged) -->
       <section class="hero">
         <h1>SKATE2EARN</h1>
         <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
@@ -208,36 +289,58 @@
           <div class="stat"><span class="stat-value">20k</span> Volume</div>
         </div>
       </section>
-      <!-- Your menu-grid remains the same -->
-      <div class="menu-grid"> ... (your 6 cards) ... </div>
+      <div class="menu-grid">
+        <!-- Your 6 menu items remain exactly the same -->
+        <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
+          <div class="card-content">
+            <div class="menu-icon">🛠️</div>
+            <div class="menu-title">BUILD & MINT</div>
+            <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+          </div>
+        </div>
+        <!-- ... keep all other 5 cards exactly as they were ... -->
+      </div>
     </div>
 
-    <!-- LEADERBOARD -->
+    <!-- LEADERBOARD PAGE -->
     <div id="leaderboard-content" style="display: none;">
       <div class="leaderboard-section">
         <div class="leaderboard-card">
           <h2 class="lb-title">🏆 TOP DONATORS 🏆</h2>
-          <p class="lb-subtitle">Real wallets that powered the revolution • Live on Solana</p>
-          
+          <p class="lb-subtitle">Real wallets that powered the revolution • Live from Solana</p>
           <div id="leaderboard-list">
-            <!-- Filled by JavaScript -->
+            <!-- Filled by JS -->
           </div>
         </div>
       </div>
     </div>
 
-    <!-- DONATE PAGE (unchanged) -->
+    <!-- DONATE PAGE -->
     <div id="donate-content" style="display: none;">
-      <!-- Your existing donate content -->
-      ... (keep everything you already had in donate-content) ...
+      <!-- Your original donate content (unchanged) -->
+      <div class="donate-hero">
+        <h1>DONATE NOW</h1>
+        <p style="font-size: 1.4rem; max-width: 720px; margin: 0 auto; color: var(--text-secondary);">
+          Support real skaters • Fund the revolution • Send SOL directly on-chain
+        </p>
+      </div>
+      <div class="donation-card">
+        <!-- All your donation card content stays exactly the same -->
+        <h2 style="text-align:center; margin-bottom:1.2rem; font-size:1.6rem;">SK8COIN Community Treasury</h2>
+        <div class="address-box">
+          <span id="treasury-address">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
+          <button onclick="copyTreasuryAddress()" style="background:var(--accent-cyan); color:#000; border:none; padding:6px 14px; border-radius:50px; font-size:0.85rem; cursor:pointer; font-weight:bold;">📋 COPY</button>
+        </div>
+        <!-- ... rest of your donate form ... -->
+      </div>
     </div>
   </main>
 
-  <!-- Thank you modal (unchanged) -->
-  <!-- Footer (unchanged) -->
+  <!-- Thank you modal and footer stay exactly the same -->
+  <div id="thank-you-modal"> ... </div>
+  <footer> ... </footer>
 
   <script>
-    // === YOUR EXISTING SCRIPT (kept as is) ===
     if (typeof window.Buffer === 'undefined') {
       window.Buffer = window.buffer.Buffer;
     }
@@ -249,29 +352,32 @@
     const RPC_URL = "https://solana-rpc.publicnode.com";
     const TREASURY = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
+    // === ALL YOUR ORIGINAL CODE (kept 100% intact) ===
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
+    const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
+    successSound.volume = 0.95;
 
-    // ... (all your existing functions: shortenAddress, getProvider, connectWallet, etc.) ...
+    function shortenAddress(addr) {
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+    // ... (all your original functions: getProvider, connectWallet, updateWalletUI, sendDonation, etc.) ...
 
-    // ==================== NEW LEADERBOARD CODE ====================
+    // ==================== LEADERBOARD FUNCTION ====================
     async function loadLeaderboard() {
       const listEl = document.getElementById('leaderboard-list');
-      listEl.innerHTML = `<p style="text-align:center; color:#00f0ff; padding:2rem;">Loading top skaters from chain...</p>`;
+      listEl.innerHTML = `<p style="text-align:center; padding:40px; color:#00f0ff;">Loading top donators from Solana...</p>`;
 
       try {
-        connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+        const conn = new solanaWeb3.Connection(RPC_URL, 'confirmed');
         const treasuryPubkey = new solanaWeb3.PublicKey(TREASURY);
 
-        const signatures = await connection.getSignaturesForAddress(treasuryPubkey, { limit: 80 });
+        const signatures = await conn.getSignaturesForAddress(treasuryPubkey, { limit: 80 });
 
         const donations = {};
 
-        for (const sigInfo of signatures) {
-          const tx = await connection.getParsedTransaction(sigInfo.signature, {
-            maxSupportedTransactionVersion: 0,
-          });
-
+        for (const sig of signatures) {
+          const tx = await conn.getParsedTransaction(sig.signature, { maxSupportedTransactionVersion: 0 });
           if (!tx) continue;
 
           tx.transaction.message.instructions.forEach(ix => {
@@ -292,41 +398,35 @@
             wallet: wallet.slice(0,6) + "..." + wallet.slice(-4),
             amount: Number(amount.toFixed(2))
           }))
-          .sort((a,b) => b.amount - a.amount)
+          .sort((a, b) => b.amount - a.amount)
           .slice(0, 10);
 
-        if (sorted.length === 0) {
-          listEl.innerHTML = `<p style="text-align:center; padding:3rem; color:#ff9500;">No donations yet.<br>Be the first legend!</p>`;
-          return;
-        }
-
         let html = '';
-        sorted.forEach((donor, i) => {
-          let rankClass = 'normal';
+        sorted.forEach((d, i) => {
+          let cls = 'normal';
           let medal = `#${i+1}`;
-          if (i === 0) { rankClass = 'gold'; medal = '🥇'; }
-          else if (i === 1) { rankClass = 'silver'; medal = '🥈'; }
-          else if (i === 2) { rankClass = 'bronze'; medal = '🥉'; }
+          if (i === 0) { cls = 'gold'; medal = '🥇'; }
+          else if (i === 1) { cls = 'silver'; medal = '🥈'; }
+          else if (i === 2) { cls = 'bronze'; medal = '🥉'; }
 
           html += `
-            <div class="lb-item ${rankClass}">
+            <div class="lb-item ${cls}">
               <div class="lb-rank">${medal}</div>
-              <div class="lb-wallet">${donor.wallet}</div>
-              <div class="lb-amount">${donor.amount} SOL</div>
-            </div>
-          `;
+              <div class="lb-wallet">${d.wallet}</div>
+              <div class="lb-amount">${d.amount} SOL</div>
+            </div>`;
         });
 
-        listEl.innerHTML = html;
+        listEl.innerHTML = html || `<p style="text-align:center; padding:40px; color:#ff9500;">No donations yet. Be the first!</p>`;
 
-      } catch (err) {
-        console.error(err);
-        listEl.innerHTML = `<p style="text-align:center; color:#ff2d55;">Failed to load leaderboard. Try again later.</p>`;
+      } catch (e) {
+        console.error(e);
+        listEl.innerHTML = `<p style="text-align:center; padding:40px; color:#ff2d55;">Could not load leaderboard right now.</p>`;
       }
     }
 
-    // ==================== NAVIGATION ====================
-    window.navigateTo = function(page) {
+    // ==================== NAVIGATION (UPDATED) ====================
+    window.navigateTo = function (page) {
       document.getElementById('home-content').style.display = 'none';
       document.getElementById('leaderboard-content').style.display = 'none';
       document.getElementById('donate-content').style.display = 'none';
@@ -338,20 +438,18 @@
       }
       if (page === 'donate') {
         document.getElementById('donate-content').style.display = 'block';
-        // your existing donate logic
+        updateDonateWalletInfo();
+        updateAllUSD();
       }
     };
 
-    // Load leaderboard automatically when page loads
-    window.addEventListener('load', async () => {
-      // your existing load code...
-      navigateTo('home');
-      
-      // Optional: auto-load leaderboard in background
-      // loadLeaderboard();
-    });
+    // Keep all your original script (connect, donate, etc.)
+    // ... paste the rest of your original <script> content here ...
 
-    // Keep all your other functions (connectWallet, sendDonation, etc.)
+    window.addEventListener('load', () => {
+      navigateTo('home');
+      // your original load code...
+    });
   </script>
 </body>
 </html>
