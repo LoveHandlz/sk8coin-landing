@@ -211,10 +211,10 @@
       font-weight: 700;
       font-size: 0.95rem;
     }
-    /* ONLY FIRST 3 PRESETS */
+    /* PRESET BUTTONS - SMALLER TO FIT 3 IN ONE ROW */
     .preset-buttons {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
       margin: 1rem 0 1.5rem;
@@ -223,19 +223,32 @@
       background: linear-gradient(135deg, #ff9500, #ff2d55);
       color: #fff;
       border: none;
-      padding: 12px 24px;
+      padding: 10px 18px;        /* smaller padding */
       border-radius: 50px;
       font-weight: 900;
-      font-size: 1.05rem;
+      font-size: 0.95rem;        /* smaller text */
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+      min-width: 105px;
     }
     .preset-btn:hover {
-      transform: scale(1.12) rotate(3deg);
+      transform: scale(1.08);
       box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
-    /* EPIC THANK YOU MODAL - MAX DOPAMINE */
+    .preset-btn .usd {
+      display: block;
+      font-size: 0.73rem;        /* even smaller USD text */
+      font-weight: 400;
+      margin-top: 3px;
+    }
+    #custom-usd {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      margin: 8px 0 16px;
+    }
+    /* EPIC THANK YOU MODAL */
     #thank-you-modal {
       display: none;
       position: fixed;
@@ -297,6 +310,8 @@
     }
     @media (max-width: 768px) {
       main { padding-top: 140px; }
+      .preset-buttons { gap: 8px; }
+      .preset-btn { padding: 9px 16px; font-size: 0.92rem; }
     }
 </style>
 </head>
@@ -411,7 +426,6 @@
           </div>
           <label>Custom Amount (SOL)</label>
           <input id="donate-amount" type="number" value="0.00" step="0.001" min="0.001">
-          <div id="custom-usd">≈ $0.00 USD</div>
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
           <button onclick="sendDonation()"
@@ -524,7 +538,7 @@
       }
     }
 
-    // === LIVE USD CONVERSION ===
+    // LIVE USD CONVERSION
     async function fetchSOLPrice() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
@@ -554,7 +568,6 @@
       updateCustomUSD();
     };
 
-    // SEND DONATION
     window.sendDonation = async function () {
       if (!provider || !publicKey) {
         alert("Please connect your Phantom wallet first (top right) 👆");
@@ -656,7 +669,6 @@
         } catch (e) {}
       }
       navigateTo('home');
-      // Live update for custom amount
       const input = document.getElementById('donate-amount');
       if (input) input.addEventListener('input', updateCustomUSD);
     });
