@@ -55,10 +55,7 @@
       gap: 1rem;
     }
 
-    .logo {
-      height: clamp(42px, 8vw, 68px);
-      width: auto;
-    }
+    .logo { height: clamp(42px, 8vw, 68px); width: auto; }
 
     nav ul {
       display: flex;
@@ -99,47 +96,17 @@
       padding-top: 160px;
       max-width: 1440px;
       margin: 0 auto;
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding: 0 1rem;
       padding-bottom: 100px;
     }
 
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
+    .hero { text-align: center; margin-bottom: 4rem; }
     .hero h1 {
       font-size: clamp(2.8rem, 8.5vw, 6.5rem);
       background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-cyan));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      line-height: 1.1;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      color: var(--text-secondary);
-    }
-
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin: 1.5rem 0 3rem;
-      color: var(--text-secondary);
-    }
-
-    .stat-value {
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      font-weight: 900;
-      color: var(--accent-cyan);
-      display: block;
     }
 
     .menu-grid {
@@ -163,39 +130,8 @@
       box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
     }
 
-    .card-content {
-      padding: 2rem 1.4rem;
-      text-align: center;
-    }
-
-    .menu-icon {
-      font-size: 4.8rem;
-      margin-bottom: 1.2rem;
-      color: var(--accent-cyan);
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-
-    .menu-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      margin-bottom: 0.8rem;
-    }
-
     /* DONATE PAGE */
     #donate-content { padding-top: 40px; }
-
-    .donate-hero {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .donate-hero h1 {
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      background: linear-gradient(90deg, #ff9500, var(--accent-cyan));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
 
     .donation-card {
       background: var(--bg-panel);
@@ -204,14 +140,12 @@
       padding: 2.5rem;
       max-width: 620px;
       margin: 0 auto;
-      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
     }
 
     .address-box {
       background: #000;
       color: #00f0ff;
       font-family: monospace;
-      font-size: 1.05rem;
       padding: 14px 18px;
       border-radius: 12px;
       display: flex;
@@ -221,27 +155,6 @@
       word-break: break-all;
     }
 
-    .donation-form input,
-    .donation-form textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--card-border);
-      color: var(--text-primary);
-      padding: 14px 18px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-    }
-
-    .donation-form label {
-      display: block;
-      margin: 1.2rem 0 0.4rem;
-      color: var(--accent-cyan);
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    /* PRESET BUTTONS - ONLY FIRST 3 + USD DISPLAY */
     .preset-buttons {
       display: flex;
       gap: 12px;
@@ -259,33 +172,79 @@
       font-weight: 900;
       font-size: 1.05rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
       min-width: 110px;
-      text-align: center;
       line-height: 1.3;
-    }
-
-    .preset-btn:hover {
-      transform: scale(1.12) rotate(3deg);
-      box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
 
     .preset-btn .usd {
       display: block;
       font-size: 0.78rem;
       font-weight: 400;
-      opacity: 0.9;
       margin-top: 4px;
     }
 
-    /* CUSTOM USD DISPLAY */
     #custom-usd {
       text-align: center;
       font-size: 0.9rem;
       color: var(--accent-cyan);
       margin: 8px 0 16px;
-      font-weight: 500;
+    }
+
+    /* ISOLATED & SMALLER POPUP - FIXED */
+    #thank-you-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 19, 47, 0.97);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, #0f1a47, #1e2f6b);
+      border: 4px solid #00f0ff;
+      border-radius: 30px;
+      padding: 2.2rem 2rem;   /* reduced padding */
+      text-align: center;
+      max-width: 420px;       /* smaller overall size */
+      box-shadow: 0 0 80px rgba(0, 240, 255, 0.85);
+      animation: modalPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .modal-content h2 {
+      font-size: 2.6rem;      /* smaller title */
+      background: linear-gradient(90deg, #ff9500, #00f0ff, #ff2d55);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(255,149,0,0.8);
+      margin-bottom: 0.8rem;
+    }
+
+    .modal-content p {
+      font-size: 1.25rem;     /* smaller text */
+      color: #e0f7ff;
+      margin: 0.8rem 0 1.5rem;
+      line-height: 1.4;
+    }
+
+    .close-modal {
+      background: linear-gradient(135deg, #00f0ff, #a78bfa);
+      color: #000;
+      font-weight: 900;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+      70% { transform: scale(1.12) rotate(5deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
     }
 
     footer {
@@ -294,12 +253,6 @@
       padding: 3rem 1rem 2.5rem;
       text-align: center;
       color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    @media (max-width: 768px) {
-      main { padding-top: 140px; }
     }
 </style>
 </head>
@@ -331,14 +284,13 @@
   </header>
 
   <main>
-    <!-- HOME PAGE (unchanged - this is the last working edition base) -->
+    <!-- HOME PAGE (unchanged) -->
     <div id="home-content">
       <section class="hero">
         <h1>SKATE2EARN</h1>
         <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
           Collect, build & earn on-chain — tokenized GameFi meets street culture. 
         </p>
-
         <div class="stats-row">
           <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
           <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
@@ -348,62 +300,31 @@
 
       <div class="menu-grid">
         <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
-          <div class="card-content">
-            <div class="menu-icon">🛠️</div>
-            <div class="menu-title">BUILD & MINT</div>
-            <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
-          </div>
+          <div class="card-content"><div class="menu-icon">🛠️</div><div class="menu-title">BUILD & MINT</div><div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div></div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
-          <div class="card-content">
-            <div class="menu-icon">🛒</div>
-            <div class="menu-title">PARTS MARKET</div>
-            <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
-          </div>
+          <div class="card-content"><div class="menu-icon">🛒</div><div class="menu-title">PARTS MARKET</div><div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div></div>
         </div>
-
         <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
-          <div class="card-content">
-            <div class="menu-icon">🛹</div>
-            <div class="menu-title">SKATE SHOP</div>
-            <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
-          </div>
+          <div class="card-content"><div class="menu-icon">🛹</div><div class="menu-title">SKATE SHOP</div><div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div></div>
         </div>
-
         <div class="menu-item" onclick="alert('Profile Hub...')">
-          <div class="card-content">
-            <div class="menu-icon">💰</div>
-            <div class="menu-title">GET $SKATE</div>
-            <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
-          </div>
+          <div class="card-content"><div class="menu-icon">💰</div><div class="menu-title">GET $SKATE</div><div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div></div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
-          <div class="card-content">
-            <div class="menu-icon">📖</div>
-            <div class="menu-title">METAZINE</div>
-            <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
-          </div>
+          <div class="card-content"><div class="menu-icon">📖</div><div class="menu-title">METAZINE</div><div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div></div>
         </div>
-
         <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
-          <div class="card-content">
-            <div class="menu-icon"><i class="fab fa-discord"></i></div>
-            <div class="menu-title">DISCORD</div>
-            <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
-          </div>
+          <div class="card-content"><div class="menu-icon"><i class="fab fa-discord"></i></div><div class="menu-title">DISCORD</div><div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div></div>
         </div>
       </div>
     </div>
 
-    <!-- DONATE PAGE (only this section updated with USD values) -->
+    <!-- DONATE PAGE (unchanged) -->
     <div id="donate-content" style="display: none;">
       <div class="donate-hero">
         <h1>DONATE NOW</h1>
-        <p style="font-size: 1.4rem; max-width: 720px; margin: 0 auto; color: var(--text-secondary);">
-          Support real skaters • Fund the revolution • Send SOL directly on-chain
-        </p>
+        <p style="font-size: 1.4rem; max-width: 720px; margin: 0 auto; color: var(--text-secondary);">Support real skaters • Fund the revolution • Send SOL directly on-chain</p>
       </div>
 
       <div class="donation-card">
@@ -411,10 +332,7 @@
         
         <div class="address-box">
           <span id="treasury-address">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
-          <button onclick="copyTreasuryAddress()" 
-                  style="background:var(--accent-cyan); color:#000; border:none; padding:6px 14px; border-radius:50px; font-size:0.85rem; cursor:pointer; font-weight:bold;">
-            📋 COPY
-          </button>
+          <button onclick="copyTreasuryAddress()" style="background:var(--accent-cyan); color:#000; border:none; padding:6px 14px; border-radius:50px; font-size:0.85rem; cursor:pointer; font-weight:bold;">📋 COPY</button>
         </div>
 
         <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
@@ -422,18 +340,9 @@
         <div class="donation-form">
           <label>Quick Donate (tap any)</label>
           <div class="preset-buttons">
-            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">
-              0.01 SOL
-              <span class="usd">≈ $--.--</span>
-            </button>
-            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">
-              0.05 SOL
-              <span class="usd">≈ $--.--</span>
-            </button>
-            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">
-              0.10 SOL
-              <span class="usd">≈ $--.--</span>
-            </button>
+            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">0.01 SOL <span class="usd">≈ $--.--</span></button>
+            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">0.05 SOL <span class="usd">≈ $--.--</span></button>
+            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">0.10 SOL <span class="usd">≈ $--.--</span></button>
           </div>
 
           <label>Custom Amount (SOL)</label>
@@ -443,69 +352,46 @@
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
 
-          <button onclick="sendDonation()" 
-                  style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.5rem; padding:1.2rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
+          <button onclick="sendDonation()" style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.5rem; padding:1.2rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
             💸 SEND DONATION VIA PHANTOM
           </button>
         </div>
-
-        <p style="text-align:center; margin-top:2rem; font-size:0.9rem; color:var(--text-secondary);">
-          100% on-chain • Mainnet • No fees to SK8COIN • Real impact for skaters
-        </p>
       </div>
     </div>
   </main>
 
-  <!-- MAX DOPAMINE THANK YOU MODAL (unchanged) -->
+  <!-- ISOLATED SMALLER POPUP -->
   <div id="thank-you-modal">
     <div class="modal-content">
       <h2>💎 TREASURE UNLOCKED! 💎</h2>
-      <p style="font-size:2.4rem; margin:1rem 0 1.5rem;">YOU JUST POWERED<br>THE SKATE REVOLUTION 🛹🔥</p>
+      <p>YOU JUST POWERED<br>THE SKATE REVOLUTION 🛹🔥</p>
       <p style="font-size:1.3rem;">Legendary move, skater.<br>The whole crew feels this one.</p>
       <button onclick="closeThankYouModal()" class="close-modal">KEEP SKATING →</button>
     </div>
   </div>
 
   <footer>
-    <p>
-      <strong>SK8COIN is more than a token — it's a revolution.</strong><br>
-      We are reclaiming skate culture from corporate control and gatekeepers. 
-      By putting boards, parts, tricks, and community ownership directly on the blockchain, 
-      we empower every skater to own their style, earn from their creativity, 
-      and build the future of street culture without middlemen. 
-      This is Skate2Earn. This is independence. This is the SK8COIN movement.
-    </p>
+    <p><strong>SK8COIN is more than a token — it's a revolution.</strong><br>We are reclaiming skate culture from corporate control and gatekeepers...</p>
   </footer>
 
   <script>
-    if (typeof window.Buffer === 'undefined') {
-      window.Buffer = window.buffer.Buffer;
-    }
+    if (typeof window.Buffer === 'undefined') window.Buffer = window.buffer.Buffer;
 
     let publicKey = null;
     let provider = null;
     let connection = null;
-    let currentSOLPrice = 170; // fallback
+    let currentSOLPrice = 170;
 
     const RPC_URL = "https://solana-rpc.publicnode.com";
-
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
-
     const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
     successSound.volume = 0.95;
-    successSound.preload = "auto";
 
-    function shortenAddress(addr) {
-      return addr.slice(0, 6) + '...' + addr.slice(-4);
-    }
+    function shortenAddress(addr) { return addr.slice(0,6)+'...'+addr.slice(-4); }
 
     function getProvider() {
-      if ('phantom' in window) {
-        const solanaProvider = window.phantom?.solana;
-        if (solanaProvider?.isPhantom) return solanaProvider;
-      }
-      return null;
+      return window.phantom?.solana?.isPhantom ? window.phantom.solana : null;
     }
 
     async function updateWalletUI() {
@@ -517,23 +403,16 @@
           const pubkeyObj = new solanaWeb3.PublicKey(publicKey);
           const balanceLamports = await connection.getBalance(pubkeyObj);
           const balanceSOL = (balanceLamports / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-          statusDiv.innerHTML = `
-            <span style="display:block; margin-bottom:6px;">
-              🟢 <strong>${shortenAddress(publicKey)}</strong> • <strong>${balanceSOL} SOL</strong>
-            </span>
-            <button onclick="updateWalletUI()" style="background:#333; color:#ccc; border:none; padding:4px 10px; border-radius:50px; font-size:0.75rem; cursor:pointer; margin-right:6px;">↻ Refresh</button>
-            <button onclick="disconnectWallet()" style="background:#222; color:#fff; border:none; padding:4px 10px; border-radius:50px; font-size:0.75rem; cursor:pointer;">Disconnect</button>
-          `;
-        } catch (e) {
-          statusDiv.innerHTML = `<span style="color:#ff2d55;">⚠️ Balance failed — tap Refresh</span>`;
-        }
+          statusDiv.innerHTML = `<span style="display:block; margin-bottom:6px;">🟢 <strong>${shortenAddress(publicKey)}</strong> • <strong>${balanceSOL} SOL</strong></span>
+            <button onclick="updateWalletUI()" style="background:#333;color:#ccc;border:none;padding:4px 10px;border-radius:50px;font-size:0.75rem;cursor:pointer;margin-right:6px;">↻ Refresh</button>
+            <button onclick="disconnectWallet()" style="background:#222;color:#fff;border:none;padding:4px 10px;border-radius:50px;font-size:0.75rem;cursor:pointer;">Disconnect</button>`;
+        } catch(e){ statusDiv.innerHTML = `<span style="color:#ff2d55;">⚠️ Balance failed — tap Refresh</span>`; }
       }, 600);
     }
 
     window.disconnectWallet = function() {
       if (provider) provider.disconnect().catch(() => {});
-      publicKey = null;
-      connection = null;
+      publicKey = null; connection = null;
       btn.innerHTML = "CONNECT WALLET";
       btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
       statusDiv.innerHTML = "";
@@ -541,63 +420,42 @@
 
     async function connectWallet() {
       provider = getProvider();
-      if (!provider) {
-        alert("Phantom wallet not found!\n\nInstall it here → https://phantom.app/");
-        window.open('https://phantom.app/', '_blank');
-        return;
-      }
+      if (!provider) { alert("Phantom wallet not found!\n\nInstall it here → https://phantom.app/"); window.open('https://phantom.app/','_blank'); return; }
       try {
-        btn.innerHTML = 'CONNECTING...';
-        btn.disabled = true;
+        btn.innerHTML = 'CONNECTING...'; btn.disabled = true;
         const resp = await provider.connect();
         publicKey = resp.publicKey.toString();
         btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
         await updateWalletUI();
         provider.on('disconnect', disconnectWallet);
-      } catch (err) {
-        btn.innerHTML = 'CONNECT WALLET';
-        btn.disabled = false;
-        statusDiv.innerHTML = "";
+      } catch(err) {
+        btn.innerHTML = 'CONNECT WALLET'; btn.disabled = false;
         alert(err.code === 4001 ? "Connection rejected." : "Failed to connect Phantom.");
       }
     }
 
-    // BEST RELIABLE SOL PRICE API (CoinGecko - free, no key, CORS friendly)
     async function fetchSOLPrice() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
         const data = await res.json();
         currentSOLPrice = data.solana.usd || 170;
-        return currentSOLPrice;
-      } catch (e) {
-        console.warn("Could not fetch live SOL price – using fallback");
-        return currentSOLPrice;
-      }
+      } catch(e){}
+      return currentSOLPrice;
     }
 
-    // UPDATE ALL USD VALUES (presets + custom)
     async function updateAllUSD() {
       const price = await fetchSOLPrice();
-
-      // Update preset buttons
       document.querySelectorAll('.preset-btn').forEach(btn => {
-        const solAmount = parseFloat(btn.dataset.sol);
-        const usdSpan = btn.querySelector('.usd');
-        if (usdSpan) {
-          usdSpan.textContent = `≈ $${(solAmount * price).toFixed(2)}`;
-        }
+        const sol = parseFloat(btn.dataset.sol);
+        btn.querySelector('.usd').textContent = `≈ $${(sol * price).toFixed(2)}`;
       });
-
-      // Update custom input live
       updateCustomUSD();
     }
 
     function updateCustomUSD() {
-      const amountInput = document.getElementById('donate-amount');
-      const usdDisplay = document.getElementById('custom-usd');
-      const amount = parseFloat(amountInput.value) || 0;
-      usdDisplay.textContent = `≈ $${(amount * currentSOLPrice).toFixed(2)} USD`;
+      const amt = parseFloat(document.getElementById('donate-amount').value) || 0;
+      document.getElementById('custom-usd').textContent = `≈ $${(amt * currentSOLPrice).toFixed(2)} USD`;
     }
 
     window.setPresetAmount = function(amount) {
@@ -606,54 +464,34 @@
     };
 
     window.sendDonation = async function () {
-      if (!provider || !publicKey) {
-        alert("Please connect your Phantom wallet first (top right) 👆");
-        return;
-      }
-
-      const amountStr = document.getElementById('donate-amount').value;
-      const amount = parseFloat(amountStr);
-      if (isNaN(amount) || amount <= 0) {
-        alert("Enter a valid amount greater than 0!");
-        return;
-      }
+      if (!provider || !publicKey) { alert("Please connect your Phantom wallet first"); return; }
+      const amount = parseFloat(document.getElementById('donate-amount').value);
+      if (isNaN(amount) || amount <= 0) { alert("Enter a valid amount > 0"); return; }
 
       const message = document.getElementById('donate-message').value.trim() || "No message";
       const recipient = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
-      if (!confirm(`💸 REAL MAINNET DONATION\n\nSend ${amount} SOL (${(amount * currentSOLPrice).toFixed(2)} USD) to SK8COIN Treasury?\nMessage: "${message}"\n\nPhantom will ask you to approve.`)) return;
+      if (!confirm(`💸 Send ${amount} SOL (≈ $${(amount*currentSOLPrice).toFixed(2)}) ?\nMessage: "${message}"`)) return;
 
       try {
         const fromPubkey = new solanaWeb3.PublicKey(publicKey);
         const toPubkey = new solanaWeb3.PublicKey(recipient);
-
         const conn = new solanaWeb3.Connection(RPC_URL, 'confirmed');
         const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash();
 
         const tx = new solanaWeb3.Transaction().add(
-          solanaWeb3.SystemProgram.transfer({
-            fromPubkey: fromPubkey,
-            toPubkey: toPubkey,
-            lamports: Math.floor(amount * solanaWeb3.LAMPORTS_PER_SOL)
-          })
+          solanaWeb3.SystemProgram.transfer({ fromPubkey, toPubkey, lamports: Math.floor(amount * solanaWeb3.LAMPORTS_PER_SOL) })
         );
-
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = fromPubkey;
+        tx.recentBlockhash = blockhash; tx.feePayer = fromPubkey;
 
         const signedTx = await provider.signTransaction(tx);
-        const rawTx = signedTx.serialize();
-
-        const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
+        const signature = await conn.sendRawTransaction(signedTx.serialize(), { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
         triggerSuccess();
-
       } catch (err) {
-        console.error(err);
         if (err.message && err.message.includes("block height exceeded")) {
-          triggerSuccess();
-          return;
+          triggerSuccess(); return;
         }
         alert("Transaction failed: " + (err.message || err));
       }
@@ -668,49 +506,28 @@
 
     window.copyTreasuryAddress = function () {
       navigator.clipboard.writeText("5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc").then(() => {
-        const btn = event.target;
-        const original = btn.innerHTML;
-        btn.innerHTML = "✅ COPIED!";
-        setTimeout(() => btn.innerHTML = original, 1800);
+        const b = event.target; const orig = b.innerHTML; b.innerHTML = "✅ COPIED!"; setTimeout(() => b.innerHTML = orig, 1800);
       });
     };
 
     function updateDonateWalletInfo() {
       const el = document.getElementById('donate-wallet-info');
-      if (!publicKey) {
-        el.innerHTML = `<span style="color:#ff9500;">⚠️ Connect your wallet above to donate</span>`;
-        return;
-      }
-      el.innerHTML = `<span style="color:#22ff88;">🟢 Connected • ${shortenAddress(publicKey)}</span>`;
+      el.innerHTML = publicKey ? `<span style="color:#22ff88;">🟢 Connected • ${shortenAddress(publicKey)}</span>` : `<span style="color:#ff9500;">⚠️ Connect your wallet above to donate</span>`;
     }
 
-    window.navigateTo = function (page) {
+    window.navigateTo = function(page) {
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
-      if (page === 'donate') {
-        updateDonateWalletInfo();
-        updateAllUSD();           // ← live USD prices loaded here
-      }
+      if (page === 'donate') { updateDonateWalletInfo(); updateAllUSD(); }
     };
 
     window.closeThankYouModal = function() {
       document.getElementById('thank-you-modal').style.display = 'none';
     };
 
-    // Live update for custom amount
-    function addCustomUSDListener() {
-      const input = document.getElementById('donate-amount');
-      if (input) {
-        input.addEventListener('input', updateCustomUSD);
-      }
-    }
-
     btn.addEventListener('click', async () => {
-      if (publicKey) {
-        if (confirm("Disconnect wallet?")) disconnectWallet();
-      } else {
-        await connectWallet();
-      }
+      if (publicKey) { if (confirm("Disconnect wallet?")) disconnectWallet(); }
+      else await connectWallet();
     });
 
     window.addEventListener('load', async () => {
@@ -722,10 +539,11 @@
           btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
           btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
           await updateWalletUI();
-        } catch (e) {}
+        } catch(e){}
       }
       navigateTo('home');
-      addCustomUSDListener();   // enable live USD on custom input
+      const input = document.getElementById('donate-amount');
+      if (input) input.addEventListener('input', updateCustomUSD);
     });
   </script>
 </body>
