@@ -211,7 +211,6 @@
       font-weight: 700;
       font-size: 0.95rem;
     }
-    /* UPDATED PRESET BUTTONS - RECTANGLE STYLE */
     .preset-buttons {
       display: flex;
       gap: 12px;
@@ -224,7 +223,7 @@
       color: #fff;
       border: none;
       padding: 14px 20px;
-      border-radius: 12px;           /* changed to rectangle */
+      border-radius: 12px;
       font-weight: 900;
       font-size: 1rem;
       cursor: pointer;
@@ -241,7 +240,7 @@
     .preset-btn .donation-type {
       display: block;
       font-size: 0.85rem;
-      color: #ffffff;                 /* changed from green to white */
+      color: #ffffff;
       margin-bottom: 4px;
       font-weight: 700;
     }
@@ -258,7 +257,6 @@
       color: var(--accent-cyan);
       margin: 8px 0 16px;
     }
-    /* EPIC THANK YOU MODAL */
     #thank-you-modal {
       display: none;
       position: fixed;
@@ -329,7 +327,6 @@
 </style>
 </head>
 <body>
-  <!-- [All the rest of your HTML remains exactly the same] -->
   <header>
     <div class="header-inner">
       <a href="https://www.sk8coin.io/" class="logo-link">
@@ -483,7 +480,6 @@
   </footer>
 
   <script>
-    // [Your entire JavaScript remains 100% unchanged]
     if (typeof window.Buffer === 'undefined') {
       window.Buffer = window.buffer.Buffer;
     }
@@ -605,11 +601,13 @@
       const message = document.getElementById('donate-message').value.trim() || "No message";
       const recipient = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
       if (!confirm(`💸 REAL MAINNET DONATION\n\nSend ${amount} SOL to SK8COIN Treasury?\nMessage: "${message}"\n\nPhantom will ask you to approve.`)) return;
+
       try {
         const fromPubkey = new solanaWeb3.PublicKey(publicKey);
         const toPubkey = new solanaWeb3.PublicKey(recipient);
         const conn = new solanaWeb3.Connection(RPC_URL, 'confirmed');
         const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash();
+
         const tx = new solanaWeb3.Transaction().add(
           solanaWeb3.SystemProgram.transfer({
             fromPubkey: fromPubkey,
@@ -619,10 +617,17 @@
         );
         tx.recentBlockhash = blockhash;
         tx.feePayer = fromPubkey;
+
         const signedTx = await provider.signTransaction(tx);
         const rawTx = signedTx.serialize();
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
-        await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
+
+        // === NEW: MAX 5-SECOND WAIT FOR THANK-YOU POPUP ===
+        const confirmPromise = conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 5000));
+        await Promise.race([confirmPromise, timeoutPromise]);
+        // ===================================================
+
         triggerSuccess();
       } catch (err) {
         console.error(err);
