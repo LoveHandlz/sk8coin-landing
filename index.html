@@ -211,7 +211,7 @@
       font-weight: 700;
       font-size: 0.95rem;
     }
-    /* PRESET BUTTONS - SMALLER TO FIT 3 IN ONE ROW */
+    /* PRESET BUTTONS - SMALLER + TITLE ABOVE */
     .preset-buttons {
       display: flex;
       gap: 10px;
@@ -223,24 +223,33 @@
       background: linear-gradient(135deg, #ff9500, #ff2d55);
       color: #fff;
       border: none;
-      padding: 10px 18px;        /* smaller padding */
+      padding: 10px 18px;
       border-radius: 50px;
       font-weight: 900;
-      font-size: 0.95rem;        /* smaller text */
+      font-size: 0.95rem;
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
       min-width: 105px;
+      line-height: 1.25;
     }
     .preset-btn:hover {
       transform: scale(1.08);
       box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
+    .preset-btn .donation-type {
+      display: block;
+      font-size: 0.78rem;
+      color: #22ff88;
+      text-shadow: 0 0 8px #22ff88;
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
     .preset-btn .usd {
       display: block;
-      font-size: 0.73rem;        /* even smaller USD text */
+      font-size: 0.73rem;
       font-weight: 400;
-      margin-top: 3px;
+      margin-top: 2px;
     }
     #custom-usd {
       text-align: center;
@@ -310,8 +319,6 @@
     }
     @media (max-width: 768px) {
       main { padding-top: 140px; }
-      .preset-buttons { gap: 8px; }
-      .preset-btn { padding: 9px 16px; font-size: 0.92rem; }
     }
 </style>
 </head>
@@ -418,11 +425,19 @@
         </div>
         <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
         <div class="donation-form">
-          <label>Quick Donate (tap any)</label>
           <div class="preset-buttons">
-            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">0.01 SOL <span class="usd">≈ $--.--</span></button>
-            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">0.05 SOL <span class="usd">≈ $--.--</span></button>
-            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">0.10 SOL <span class="usd">≈ $--.--</span></button>
+            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">
+              <span class="donation-type">Flow Donation</span><br>
+              0.01 SOL <span class="usd">≈ $--.--</span>
+            </button>
+            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">
+              <span class="donation-type">Amateur Donation</span><br>
+              0.05 SOL <span class="usd">≈ $--.--</span>
+            </button>
+            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">
+              <span class="donation-type">Pro Donation</span><br>
+              0.10 SOL <span class="usd">≈ $--.--</span>
+            </button>
           </div>
           <label>Custom Amount (SOL)</label>
           <input id="donate-amount" type="number" value="0.00" step="0.001" min="0.001">
