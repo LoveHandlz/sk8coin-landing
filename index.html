@@ -9,10 +9,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
   
-  <!-- BUFFER POLYFILL (required for @solana/web3.js in browser) -->
+  <!-- BUFFER POLYFILL -->
   <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
   
-  <!-- SOLANA WEB3.JS (official CDN - latest v1.x IIFE build) -->
+  <!-- SOLANA WEB3.JS (official latest IIFE) -->
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
  <style>
@@ -79,6 +79,10 @@
       transition: color 0.25s;
     }
 
+    nav a:hover {
+      color: var(--accent-cyan);
+    }
+
     .wallet-btn {
       background: linear-gradient(135deg, var(--accent-cyan), #a78bfa);
       color: #000;
@@ -95,6 +99,7 @@
       font-size: 0.85rem;
       color: #22ff88;
       margin-top: 4px;
+      line-height: 1.4;
     }
 
     main {
@@ -183,6 +188,74 @@
       margin-bottom: 0.8rem;
     }
 
+    /* === DONATE PAGE STYLES === */
+    #donate-content {
+      padding-top: 40px;
+    }
+
+    .donate-hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .donate-hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      background: linear-gradient(90deg, #ff9500, var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .donation-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 620px;
+      margin: 0 auto;
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .donation-card:hover {
+      box-shadow: 0 20px 45px rgba(0, 240, 255, 0.3);
+    }
+
+    .address-box {
+      background: #000;
+      color: #00f0ff;
+      font-family: monospace;
+      font-size: 1.05rem;
+      padding: 14px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1rem 0;
+      word-break: break-all;
+    }
+
+    .donation-form input,
+    .donation-form textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .donation-form label {
+      display: block;
+      margin: 1.2rem 0 0.4rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
     footer {
       background: rgba(10,19,47,0.95);
       border-top: 1px solid var(--card-border);
@@ -196,10 +269,7 @@
     @media (max-width: 768px) {
       .header-inner { padding: 0 0.8rem; }
       nav ul { gap: 1rem; font-size: 0.9rem; }
-      .hero { margin-bottom: 3rem; }
       .menu-grid { grid-template-columns: 1fr; gap: 1.6rem; }
-      .card-content { padding: 1.8rem 1.2rem; }
-      .menu-icon { font-size: 4.2rem; }
     }
 
     @media (max-width: 480px) {
@@ -219,12 +289,13 @@
 
       <nav>
         <ul>
-          <li><a href="#">Home</a></li>
+          <li><a href="#" onclick="navigateTo('home')">Home</a></li>
           <li><a href="#">Market</a></li>
           <li><a href="#">Builder</a></li>
           <li><a href="#">Shop</a></li>
           <li><a href="#">Metazine</a></li>
           <li><a href="#">Discord</a></li>
+          <li><a href="#" onclick="navigateTo('donate')" style="color:var(--accent-cyan); font-weight:700;">💸 Donate Now</a></li>
         </ul>
       </nav>
 
@@ -236,66 +307,110 @@
   </header>
 
   <main>
-    <section class="hero">
-      <h1>SKATE2EARN</h1>
-      <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
-        Collect, build & earn on-chain — tokenized GameFi meets street culture. 
-      </p>
+    <!-- HOME PAGE CONTENT -->
+    <div id="home-content">
+      <section class="hero">
+        <h1>SKATE2EARN</h1>
+        <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
+          Collect, build & earn on-chain — tokenized GameFi meets street culture. 
+        </p>
 
-      <div class="stats-row">
-        <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
-        <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
-        <div class="stat"><span class="stat-value">20k</span> Volume</div>
-      </div>
-    </section>
+        <div class="stats-row">
+          <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
+          <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
+          <div class="stat"><span class="stat-value">20k</span> Volume</div>
+        </div>
+      </section>
 
-    <div class="menu-grid">
-      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
-        <div class="card-content">
-          <div class="menu-icon">🛠️</div>
-          <div class="menu-title">BUILD & MINT</div>
-          <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+      <div class="menu-grid">
+        <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
+          <div class="card-content">
+            <div class="menu-icon">🛠️</div>
+            <div class="menu-title">BUILD & MINT</div>
+            <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+          </div>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
+          <div class="card-content">
+            <div class="menu-icon">🛒</div>
+            <div class="menu-title">PARTS MARKET</div>
+            <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+          </div>
+        </div>
+
+        <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
+          <div class="card-content">
+            <div class="menu-icon">🛹</div>
+            <div class="menu-title">SKATE SHOP</div>
+            <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
+          </div>
+        </div>
+
+        <div class="menu-item" onclick="alert('Profile Hub...')">
+          <div class="card-content">
+            <div class="menu-icon">💰</div>
+            <div class="menu-title">GET $SKATE</div>
+            <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
+          </div>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+          <div class="card-content">
+            <div class="menu-icon">📖</div>
+            <div class="menu-title">METAZINE</div>
+            <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+          </div>
+        </div>
+
+        <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
+          <div class="card-content">
+            <div class="menu-icon"><i class="fab fa-discord"></i></div>
+            <div class="menu-title">DISCORD</div>
+            <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
-        <div class="card-content">
-          <div class="menu-icon">🛒</div>
-          <div class="menu-title">PARTS MARKET</div>
-          <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
-        </div>
+    <!-- NEW DONATE NOW PAGE -->
+    <div id="donate-content" style="display: none;">
+      <div class="donate-hero">
+        <h1>DONATE NOW</h1>
+        <p style="font-size: 1.4rem; max-width: 720px; margin: 0 auto; color: var(--text-secondary);">
+          Support real skaters • Fund the revolution • Send SOL directly on-chain
+        </p>
       </div>
 
-      <div class="menu-item" onclick="alert('you are now entering the skate shop...')">
-        <div class="card-content">
-          <div class="menu-icon">🛹</div>
-          <div class="menu-title">SKATE SHOP</div>
-          <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
+      <div class="donation-card">
+        <h2 style="text-align:center; margin-bottom:1.2rem; font-size:1.6rem;">SK8COIN Community Treasury</h2>
+        
+        <div class="address-box">
+          <span id="treasury-address">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
+          <button onclick="copyTreasuryAddress()" 
+                  style="background:var(--accent-cyan); color:#000; border:none; padding:6px 14px; border-radius:50px; font-size:0.85rem; cursor:pointer; font-weight:bold;">
+            📋 COPY
+          </button>
         </div>
-      </div>
 
-      <div class="menu-item" onclick="alert('Profile Hub...')">
-        <div class="card-content">
-          <div class="menu-icon">💰</div>
-          <div class="menu-title">GET $SKATE</div>
-          <div class="menu-desc">Level up rank, unlock Discord roles & VIP features</div>
-        </div>
-      </div>
+        <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
 
-      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
-        <div class="card-content">
-          <div class="menu-icon">📖</div>
-          <div class="menu-title">METAZINE</div>
-          <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
-        </div>
-      </div>
+        <div class="donation-form">
+          <label>Amount to Donate (SOL)</label>
+          <input id="donate-amount" type="number" value="0.05" step="0.001" min="0.001">
 
-      <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
-        <div class="card-content">
-          <div class="menu-icon"><i class="fab fa-discord"></i></div>
-          <div class="menu-title">DISCORD</div>
-          <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+          <label>Skater Shoutout / Message (optional)</label>
+          <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
+
+          <button onclick="sendDonation()" 
+                  style="width:100%; margin-top:1rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.4rem; padding:1.1rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
+            💸 SEND DONATION VIA PHANTOM
+          </button>
         </div>
+
+        <p style="text-align:center; margin-top:2rem; font-size:0.9rem; color:var(--text-secondary);">
+          100% on-chain • Mainnet • No fees to SK8COIN • Real impact for skaters
+        </p>
       </div>
     </div>
   </main>
@@ -312,7 +427,7 @@
   </footer>
 
   <script>
-    // === BUFFER POLYFILL (must run before any web3.js code) ===
+    // === BUFFER POLYFILL ===
     if (typeof window.Buffer === 'undefined') {
       window.Buffer = window.buffer.Buffer;
       console.log('%c✅ Buffer polyfill loaded for Solana web3.js', 'color:#00f0ff; font-weight:bold');
@@ -325,12 +440,10 @@
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
-    // Helper to shorten address
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
     }
 
-    // Get Phantom provider
     function getProvider() {
       if ('phantom' in window) {
         const solanaProvider = window.phantom?.solana;
@@ -339,7 +452,7 @@
       return null;
     }
 
-    // Fetch and display SOL balance + action buttons (no layout change)
+    // CLEAN + UPGRADED WALLET UI (balance + actions)
     async function updateWalletUI() {
       if (!publicKey || !connection) return;
 
@@ -348,21 +461,16 @@
         const balanceLamports = await connection.getBalance(pubkeyObj);
         const balanceSOL = (balanceLamports / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
 
-        // Rich status with balance + action buttons (still inside original #wallet-status div)
         statusDiv.innerHTML = `
-          <span style="display:block; margin-bottom:6px;">
+          <span style="display:block; margin-bottom:6px; font-size:0.9rem;">
             🟢 <strong>${shortenAddress(publicKey)}</strong> • <strong>${balanceSOL} SOL</strong>
           </span>
           <button onclick="signLoginMessage()" 
-                  style="background:linear-gradient(135deg,#00f0ff,#a78bfa); color:#000; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; margin-right:6px; cursor:pointer;">
+                  style="background:linear-gradient(135deg,#00f0ff,#a78bfa); color:#000; border:none; padding:5px 12px; border-radius:50px; font-size:0.78rem; margin-right:6px; cursor:pointer;">
             🔑 Sign Login
           </button>
-          <button onclick="sendDemoSOL()" 
-                  style="background:linear-gradient(135deg,#ff9500,#ff2d55); color:#000; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; cursor:pointer;">
-            💸 Send 0.01 SOL
-          </button>
           <button onclick="disconnectWallet()" 
-                  style="background:#222; color:#fff; border:none; padding:4px 12px; border-radius:50px; font-size:0.75rem; margin-left:6px; cursor:pointer;">
+                  style="background:#222; color:#fff; border:none; padding:5px 12px; border-radius:50px; font-size:0.78rem; cursor:pointer;">
             Disconnect
           </button>
         `;
@@ -372,7 +480,21 @@
       }
     }
 
-    // SIGN MESSAGE FOR LOGIN (legit Web3 authentication proof)
+    // TRUE CLEAN DISCONNECT (full reset)
+    window.disconnectWallet = function () {
+      if (provider) {
+        provider.disconnect().catch(() => {});
+      }
+      publicKey = null;
+      provider = null;           // full reset
+      connection = null;
+      btn.innerHTML = "CONNECT WALLET";
+      btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
+      statusDiv.innerHTML = "";
+      console.log('%c✅ Wallet fully disconnected', 'color:#ff2d55; font-weight:bold');
+    };
+
+    // SIGN MESSAGE (unchanged - legit web3 auth)
     window.signLoginMessage = async function () {
       if (!provider || !publicKey) return;
 
@@ -391,7 +513,7 @@
         console.log('Signature (hex):', signatureHex);
         console.log('Public Key:', publicKey);
 
-        alert(`✅ SIGNED SUCCESSFULLY!\n\nMessage: ${messageText}\n\nSignature (copy for backend):\n${signatureHex}\n\n✅ You can now send this to your server for verification.`);
+        alert(`✅ SIGNED SUCCESSFULLY!\n\nMessage: ${messageText}\n\nSignature (copy for backend):\n${signatureHex}`);
       } catch (err) {
         console.error(err);
         if (err.code === 4001) alert("User rejected signing.");
@@ -399,29 +521,30 @@
       }
     };
 
-    // SEND SOL DEMO (full web3 transaction using Phantom)
-    window.sendDemoSOL = async function () {
-      if (!provider || !publicKey) return;
-
-      const recipient = prompt("💸 Enter recipient wallet address (mainnet):", "Enter a valid Solana address here");
-      if (!recipient) return;
-
-      const amountStr = prompt("Amount in SOL (demo uses 0.01 by default):", "0.01");
-      const amount = parseFloat(amountStr);
-      if (isNaN(amount) || amount <= 0) {
-        alert("Invalid amount!");
+    // DONATION FUNCTION - true web3 Phantom transfer to your address
+    window.sendDonation = async function () {
+      if (!provider || !publicKey) {
+        alert("Please connect your Phantom wallet first (top right) 👆");
         return;
       }
 
-      if (!confirm(`⚠️ REAL TRANSACTION ON MAINNET\n\nSend ${amount} SOL to ${recipient}?\n\nPhantom will ask you to approve.`)) return;
+      const amountStr = document.getElementById('donate-amount').value;
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Enter a valid amount greater than 0!");
+        return;
+      }
+
+      const message = document.getElementById('donate-message').value.trim() || "No message";
+      const recipient = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
+
+      if (!confirm(`💸 REAL MAINNET DONATION\n\nSend ${amount} SOL to SK8COIN Treasury?\nMessage: "${message}"\n\nPhantom will ask you to approve.`)) return;
 
       try {
         const fromPubkey = new solanaWeb3.PublicKey(publicKey);
         const toPubkey = new solanaWeb3.PublicKey(recipient);
 
-        // Use mainnet
         const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
-
         const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash();
 
         const tx = new solanaWeb3.Transaction().add(
@@ -435,24 +558,61 @@
         tx.recentBlockhash = blockhash;
         tx.feePayer = fromPubkey;
 
-        // Phantom signs + sends
         const signedTx = await provider.signTransaction(tx);
         const rawTx = signedTx.serialize();
 
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
-        alert(`✅ TRANSACTION SENT!\n\nAmount: ${amount} SOL\nTx Signature: ${signature}\n\nView on Solscan: https://solscan.io/tx/${signature}`);
-        console.log('%c✅ Tx successful:', 'color:#22ff88', `https://solscan.io/tx/${signature}`);
+        alert(`🎉 DONATION SUCCESSFUL!\n\nAmount: ${amount} SOL\nTx: ${signature}\n\nThank you for powering the skate revolution! 🛹\n\nView on Solscan: https://solscan.io/tx/${signature}`);
 
-        // Refresh balance after send
+        console.log('%c✅ Donation tx:', 'color:#22ff88', `https://solscan.io/tx/${signature}`);
+
+        // refresh balance in header
         setTimeout(updateWalletUI, 3000);
+
       } catch (err) {
         console.error(err);
         alert("Transaction failed: " + (err.message || err));
       }
     };
 
+    // Copy treasury address
+    window.copyTreasuryAddress = function () {
+      navigator.clipboard.writeText("5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc").then(() => {
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ COPIED!";
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      });
+    };
+
+    // Update donate page wallet info (clean)
+    function updateDonateWalletInfo() {
+      const el = document.getElementById('donate-wallet-info');
+      if (!publicKey) {
+        el.innerHTML = `<span style="color:#ff9500;">⚠️ Connect your wallet above to donate</span>`;
+        return;
+      }
+      el.innerHTML = `
+        <span style="color:#22ff88;">🟢 Connected • ${shortenAddress(publicKey)}</span>
+        <br><small style="color:#a5d8ff;">Ready to send donation on mainnet</small>
+      `;
+    }
+
+    // PAGE NAVIGATION (Home ↔ Donate)
+    window.navigateTo = function (page) {
+      if (page === 'home') {
+        document.getElementById('home-content').style.display = 'block';
+        document.getElementById('donate-content').style.display = 'none';
+      } else if (page === 'donate') {
+        document.getElementById('home-content').style.display = 'none';
+        document.getElementById('donate-content').style.display = 'block';
+        updateDonateWalletInfo();   // refresh donate page status
+      }
+    };
+
+    // CONNECT WALLET (unchanged but now cleaner)
     async function connectWallet() {
       provider = getProvider();
       if (!provider) {
@@ -468,17 +628,13 @@
         const resp = await provider.connect();
         publicKey = resp.publicKey.toString();
 
-        // Create connection once
         connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
 
-        // Update button
         btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
 
-        // Full wallet UI with balance + buttons
         await updateWalletUI();
 
-        // Listen for disconnect
         provider.on('disconnect', () => disconnectWallet());
 
       } catch (err) {
@@ -490,15 +646,6 @@
       }
     }
 
-    function disconnectWallet() {
-      if (provider) provider.disconnect().catch(() => {});
-      publicKey = null;
-      connection = null;
-      btn.innerHTML = "CONNECT WALLET";
-      btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
-      statusDiv.innerHTML = "";
-    }
-
     // Button handler
     btn.addEventListener('click', async () => {
       if (publicKey) {
@@ -508,7 +655,7 @@
       }
     });
 
-    // Auto-connect if Phantom already trusted
+    // Auto-connect if trusted
     window.addEventListener('load', async () => {
       provider = getProvider();
       if (provider && provider.isConnected) {
@@ -522,9 +669,12 @@
           await updateWalletUI();
         } catch (e) {}
       }
+
+      // Start on home page
+      navigateTo('home');
     });
 
-    // Keep original menu hover effects
+    // Keep menu hover effects
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('mouseenter', () => {
         item.style.transform = 'translateY(-10px)';
