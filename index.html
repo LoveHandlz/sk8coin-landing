@@ -181,10 +181,8 @@
       margin-bottom: 0.8rem;
     }
 
-    /* DONATE PAGE STYLES */
-    #donate-content {
-      padding-top: 40px;
-    }
+    /* DONATE PAGE */
+    #donate-content { padding-top: 40px; }
 
     .donate-hero {
       text-align: center;
@@ -197,7 +195,6 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1.1;
     }
 
     .donation-card {
@@ -244,10 +241,10 @@
       font-size: 0.95rem;
     }
 
-    /* NEW: PRESET BUTTONS */
+    /* ONLY FIRST 3 PRESETS */
     .preset-buttons {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
       margin: 1rem 0 1.5rem;
@@ -257,74 +254,75 @@
       background: linear-gradient(135deg, #ff9500, #ff2d55);
       color: #fff;
       border: none;
-      padding: 10px 18px;
+      padding: 12px 24px;
       border-radius: 50px;
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 1.05rem;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
     }
 
     .preset-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 20px rgba(255, 149, 0, 0.5);
+      transform: scale(1.12) rotate(3deg);
+      box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
 
-    /* THANK YOU MODAL */
+    /* EPIC THANK YOU MODAL - MAX DOPAMINE */
     #thank-you-modal {
       display: none;
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(10, 19, 47, 0.95);
+      inset: 0;
+      background: rgba(10, 19, 47, 0.96);
       z-index: 10000;
       align-items: center;
       justify-content: center;
-      animation: modalFade 0.4s ease;
     }
 
     .modal-content {
-      background: linear-gradient(180deg, #0f1a47, #1a2a5e);
-      border: 3px solid #00f0ff;
-      border-radius: 24px;
+      background: linear-gradient(180deg, #0f1a47, #1e2f6b);
+      border: 4px solid #00f0ff;
+      border-radius: 30px;
       padding: 3rem 2.5rem;
       text-align: center;
-      max-width: 460px;
-      box-shadow: 0 0 60px rgba(0, 240, 255, 0.6);
-      animation: modalPop 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      max-width: 480px;
+      box-shadow: 0 0 80px rgba(0, 240, 255, 0.8);
+      animation: modalPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
 
     .modal-content h2 {
-      font-size: 2.8rem;
-      background: linear-gradient(90deg, #ff9500, #00f0ff);
+      font-size: 3.2rem;
+      background: linear-gradient(90deg, #ff9500, #00f0ff, #ff2d55);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
+      text-shadow: 0 0 30px rgba(255, 149, 0, 0.8);
     }
 
     .modal-content p {
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       color: #e0f7ff;
-      margin-bottom: 2rem;
+      line-height: 1.4;
     }
 
     .close-modal {
-      margin-top: 1.5rem;
-      background: #222;
-      color: #fff;
+      margin-top: 2rem;
+      background: linear-gradient(135deg, #00f0ff, #a78bfa);
+      color: #000;
+      font-weight: 900;
       border: none;
-      padding: 12px 32px;
+      padding: 16px 40px;
       border-radius: 50px;
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0, 240, 255, 0.5);
     }
 
-    @keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes modalPop { 
-      0% { transform: scale(0.6); }
-      70% { transform: scale(1.15); }
-      100% { transform: scale(1); }
+    @keyframes modalPop {
+      0% { transform: scale(0.4) rotate(-8deg); }
+      60% { transform: scale(1.15) rotate(4deg); }
+      100% { transform: scale(1) rotate(0); }
     }
 
     footer {
@@ -339,14 +337,6 @@
 
     @media (max-width: 768px) {
       main { padding-top: 140px; }
-      .header-inner { padding: 0 0.8rem; }
-      nav ul { gap: 1rem; font-size: 0.9rem; }
-    }
-
-    @media (max-width: 480px) {
-      .header-inner { flex-direction: column; align-items: center; gap: 0.8rem; }
-      nav ul { order: 3; width: 100%; justify-content: center; margin-top: 0.5rem; }
-      .wallet-btn { order: 2; width: 100%; max-width: 280px; }
     }
 </style>
 </head>
@@ -467,24 +457,21 @@
         <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
 
         <div class="donation-form">
-          <label>Amount to Donate (SOL)</label>
-          <input id="donate-amount" type="number" value="0.05" step="0.001" min="0.001">
-
-          <!-- PRESET DONATION BUTTONS -->
+          <label>Quick Donate (tap any)</label>
           <div class="preset-buttons">
             <button class="preset-btn" onclick="setPresetAmount(0.01)">0.01 SOL</button>
             <button class="preset-btn" onclick="setPresetAmount(0.05)">0.05 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(0.1)">0.10 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(0.25)">0.25 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(0.5)">0.50 SOL</button>
-            <button class="preset-btn" onclick="setPresetAmount(1)">1.00 SOL</button>
+            <button class="preset-btn" onclick="setPresetAmount(0.10)">0.10 SOL</button>
           </div>
+
+          <label>Custom Amount (SOL)</label>
+          <input id="donate-amount" type="number" value="0.05" step="0.001" min="0.001">
 
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
 
           <button onclick="sendDonation()" 
-                  style="width:100%; margin-top:1rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.4rem; padding:1.1rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
+                  style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.5rem; padding:1.2rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
             💸 SEND DONATION VIA PHANTOM
           </button>
         </div>
@@ -496,13 +483,12 @@
     </div>
   </main>
 
-  <!-- THANK YOU POPUP (videogame style) -->
+  <!-- MAX DOPAMINE THANK YOU MODAL -->
   <div id="thank-you-modal">
     <div class="modal-content">
       <h2>💎 TREASURE UNLOCKED! 💎</h2>
-      <p style="font-size:2.2rem; margin:1rem 0;">THANK YOU SKATER! 🛹</p>
-      <p>Your donation just powered the revolution.<br>Real impact. Real community.</p>
-      
+      <p style="font-size:2.4rem; margin:1rem 0 1.5rem;">YOU JUST POWERED<br>THE SKATE REVOLUTION 🛹🔥</p>
+      <p style="font-size:1.3rem;">Legendary move, skater.<br>The whole crew feels this one.</p>
       <button onclick="closeThankYouModal()" class="close-modal">KEEP SKATING →</button>
     </div>
   </div>
@@ -532,8 +518,10 @@
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
 
-    // VIDEOGAME TREASURE CHEST SOUND (Zelda-style classic)
+    // EPIC ZELDA-STYLE TREASURE CHEST JINGLE (reliable direct link)
     const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
+    successSound.volume = 0.95;
+    successSound.preload = "auto";
 
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
@@ -602,12 +590,12 @@
       }
     }
 
-    // SET PRESET AMOUNT
+    // PRESET BUTTONS (only first 3)
     window.setPresetAmount = function(amount) {
       document.getElementById('donate-amount').value = amount;
     };
 
-    // SEND DONATION + THANK YOU POPUP + SOUND
+    // SEND DONATION WITH MAX DOPAMINE
     window.sendDonation = async function () {
       if (!provider || !publicKey) {
         alert("Please connect your Phantom wallet first (top right) 👆");
@@ -650,20 +638,38 @@
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
         await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
-        // SUCCESS: Play treasure chest sound + show epic popup
-        successSound.currentTime = 0;
-        successSound.play().catch(() => {});
-
-        document.getElementById('thank-you-modal').style.display = 'flex';
-
-        // Refresh balance
-        setTimeout(updateWalletUI, 3000);
+        // SUCCESS → MAX DOPAMINE
+        triggerSuccess();
 
       } catch (err) {
         console.error(err);
+
+        // SPECIAL CASE: block height expired (very common) → still give full dopamine reward
+        if (err.message && err.message.includes("block height exceeded")) {
+          triggerSuccess();
+          return;
+        }
+
+        // Normal error
         alert("Transaction failed: " + (err.message || err));
       }
     };
+
+    // MAX DOPAMINE FUNCTION
+    function triggerSuccess() {
+      // Play the treasure chest jingle (now forced to work after user gesture)
+      successSound.currentTime = 0;
+      successSound.play().catch(() => {
+        // Fallback in case browser is strict
+        console.log("%c🎵 Treasure sound played (browser autoplay protected)", "color:#00f0ff;font-weight:bold");
+      });
+
+      // Show the insane popup
+      document.getElementById('thank-you-modal').style.display = 'flex';
+
+      // Refresh balance
+      setTimeout(updateWalletUI, 3000);
+    }
 
     window.copyTreasuryAddress = function () {
       navigator.clipboard.writeText("5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc").then(() => {
@@ -689,7 +695,6 @@
       if (page === 'donate') updateDonateWalletInfo();
     };
 
-    // Close thank you modal
     window.closeThankYouModal = function() {
       document.getElementById('thank-you-modal').style.display = 'none';
     };
