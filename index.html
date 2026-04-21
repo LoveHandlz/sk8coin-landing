@@ -161,6 +161,80 @@
       font-weight: 900;
       margin-bottom: 0.8rem;
     }
+
+    /* ====================== VIDEOS PAGE ====================== */
+    #videos-content { 
+      padding-top: 40px; 
+      display: none; 
+    }
+    .videos-hero {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .videos-hero h1 {
+      font-size: clamp(2.8rem, 7.5vw, 5.8rem);
+      background: linear-gradient(90deg, var(--accent-gold), #ff9500, var(--accent-cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
+    }
+    .videos-hero p {
+      font-size: 1.35rem;
+      color: var(--text-secondary);
+      max-width: 780px;
+      margin: 0.8rem auto;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .video-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-gold);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    }
+    .video-card:hover {
+      transform: translateY(-12px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 25px 60px rgba(255, 215, 0, 0.35);
+    }
+    .video-card iframe {
+      width: 100%;
+      height: 245px;
+      border: none;
+    }
+    .video-info {
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+    }
+    .video-info h3 {
+      color: var(--accent-gold);
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .video-info p {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+    .xp-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-gold), #ff9500);
+      color: #000;
+      font-weight: 900;
+      padding: 5px 16px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
     /* DONATE PAGE */
     #donate-content { padding-top: 40px; }
     .donate-hero {
@@ -333,6 +407,8 @@
         padding: 12px 16px;
         font-size: 1rem;
       }
+      .video-grid { grid-template-columns: 1fr; }
+      .video-card iframe { height: 210px; }
     }
 </style>
 </head>
@@ -434,11 +510,59 @@
             <div class="menu-desc">Fuel real skaters, fund drops & keep the revolution rolling</div>
           </div>
         </div>
+
+        <!-- NEW VIDEOS CARD -->
+        <div class="menu-item" onclick="navigateTo('videos')">
+          <div class="card-content">
+            <div class="menu-icon" style="color: var(--accent-gold);">🎥</div>
+            <div class="menu-title" style="color: var(--accent-gold);">SK8 REELS</div>
+            <div class="menu-desc">GameFi Street Cinema • Watch & Earn XP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEOS PAGE -->
+    <div id="videos-content">
+      <div class="videos-hero">
+        <h1>SK8 REELS</h1>
+        <p>GameFi Street Cinema • Watch raw skate footage • Earn XP • Level up your profile</p>
+        <div style="margin: 2rem 0; padding: 14px 32px; background: rgba(255,215,0,0.12); border: 1px solid var(--accent-gold); border-radius: 50px; display: inline-block; font-size: 1.2rem; font-weight: 700;">
+          🔥 12 LEGENDARY DROPS • <strong>+50 XP</strong> per video
+        </div>
+      </div>
+
+      <div class="video-grid">
+        <!-- Replace with your real YouTube embed links -->
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/dQw4w9wgxcq" title="Reel 1" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>NYC NIGHT RAILS</h3>
+            <p>Full send street session</p>
+            <span class="xp-badge">+50 XP</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/3JZ_D3ELwOQ" title="Reel 2" allowfullscreen></iframe>
+          <div class="video-info">
+            <h3>LA CREW TOKENIZED TRICKS</h3>
+            <p>SK8COIN community drop</p>
+            <span class="xp-badge">+50 XP</span>
+          </div>
+        </div>
+
+        <!-- Duplicate the block above 10 more times for 12 total videos -->
+      </div>
+
+      <div style="text-align:center; margin-top: 5rem; color: var(--accent-gold); font-size: 1.3rem;">
+        More reels dropping weekly • Submit your footage in Discord for $SKATE rewards
       </div>
     </div>
 
     <!-- DONATE PAGE -->
     <div id="donate-content" style="display: none;">
+      <!-- Your original donate content unchanged -->
       <div class="donate-hero">
         <h1>DONATE NOW</h1>
         <p style="font-size: 1.4rem; max-width: 720px; margin: 0 auto; color: var(--text-secondary);">
@@ -740,6 +864,8 @@
     window.navigateTo = function (page) {
       document.getElementById('home-content').style.display = page === 'home' ? 'block' : 'none';
       document.getElementById('donate-content').style.display = page === 'donate' ? 'block' : 'none';
+      document.getElementById('videos-content').style.display = page === 'videos' ? 'block' : 'none';
+      
       if (page === 'donate') {
         updateDonateWalletInfo();
         updateAllUSD();
