@@ -144,7 +144,7 @@
       transform: translateY(-8px);
       box-shadow: 0 16px 40px rgba(0,240,255,0.25), 
                   0 0 0 2px var(--accent-cyan),
-                  0 0 35px rgba(255, 215, 0, 0.6); /* Intense gold glow */
+                  0 0 35px rgba(255, 215, 0, 0.6);
     }
     .card-content {
       padding: 2rem 1.4rem;
@@ -417,7 +417,6 @@
           </div>
         </div>
         
-        <!-- NEW DONATE CARD -->
         <div class="menu-item" onclick="navigateTo('donate')">
           <div class="card-content">
             <div class="menu-icon" style="color: var(--accent-gold);">💸</div>
@@ -521,9 +520,12 @@
     const RPC_URL = "https://solana-rpc.publicnode.com";
     const btn = document.getElementById('connect-wallet-btn');
     const statusDiv = document.getElementById('wallet-status');
+    
+    // Audio alerts
     const successSound = new Audio('https://www.myinstants.com/media/sounds/zelda-chest-opening-and-item-catch.mp3');
+    const connectSound = new Audio('https://www.myinstants.com/media/sounds/zelda-secret.mp3'); // Classic game alert sound
     successSound.volume = 0.95;
-    successSound.preload = "auto";
+    connectSound.volume = 0.85;
 
     function shortenAddress(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
@@ -535,6 +537,12 @@
       }
       return null;
     }
+
+    function playConnectSound() {
+      connectSound.currentTime = 0;
+      connectSound.play().catch(() => {});
+    }
+
     async function updateWalletUI() {
       if (!publicKey) return;
       statusDiv.innerHTML = `<span style="color:#ff9500;">Loading SOL balance...</span>`;
@@ -556,6 +564,7 @@
         }
       }, 600);
     }
+
     window.disconnectWallet = function() {
       if (provider) provider.disconnect().catch(() => {});
       publicKey = null;
@@ -564,6 +573,7 @@
       btn.style.background = "linear-gradient(135deg, var(--accent-cyan), #a78bfa)";
       statusDiv.innerHTML = "";
     };
+
     async function connectWallet() {
       provider = getProvider();
       if (!provider) {
@@ -576,8 +586,14 @@
         btn.disabled = true;
         const resp = await provider.connect();
         publicKey = resp.publicKey.toString();
-        btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
+
+        // === CHANGES REQUESTED ===
+        btn.innerHTML = "✅ WALLET CONNECTED";
         btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
+        
+        playConnectSound();           // Game-style alert sound
+        // =========================
+
         await updateWalletUI();
         provider.on('disconnect', disconnectWallet);
       } catch (err) {
@@ -588,6 +604,7 @@
       }
     }
 
+    // Rest of the script remains exactly the same
     async function fetchSOLPrice() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
@@ -720,9 +737,10 @@
         try {
           const resp = await provider.connect({ onlyIfTrusted: true });
           publicKey = resp.publicKey.toString();
-          btn.innerHTML = `✅ ${shortenAddress(publicKey)}`;
+          btn.innerHTML = "✅ WALLET CONNECTED";
           btn.style.background = 'linear-gradient(135deg, #00f0ff, #22ff88)';
           await updateWalletUI();
+          playConnectSound();
         } catch (e) {}
       }
       navigateTo('home');
