@@ -17,6 +17,7 @@
       --accent-red: #ff2d55;
       --accent-orange: #ff9500;
       --accent-cyan: #00f0ff;
+      --accent-gold: #ffd700;
       --text-primary: #e0f7ff;
       --text-secondary: #a5d8ff;
       --card-border: rgba(0, 240, 255, 0.14);
@@ -141,7 +142,9 @@
     }
     .menu-item:hover {
       transform: translateY(-8px);
-      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 0 0 0 2px var(--accent-cyan);
+      box-shadow: 0 16px 40px rgba(0,240,255,0.25), 
+                  0 0 0 2px var(--accent-cyan),
+                  0 0 35px rgba(255, 215, 0, 0.6); /* Intense gold glow */
     }
     .card-content {
       padding: 2rem 1.4rem;
@@ -216,7 +219,19 @@
       gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
-      margin: 1rem 0 1.5rem;
+      margin: 1.5rem 0 1.8rem;
+    }
+    .preset-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .donation-type-label {
+      color: var(--accent-gold);
+      font-weight: 900;
+      font-size: 0.95rem;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
     }
     .preset-btn {
       background: linear-gradient(135deg, #ff9500, #ff2d55);
@@ -225,11 +240,11 @@
       padding: 14px 20px;
       border-radius: 12px;
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
-      min-width: 130px;
+      min-width: 148px;
       line-height: 1.3;
       text-align: center;
     }
@@ -237,25 +252,20 @@
       transform: scale(1.05);
       box-shadow: 0 10px 25px rgba(255, 149, 0, 0.6);
     }
-    .preset-btn .donation-type {
-      display: block;
-      font-size: 0.85rem;
-      color: #ffffff;
-      margin-bottom: 4px;
-      font-weight: 700;
-    }
     .preset-btn .usd {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 400;
-      margin-top: 2px;
+      margin-top: 4px;
       opacity: 0.95;
     }
     #custom-usd {
       text-align: center;
-      font-size: 0.9rem;
-      color: var(--accent-cyan);
+      font-size: 1rem;
+      color: var(--accent-gold);
       margin: 8px 0 16px;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
     #thank-you-modal {
       display: none;
@@ -319,9 +329,9 @@
     @media (max-width: 768px) {
       main { padding-top: 140px; }
       .preset-btn {
-        min-width: 110px;
+        min-width: 120px;
         padding: 12px 16px;
-        font-size: 0.95rem;
+        font-size: 1rem;
       }
     }
 </style>
@@ -406,6 +416,15 @@
             <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
           </div>
         </div>
+        
+        <!-- NEW DONATE CARD -->
+        <div class="menu-item" onclick="navigateTo('donate')">
+          <div class="card-content">
+            <div class="menu-icon" style="color: var(--accent-gold);">💸</div>
+            <div class="menu-title" style="color: var(--accent-gold);">SUPPORT THE MOVEMENT</div>
+            <div class="menu-desc">Fuel real skaters, fund drops & keep the revolution rolling</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -428,25 +447,36 @@
           </button>
         </div>
         <div id="donate-wallet-info" style="text-align:center; margin:1.5rem 0; font-size:1rem; min-height:28px;"></div>
+        
         <div class="donation-form">
           <div class="preset-buttons">
-            <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">
-              <span class="donation-type">Flow Donation</span>
-              0.01 SOL <span class="usd">≈ $--.--</span>
-            </button>
-            <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">
-              <span class="donation-type">Amateur Donation</span>
-              0.05 SOL <span class="usd">≈ $--.--</span>
-            </button>
-            <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">
-              <span class="donation-type">Pro Donation</span>
-              0.10 SOL <span class="usd">≈ $--.--</span>
-            </button>
+            <div class="preset-group">
+              <div class="donation-type-label">FLOW DONATION</div>
+              <button class="preset-btn" data-sol="0.01" onclick="setPresetAmount(0.01)">
+                0.01 SOL <span class="usd">≈ $--.--</span>
+              </button>
+            </div>
+            <div class="preset-group">
+              <div class="donation-type-label">AMATEUR DONATION</div>
+              <button class="preset-btn" data-sol="0.05" onclick="setPresetAmount(0.05)">
+                0.05 SOL <span class="usd">≈ $--.--</span>
+              </button>
+            </div>
+            <div class="preset-group">
+              <div class="donation-type-label">PRO DONATION</div>
+              <button class="preset-btn" data-sol="0.10" onclick="setPresetAmount(0.10)">
+                0.10 SOL <span class="usd">≈ $--.--</span>
+              </button>
+            </div>
           </div>
+
           <label>Custom Amount (SOL)</label>
           <input id="donate-amount" type="number" value="0.00" step="0.001" min="0.001">
+          <div id="custom-usd">≈ $0.00 USD</div>
+
           <label>Skater Shoutout / Message (optional)</label>
           <textarea id="donate-message" rows="3" placeholder="For the homies 🛹 Keep skating independent!"></textarea>
+          
           <button onclick="sendDonation()"
                   style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color:#fff; font-size:1.5rem; padding:1.2rem; border-radius:50px; border:none; cursor:pointer; font-weight:900;">
             💸 SEND DONATION VIA PHANTOM
@@ -579,7 +609,8 @@
 
     function updateCustomUSD() {
       const amount = parseFloat(document.getElementById('donate-amount').value) || 0;
-      document.getElementById('custom-usd').textContent = `≈ $${(amount * currentSOLPrice).toFixed(2)} USD`;
+      const usdEl = document.getElementById('custom-usd');
+      usdEl.textContent = `≈ $${(amount * currentSOLPrice).toFixed(2)} USD`;
     }
 
     window.setPresetAmount = function(amount) {
@@ -622,11 +653,9 @@
         const rawTx = signedTx.serialize();
         const signature = await conn.sendRawTransaction(rawTx, { skipPreflight: true });
 
-        // === NEW: MAX 5-SECOND WAIT FOR THANK-YOU POPUP ===
         const confirmPromise = conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
         const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 5000));
         await Promise.race([confirmPromise, timeoutPromise]);
-        // ===================================================
 
         triggerSuccess();
       } catch (err) {
