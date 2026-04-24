@@ -451,20 +451,27 @@ footer {
     </div>
 </div>
 
-<audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+<audio id="jingle" src="https://freesound.org/data/previews/456/456968_9313539-lq.mp3" preload="auto"></audio>
 
 <script>
-let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
-const RPC_URL = "https://solana-rpc.publicnode.com";
+let publicKey = null; 
+let provider = null; 
+let solPrice = 0; 
+let activeVideoId = null; 
+let currentSkaterTarget = "";
+
+// Using Official Mainnet RPC and Jupiter (The most reliable SOL/USD feed)
+const RPC_URL = "https://api.mainnet-beta.solana.com";
+const JUPITER_PRICE_API = "https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
-// FIX: Improved Sol Price Fetch with retry
 async function getSolPrice() {
     try { 
-      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); 
-      const d = await r.json(); 
-      if(d.solana.usd) solPrice = d.solana.usd;
-    } catch (e) { console.error("Price fetch failed", e); }
+        const r = await fetch(JUPITER_PRICE_API); 
+        const d = await r.json(); 
+        const price = d.data["So11111111111111111111111111111111111111112"]?.price;
+        if (price) solPrice = parseFloat(price);
+    } catch (e) { console.error("Jupiter Price Fail:", e); }
 }
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
@@ -488,9 +495,9 @@ async function fetchBalance() {
     document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
 }
 
-// FIX: Recursive staggered balance fetching every 15 sec
+// FIX: Sequential fetching with delays to prevent timeouts
 async function fetchSkaterBalances() {
-    await getSolPrice(); // Refresh price first
+    await getSolPrice();
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const els = document.querySelectorAll('.skater-wallet-bal');
     
@@ -501,14 +508,11 @@ async function fetchSkaterBalances() {
             const bal = await connection.getBalance(new solanaWeb3.PublicKey(addr));
             const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
             el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
-            // Small delay between each fetch to avoid RPC spam
-            await new Promise(r => setTimeout(r, 50));
-        } catch(e) { el.innerText = "Syncing..."; }
+            // 300ms pause between each address request
+            await new Promise(r => setTimeout(r, 300));
+        } catch(e) { console.warn("Balance sync skipped for one card"); }
     }
 }
-
-// Start the 15-second loop
-setInterval(fetchSkaterBalances, 15000);
 
 async function fetchTreasuryBalance() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -566,10 +570,8 @@ async function sendSOL(amount, destination) {
     // Trigger Audio immediately
     document.getElementById('jingle').play().catch(e => console.log("Audio trigger failed"));
 
-    // Close inputs
     closeModal(); closeTreasuryModal();
 
-    // Wait 3 seconds for confirm, then unlock and show confetti
     setTimeout(() => {
         if (activeVideoId) {
             localStorage.setItem(activeVideoId, 'true');
@@ -613,6 +615,8 @@ window.onload = async () => {
           fetchSkaterBalances();
         } catch (e) {}
     }
+    // Set the 15-second loop
+    setInterval(fetchSkaterBalances, 15000);
 };
 </script>
 </body>
