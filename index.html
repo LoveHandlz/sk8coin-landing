@@ -1,15 +1,16 @@
 <script>
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
-// Using a robust fallback list for the RPC
+// Official Solana Mainnet RPC - The most stable, but strictly rate-limited
 const RPC_URL = "https://api.mainnet-beta.solana.com";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
+const REFRESH_RATE = 60000; // Increased to 1 minute for maximum stability
 
 async function getSolPrice() {
     try { 
         const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); 
         const d = await r.json(); 
         solPrice = d.solana.usd; 
-    } catch (e) { solPrice = 150; } // Hardcoded fallback if API fails
+    } catch (e) { solPrice = 0; }
 }
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
@@ -41,61 +42,46 @@ function updateWalletUI() {
     }
 }
 
-// Robust Fetcher with built-in retry and delay
-async function getSafeBalance(address) {
-    try {
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const pubKey = new solanaWeb3.PublicKey(address);
-        const bal = await conn.getBalance(pubKey);
-        return bal / solanaWeb3.LAMPORTS_PER_SOL;
-    } catch (e) {
-        console.warn("Retry fetch for:", address);
-        return null;
-    }
-}
-
 async function fetchBalance() {
     if (!publicKey) return;
-    const b = await getSafeBalance(publicKey);
-    if (b !== null) document.getElementById("sol-balance").innerText = b.toFixed(4) + " SOL";
+    try {
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+        document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
+    } catch (e) { console.log("User balance throttled"); }
 }
 
-async function refreshAllData() {
-    await getSolPrice();
-    
-    // 1. Fetch User Balance
-    if (publicKey) await fetchBalance();
-
-    // 2. Fetch Treasury Balance
-    const tBal = await getSafeBalance(TREASURY_WALLET);
-    if (tBal !== null) {
-        document.getElementById("treasury-sol-balance").innerText = tBal.toFixed(4) + " SOL";
+async function fetchSkaterBalances() {
+    if (solPrice === 0) await getSolPrice();
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const els = document.querySelectorAll('.skater-wallet-bal');
+    for (let el of els) {
+        try {
+            // Staggered delay to respect the official node's rate limit
+            await new Promise(r => setTimeout(r, 200)); 
+            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
+            const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
+            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
+        } catch(e) { console.log("Skater fetch skipped"); }
     }
+}
 
-    // 3. Fetch Skater Balances (Staggered to prevent rate limit)
-    const skaterEls = document.querySelectorAll('.skater-wallet-bal');
-    for (let el of skaterEls) {
-        // 100ms sleep between requests to avoid "Zero" lockout
-        await new Promise(r => setTimeout(r, 100)); 
-        const sBal = await getSafeBalance(el.dataset.address);
-        if (sBal !== null) {
-            el.innerHTML = `Blessings: ${sBal.toFixed(4)} SOL <span class="usd-val">$${(sBal*solPrice).toFixed(2)}</span>`;
-        }
-    }
+async function fetchTreasuryBalance() {
+    try {
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
+        const sol = balance / solanaWeb3.LAMPORTS_PER_SOL;
+        document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
+    } catch (e) { console.log("Treasury fetch skipped"); }
 }
 
 function initRefreshCycle() {
-    // 30 second refresh
-    setInterval(() => { refreshAllData(); }, 30000);
-}
-
-function navigateTo(page) {
-    document.getElementById("home-content").style.display = (page === 'home' ? 'block' : 'none');
-    document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
-    document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
-    
-    if (page !== 'home') refreshAllData();
-    if (page === 'video') checkPersistence();
+    setInterval(async () => {
+        await getSolPrice();
+        if (publicKey) await fetchBalance();
+        if (document.getElementById("video-content").style.display !== "none") await fetchSkaterBalances();
+        if (document.getElementById("donate-content").style.display !== "none") await fetchTreasuryBalance();
+    }, REFRESH_RATE);
 }
 
 function checkPersistence() {
@@ -110,35 +96,14 @@ function checkPersistence() {
     });
 }
 
-// Transaction logic remains unchanged
-async function sendSOL(amount, destination) {
-  try {
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const fromPubkey = new solanaWeb3.PublicKey(publicKey);
-    const toPubkey = new solanaWeb3.PublicKey(destination);
-    const transaction = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey, toPubkey, lamports: amount * solanaWeb3.LAMPORTS_PER_SOL }));
-    const { blockhash } = await conn.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
-    const signed = await provider.signTransaction(transaction);
-    await conn.sendRawTransaction(signed.serialize());
-    document.getElementById('jingle').play().catch(e => {});
-    document.getElementById("sponsor-modal").style.display = "none";
-    document.getElementById("treasury-modal").style.display = "none";
-    setTimeout(() => {
-        if (activeVideoId) {
-            localStorage.setItem(activeVideoId, 'true');
-            const card = document.getElementById(activeVideoId);
-            card.querySelector('iframe').src = card.querySelector('iframe').dataset.src;
-            card.classList.add('unlocked');
-        }
-        document.getElementById("success-modal").style.display = "flex";
-        createConfetti();
-        refreshAllData();
-    }, 3000);
-  } catch (err) { alert("Action Cancelled"); }
+function navigateTo(page) {
+    document.getElementById("home-content").style.display = (page === 'home' ? 'block' : 'none');
+    document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
+    document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
+    if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
+    if(page === 'donate') fetchTreasuryBalance();
 }
 
-// Global UI Listeners
 document.addEventListener('click', (e) => {
     if (e.target && e.target.classList.contains('donate-btn')) {
         if(!publicKey) { alert("Connect Wallet First"); return; }
@@ -154,28 +119,66 @@ function closeSuccessModal() { document.getElementById("success-modal").style.di
 function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
 function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
 function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+
+async function sendSOL(amount, destination) {
+  try {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const fromPubkey = new solanaWeb3.PublicKey(publicKey);
+    const toPubkey = new solanaWeb3.PublicKey(destination);
+    const transaction = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey, toPubkey, lamports: amount * solanaWeb3.LAMPORTS_PER_SOL }));
+    const { blockhash } = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
+    const signed = await provider.signTransaction(transaction);
+    await connection.sendRawTransaction(signed.serialize());
+
+    document.getElementById('jingle').play().catch(e => {});
+    closeModal(); closeTreasuryModal();
+
+    setTimeout(() => {
+        if (activeVideoId) {
+            localStorage.setItem(activeVideoId, 'true');
+            const card = document.getElementById(activeVideoId);
+            card.querySelector('iframe').src = card.querySelector('iframe').dataset.src;
+            card.classList.add('unlocked');
+        }
+        document.getElementById("success-modal").style.display = "flex";
+        createConfetti();
+        fetchBalance(); 
+        if (activeVideoId) fetchSkaterBalances();
+    }, 3000);
+
+  } catch (err) { console.log("TX Failed"); }
+}
+
 function createConfetti() {
   for (let i = 0; i < 50; i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random() * 100 + 'vw';
-    c.style.backgroundColor = ['#ff2d55', '#ff9500', '#00f0ff', '#ffd700'][Math.floor(Math.random() * 4)];
-    c.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 5000);
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = ['#ff2d55', '#ff9500', '#00f0ff', '#ffd700'][Math.floor(Math.random() * 4)];
+    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 5000);
   }
 }
+
 function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
 
 window.onload = async () => {
-    refreshAllData();
+    await getSolPrice();
+    checkPersistence();
     initRefreshCycle();
     const p = getProvider();
     if (p?.isPhantom) {
         try { 
             const resp = await p.connect({ onlyIfTrusted: true }); 
-            publicKey = resp.publicKey.toString(); provider = p; updateWalletUI(); fetchBalance(); 
+            publicKey = resp.publicKey.toString(); 
+            provider = p; 
+            updateWalletUI(); 
+            fetchBalance(); 
         } catch (e) {}
     }
 };
 </script>
+</body>
+</html>
