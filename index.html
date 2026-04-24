@@ -241,15 +241,37 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
   <div id="home-content">
     <section class="hero">
         <h1>SKATE2EARN</h1>
+        <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
+          Collect, build & earn on-chain — tokenized GameFi meets street culture.
+        </p>
         <div class="stats-row">
           <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
           <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
           <div class="stat"><span class="stat-value">20k</span> Volume</div>
         </div>
     </section>
+
     <div class="menu-grid">
-      <div class="menu-item" onclick="navigateTo('video')"><div class="menu-icon">📺</div><div class="menu-title">VIDEOS</div><div class="menu-desc">Watch clips and sponsor skaters directly on-chain.</div></div>
-      <div class="menu-item" onclick="navigateTo('donate')"><div class="menu-icon">💸</div><div class="menu-title">TREASURY</div><div class="menu-desc">Support the overall movement and future of SK8COIN.</div></div>
+      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
+        <div class="menu-icon">🛠️</div>
+        <div class="menu-title">BUILD & MINT</div>
+        <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+      </div>
+      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
+        <div class="menu-icon">🛒</div>
+        <div class="menu-title">PARTS MARKET</div>
+        <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+      </div>
+      <div class="menu-item" onclick="navigateTo('video')">
+        <div class="menu-icon">📺</div>
+        <div class="menu-title">VIDEOS</div>
+        <div class="menu-desc">Watch clips and sponsor skaters directly on-chain.</div>
+      </div>
+      <div class="menu-item" onclick="navigateTo('donate')">
+        <div class="menu-icon">💸</div>
+        <div class="menu-title">TREASURY</div>
+        <div class="menu-desc">Support the overall movement and future of SK8COIN.</div>
+      </div>
     </div>
   </div>
 
@@ -313,8 +335,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
       <p style="margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase;">Current Treasury Funds</p>
       <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2.2rem; margin-bottom: 20px;">0.0000 SOL</h2>
       <div style="background:#000; padding:15px; border-radius:10px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-        <span id="treasury-addr-display">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
-        <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold;">COPY</button>
+        <span id="treasury-addr-display" style="word-break: break-all;">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
+        <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold; margin-left:10px;">COPY</button>
       </div>
       <button onclick="openTreasuryModal()" style="width:100%; padding:20px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:50px; cursor:pointer; font-family: 'Orbitron';">CONTRIBUTE TO TREASURY</button>
     </div>
@@ -462,7 +484,7 @@ async function sendSOL(amount, destination) {
         createConfetti();
         fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
     }, 3000);
-  } catch (err) { console.log("Failed"); }
+  } catch (err) { console.log("Transaction failed or cancelled"); }
 }
 
 function createConfetti() {
