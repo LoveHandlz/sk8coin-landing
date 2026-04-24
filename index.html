@@ -458,8 +458,13 @@ let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId =
 const RPC_URL = "https://solana-rpc.publicnode.com";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
+// FIX: Improved Sol Price Fetch with retry
 async function getSolPrice() {
-    try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); const d = await r.json(); solPrice = d.solana.usd; } catch (e) {}
+    try { 
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); 
+      const d = await r.json(); 
+      if(d.solana.usd) solPrice = d.solana.usd;
+    } catch (e) { console.error("Price fetch failed", e); }
 }
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
@@ -483,18 +488,27 @@ async function fetchBalance() {
     document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
 }
 
+// FIX: Recursive staggered balance fetching every 15 sec
 async function fetchSkaterBalances() {
-    if (solPrice === 0) await getSolPrice();
+    await getSolPrice(); // Refresh price first
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const els = document.querySelectorAll('.skater-wallet-bal');
+    
     for (let el of els) {
         try {
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
+            const addr = el.dataset.address;
+            if(!addr) continue;
+            const bal = await connection.getBalance(new solanaWeb3.PublicKey(addr));
             const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
             el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
-        } catch(e) { el.innerText = "Check wallet..."; }
+            // Small delay between each fetch to avoid RPC spam
+            await new Promise(r => setTimeout(r, 50));
+        } catch(e) { el.innerText = "Syncing..."; }
     }
 }
+
+// Start the 15-second loop
+setInterval(fetchSkaterBalances, 15000);
 
 async function fetchTreasuryBalance() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -590,7 +604,14 @@ window.onload = async () => {
     checkPersistence();
     const p = getProvider();
     if (p?.isPhantom) {
-        try { const resp = await p.connect({ onlyIfTrusted: true }); publicKey = resp.publicKey.toString(); provider = p; updateWalletUI(); fetchBalance(); } catch (e) {}
+        try { 
+          const resp = await p.connect({ onlyIfTrusted: true }); 
+          publicKey = resp.publicKey.toString(); 
+          provider = p; 
+          updateWalletUI(); 
+          fetchBalance(); 
+          fetchSkaterBalances();
+        } catch (e) {}
     }
 };
 </script>
