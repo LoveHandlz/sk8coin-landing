@@ -474,7 +474,6 @@ async function fetchTreasuryBalance() {
     }
 }
 
-// Updated function to show "Blessings" instead of "Wallet"
 async function fetchSkaterBalances() {
     try {
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -497,13 +496,15 @@ function navigateTo(page) {
 }
 
 let currentSkaterTarget = "";
-document.querySelectorAll('.donate-btn').forEach(btn => {
-  btn.onclick = () => {
-    if(!publicKey) { alert("Connect Wallet First"); return; }
-    currentSkaterTarget = btn.dataset.address;
-    document.getElementById("modal-skater-title").innerText = "Sponsoring: " + btn.closest('.video-card').querySelector('.card-title').innerText;
-    document.getElementById("sponsor-modal").style.display = "flex";
-  };
+
+// Attach dynamic modal logic to video buttons
+document.addEventListener('click', (e) => {
+    if (e.target && e.target.classList.contains('donate-btn')) {
+        if(!publicKey) { alert("Connect Wallet First"); return; }
+        currentSkaterTarget = e.target.dataset.address;
+        document.getElementById("modal-skater-title").innerText = "Sponsoring: " + e.target.closest('.video-card').querySelector('.card-title').innerText;
+        document.getElementById("sponsor-modal").style.display = "flex";
+    }
 });
 
 function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
@@ -546,11 +547,12 @@ async function sendSOL(amount, destination) {
     transaction.feePayer = fromPubkey;
 
     const signed = await provider.signTransaction(transaction);
-    await connection.sendRawTransaction(signed.serialize());
+    const signature = await connection.sendRawTransaction(signed.serialize());
     
     closeModal();
     closeTreasuryModal();
 
+    // Small delay to simulate blockchain confirmation feedback
     setTimeout(() => {
         document.getElementById('jingle').play();
         runConfetti();
@@ -558,10 +560,10 @@ async function sendSOL(amount, destination) {
         fetchBalance();
         fetchTreasuryBalance();
         fetchSkaterBalances();
-    }, 3000);
+    }, 2000);
 
   } catch (err) {
-    console.log("Transaction flow finished by user.");
+    console.log("Transaction flow finished or cancelled.");
   }
 }
 
