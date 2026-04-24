@@ -455,34 +455,33 @@ footer {
 
 <script>
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
-const RPC_URL = "https://solana-rpc.publicnode.com";
+// Switched to a more reliable community endpoint
+const RPC_URL = "https://api.mainnet-beta.solana.com"; 
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
-const REFRESH_RATE = 30000; // 30 seconds
+const REFRESH_RATE = 30000; 
 
 async function getSolPrice() {
     try { 
         const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); 
         const d = await r.json(); 
         solPrice = d.solana.usd; 
-    } catch (e) { console.error("Price fetch failed"); }
+    } catch (e) { console.error("Price API throttle"); }
 }
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
 
 async function handleWalletAction() {
     if (publicKey) { 
-        if (confirm("Disconnect?")) { 
-            await provider.disconnect(); 
-            publicKey = null; 
-            updateWalletUI(); 
-        } 
+        if (confirm("Disconnect?")) { await provider.disconnect(); publicKey = null; updateWalletUI(); } 
     } else { 
         provider = getProvider(); 
         if (!provider) { alert("Install Phantom!"); return; } 
-        const resp = await provider.connect(); 
-        publicKey = resp.publicKey.toString(); 
-        updateWalletUI(); 
-        fetchBalance(); 
+        try {
+            const resp = await provider.connect(); 
+            publicKey = resp.publicKey.toString(); 
+            updateWalletUI(); 
+            fetchBalance(); 
+        } catch(e) {}
     }
 }
 
@@ -498,49 +497,50 @@ function updateWalletUI() {
     }
 }
 
+// Single balance fetch for user
 async function fetchBalance() {
     if (!publicKey) return;
     try {
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
         document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
-    } catch (e) { console.error("Balance fetch failed"); }
+    } catch (e) { console.log("RPC Limit hit on user bal"); }
 }
 
-async function fetchSkaterBalances() {
-    if (solPrice === 0) await getSolPrice();
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const els = document.querySelectorAll('.skater-wallet-bal');
-    for (let el of els) {
-        try {
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
-            const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
-            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
-        } catch(e) { el.innerText = "Check wallet..."; }
+// RELIABLE FIX: Multiple addresses in ONE request to prevent timeout
+async function fetchAllBalances() {
+    try {
+        if (solPrice === 0) await getSolPrice();
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        
+        // Collect all unique addresses from the page
+        const skaterEls = document.querySelectorAll('.skater-wallet-bal');
+        const addresses = [new solanaWeb3.PublicKey(TREASURY_WALLET)];
+        skaterEls.forEach(el => addresses.push(new solanaWeb3.PublicKey(el.dataset.address)));
+
+        // Batch Request: getMultipleAccounts is much faster/stable than getBalance in a loop
+        const accounts = await connection.getMultipleAccountsInfo(addresses);
+
+        // Update Treasury (Index 0)
+        const treasuryBal = accounts[0] ? accounts[0].lamports / solanaWeb3.LAMPORTS_PER_SOL : 0;
+        const treasuryEl = document.getElementById("treasury-sol-balance");
+        if(treasuryEl) treasuryEl.innerText = treasuryBal.toFixed(4) + " SOL";
+
+        // Update Skaters (Index 1+)
+        skaterEls.forEach((el, i) => {
+            const bal = accounts[i+1] ? accounts[i+1].lamports / solanaWeb3.LAMPORTS_PER_SOL : 0;
+            el.innerHTML = `Blessings: ${bal.toFixed(4)} SOL <span class="usd-val">$${(bal*solPrice).toFixed(2)}</span>`;
+        });
+    } catch (e) {
+        console.error("Batch fetch failed. Node is likely rate-limiting.");
     }
 }
 
-async function fetchTreasuryBalance() {
-    try {
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
-        document.getElementById("treasury-sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
-    } catch (e) { console.error("Treasury fetch failed"); }
-}
-
-// Optimized Refresh Cycle
 function initRefreshCycle() {
     setInterval(async () => {
         await getSolPrice();
         if (publicKey) await fetchBalance();
-        
-        // Only refresh secondary data if the specific sections are visible to save requests
-        if (document.getElementById("video-content").style.display !== "none") {
-            await fetchSkaterBalances();
-        }
-        if (document.getElementById("donate-content").style.display !== "none") {
-            await fetchTreasuryBalance();
-        }
+        await fetchAllBalances();
     }, REFRESH_RATE);
 }
 
@@ -560,8 +560,7 @@ function navigateTo(page) {
   document.getElementById("home-content").style.display = (page === 'home' ? 'block' : 'none');
   document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
   document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
-  if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
-  if(page === 'donate') fetchTreasuryBalance();
+  if(page !== 'home') { fetchAllBalances(); checkPersistence(); }
 }
 
 document.addEventListener('click', (e) => {
@@ -590,11 +589,8 @@ async function sendSOL(amount, destination) {
     transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
     const signed = await provider.signTransaction(transaction);
     await connection.sendRawTransaction(signed.serialize());
-
-    document.getElementById('jingle').play().catch(e => console.log("Audio trigger failed"));
-
+    document.getElementById('jingle').play().catch(e => {});
     closeModal(); closeTreasuryModal();
-
     setTimeout(() => {
         if (activeVideoId) {
             localStorage.setItem(activeVideoId, 'true');
@@ -604,10 +600,9 @@ async function sendSOL(amount, destination) {
         }
         document.getElementById("success-modal").style.display = "flex";
         createConfetti();
-        fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
+        fetchBalance(); fetchAllBalances();
     }, 3000);
-
-  } catch (err) { console.log("Failed or Cancelled"); }
+  } catch (err) { alert("Transaction failed or cancelled."); }
 }
 
 function createConfetti() {
@@ -627,7 +622,8 @@ function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET);
 window.onload = async () => {
     await getSolPrice();
     checkPersistence();
-    initRefreshCycle(); // Start the 30s loop
+    fetchAllBalances(); // Initial Load
+    initRefreshCycle();
     const p = getProvider();
     if (p?.isPhantom) {
         try { 
