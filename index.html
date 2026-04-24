@@ -8,7 +8,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
@@ -144,9 +144,10 @@ main {
   border-radius: 12px;
   overflow: hidden;
   transition: 0.3s;
+  position: relative;
 }
 .video-card:hover { border-color: var(--accent-gold); transform: scale(1.02); }
-.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000;}
 .video-wrapper iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:none; z-index: 1;}
 
 /* LOCK OVERLAY */
@@ -154,7 +155,7 @@ main {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(45deg, rgba(10,19,47,0.98), rgba(15,26,71,0.95));
   display: flex; flex-direction: column; justify-content: center; align-items: center;
-  z-index: 10; transition: 0.4s ease; border: 1px solid rgba(255, 215, 0, 0.2);
+  z-index: 10; transition: 0.4s ease;
 }
 .video-mask i { font-size: 2rem; color: var(--accent-gold); margin-bottom: 8px; }
 .video-mask p { font-size: 0.6rem; letter-spacing: 2px; color: #fff; text-transform: uppercase; font-weight: bold;}
@@ -211,6 +212,24 @@ footer {
   line-height: 1.8;
   font-family: 'Inter', sans-serif;
 }
+.footer-widgets h3, .footer-logos h3 {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.footer-socials { display: flex; gap: 1.5rem; font-size: 1.6rem; }
+.footer-socials a { color: var(--text-secondary); transition: 0.3s; }
+.footer-socials a:hover { color: var(--accent-gold); transform: translateY(-3px); }
+.logo-stack { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+.mini-logo {
+  height: 32px;
+  filter: grayscale(1) brightness(1.2);
+  transition: 0.4s;
+  cursor: pointer;
+}
+.mini-logo:hover { filter: none; opacity: 1; }
 
 .modal-overlay {
   display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
@@ -229,7 +248,8 @@ footer {
 @keyframes fall { to { transform: translateY(450px) rotate(360deg); opacity: 0; } }
 
 @media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr; gap: 3rem; text-align: center; } }
+@media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr; gap: 3rem; text-align: center; } .footer-socials, .logo-stack { justify-content: center; } }
+@media (max-width: 700px) { .video-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 3rem; } }
 </style>
 </head>
 <body>
@@ -269,18 +289,48 @@ footer {
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
         <div class="menu-icon">🛠️</div>
         <div class="menu-title">BUILD & MINT</div>
-        <div class="menu-desc">Craft complete boards from parts</div>
+        <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+      </div>
+      <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
+        <div class="menu-icon">🛒</div>
+        <div class="menu-title">PARTS MARKET</div>
+        <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+      </div>
+      <div class="menu-item" onclick="alert('Entering Skate Shop...')">
+        <div class="menu-icon">🛹</div>
+        <div class="menu-title">SKATE SHOP</div>
+        <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
       </div>
       <div class="menu-item" onclick="navigateTo('video')">
         <div class="menu-icon">📺</div>
         <div class="menu-title">VIDEOS</div>
-        <div class="menu-desc">Sponsor skaters to unlock clips</div>
+        <div class="menu-desc">Watch videos, sponsor skaters by supporting them directly on-chain.</div>
+      </div>
+      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+        <div class="menu-icon">📖</div>
+        <div class="menu-title">METAZINE</div>
+        <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+      </div>
+      <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
+        <div class="menu-icon"><i class="fab fa-discord" style="color:#5865f2;"></i></div>
+        <div class="menu-title">DISCORD</div>
+        <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+      </div>
+      <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
+        <div class="menu-icon" style="color: var(--accent-gold);">📜</div>
+        <div class="menu-title" style="color: var(--accent-gold);">WHITE PAPER</div>
+        <div class="menu-desc">Project Overview — Vision, Tokenomics, Roadmap & Skate2Earn mechanics</div>
+      </div>
+      <div class="menu-item" onclick="navigateTo('donate')">
+        <div class="menu-icon" style="color: var(--accent-gold);">💸</div>
+        <div class="menu-title" style="color: var(--accent-gold);">SUPPORT THE MOVEMENT</div>
+        <div class="menu-desc">Fuel real skaters, fund drops & keep the revolution rolling</div>
       </div>
     </div>
   </div>
 
   <div id="video-content" style="display:none;">
-    <div class="hero"><h1 style="font-size:3rem;">SK8 VIDEOS</h1></div>
+    <div class="hero"><h1 style="font-size:3rem;">SK8 VIDEOS</h1><p style="color: var(--accent-gold); font-weight:bold;">PEER-TO-PEER SPONSORSHIP ACTIVE</p></div>
     <div class="video-grid">
       <div class="video-card" id="vid-1">
         <div class="video-wrapper"><div class="video-mask"><i class="fas fa-lock"></i><p>Sponsor to Unlock</p></div><iframe src="" data-src="https://www.youtube.com/embed/On2BmcreKTM"></iframe></div>
@@ -336,32 +386,72 @@ footer {
   <div id="donate-content" style="display:none;">
     <div class="hero"><h1>COMMUNITY TREASURY</h1></div>
     <div style="background:var(--bg-panel); max-width:600px; margin:auto; padding:2rem; border-radius:20px; border:1px solid var(--accent-gold); text-align: center;">
-      <h2 id="treasury-sol-balance" style="color: var(--accent-gold);">0.0000 SOL</h2>
-      <button onclick="openTreasuryModal()" style="width:100%; padding:20px; background:var(--accent-gold); border:none; border-radius:50px; cursor:pointer;">CONTRIBUTE</button>
+      <p style="margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase;">Current Treasury Funds</p>
+      <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2.2rem; margin-bottom: 20px; word-break: break-all;">0.0000 SOL</h2>
+      <div style="background:#000; padding:15px; border-radius:10px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <span id="treasury-addr-display">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
+        <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold;">COPY</button>
+      </div>
+      <button onclick="openTreasuryModal()" style="width:100%; padding:20px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:50px; cursor:pointer; font-family: 'Orbitron';">CONTRIBUTE TO TREASURY</button>
     </div>
   </div>
 </main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-about">
+      <h3>MISSION CONTROL</h3>
+      <p>Skate2earn is a new economic model for skateboarders all over the world using a decentralized peer-to-peer sponsorship model where anyone can help a skater progress through micro donations.</p>
+    </div>
+    <div class="footer-widgets">
+      <h3>CONNECT</h3>
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-discord"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-logos">
+      <h3>POWERED BY</h3>
+      <div class="logo-stack">
+        <img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="mini-logo" title="Solana">
+        <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" class="mini-logo" title="SK8COIN">
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 3rem; font-size: 0.7rem; color: #444; letter-spacing: 1px;">&copy; 2026 SKATE2EARN PROTOCOL.</div>
+</footer>
+
+<div id="treasury-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 style="color:var(--accent-gold); margin-bottom: 15px;">Treasury Donation</h3>
+      <button class="tier-btn" onclick="sendDonation(0.01)">0.01 SOL</button>
+      <button class="tier-btn" onclick="sendDonation(0.05)">0.05 SOL</button>
+      <button onclick="closeTreasuryModal()" style="background:transparent; color:#888; border:none; cursor:pointer;">Back</button>
+    </div>
+</div>
 
 <div id="sponsor-modal" class="modal-overlay">
   <div class="modal-content">
     <h3 id="modal-skater-title" style="color:var(--accent-gold)">Sponsor Clip</h3>
     <button onclick="selectAmount(0.01)" class="tier-btn">0.01 SOL</button>
     <button onclick="selectAmount(0.05)" class="tier-btn">0.05 SOL</button>
-    <button onclick="closeModal()" style="background:none; border:none; color:#888;">Cancel</button>
+    <button onclick="closeModal()" style="background:transparent; color:#888; border:none; cursor:pointer;">Cancel</button>
   </div>
 </div>
 
 <div id="success-modal" class="modal-overlay">
     <div class="modal-content" id="success-box">
-      <h2 style="color:var(--accent-gold); font-family:'Bangers';">UNLOCKED!</h2>
-      <button onclick="closeSuccessModal()" class="wallet-btn">KEEP SHREDDING</button>
+      <h2 style="color:var(--accent-gold); font-family:'Bangers'; font-size: 2.5rem;">UNLOCKED!</h2>
+      <button onclick="closeSuccessModal()" class="wallet-btn" style="width:100%; margin-top:20px;">KEEP SHREDDING</button>
     </div>
 </div>
 
 <audio id="jingle" src="https://www.myinstants.com/media/sounds/secret-found.mp3"></audio>
 
 <script>
-let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null;
+let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 const RPC_URL = "https://solana-rpc.publicnode.com";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
@@ -401,12 +491,18 @@ async function fetchSkaterBalances() {
     }
 }
 
-// NEW: Persistence Logic
+async function fetchTreasuryBalance() {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
+    document.getElementById("treasury-sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
+}
+
+// PERSISTENCE LOGIC
 function checkPersistence() {
     document.querySelectorAll('.video-card').forEach(card => {
         if (localStorage.getItem(card.id) === 'true') {
             const iframe = card.querySelector('iframe');
-            if (iframe && iframe.src === "" || iframe.src === window.location.href) {
+            if (iframe && (iframe.src === "" || iframe.src === window.location.href)) {
                 iframe.src = iframe.dataset.src;
             }
             card.classList.add('unlocked');
@@ -419,6 +515,7 @@ function navigateTo(page) {
   document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
   document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
   if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
+  if(page === 'donate') fetchTreasuryBalance();
 }
 
 document.addEventListener('click', (e) => {
@@ -426,52 +523,47 @@ document.addEventListener('click', (e) => {
         if(!publicKey) { alert("Connect Wallet First"); return; }
         currentSkaterTarget = e.target.dataset.address;
         activeVideoId = e.target.dataset.target;
-        document.getElementById("modal-skater-title").innerText = "Sponsoring Clip...";
         document.getElementById("sponsor-modal").style.display = "flex";
     }
 });
 
 function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
+function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
 function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
+function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
 function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
+function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
 
 async function sendSOL(amount, destination) {
   try {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const fromPubkey = new solanaWeb3.PublicKey(publicKey);
     const toPubkey = new solanaWeb3.PublicKey(destination);
-
-    const transaction = new solanaWeb3.Transaction().add(
-      solanaWeb3.SystemProgram.transfer({
-        fromPubkey, toPubkey, lamports: amount * solanaWeb3.LAMPORTS_PER_SOL,
-      })
-    );
-
+    const transaction = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey, toPubkey, lamports: amount * solanaWeb3.LAMPORTS_PER_SOL }));
     const { blockhash } = await connection.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = fromPubkey;
-
+    transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
     const signed = await provider.signTransaction(transaction);
     await connection.sendRawTransaction(signed.serialize());
 
-    // ACTION: Unlock UI & Save to Browser Storage
     if (activeVideoId) {
-        localStorage.setItem(activeVideoId, 'true'); // PERSISTENCE KEY
+        localStorage.setItem(activeVideoId, 'true');
         const card = document.getElementById(activeVideoId);
-        const iframe = card.querySelector('iframe');
-        iframe.src = iframe.dataset.src; 
+        card.querySelector('iframe').src = card.querySelector('iframe').dataset.src;
         card.classList.add('unlocked');
     }
 
-    closeModal();
+    closeModal(); closeTreasuryModal();
     document.getElementById('jingle').play();
     document.getElementById("success-modal").style.display = "flex";
+    fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
   } catch (err) { console.log("Failed"); }
 }
 
+function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
+
 window.onload = async () => {
     await getSolPrice();
-    checkPersistence(); // Check storage immediately
+    checkPersistence();
     const p = getProvider();
     if (p?.isPhantom) {
         try { const resp = await p.connect({ onlyIfTrusted: true }); publicKey = resp.publicKey.toString(); provider = p; updateWalletUI(); fetchBalance(); } catch (e) {}
