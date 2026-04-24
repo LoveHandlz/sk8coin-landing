@@ -435,12 +435,16 @@ footer {
 
 <div id="sponsor-modal" class="modal-overlay">
   <div class="modal-content">
-      <h3 style="color:var(--accent-gold); margin-bottom: 15px;">Treasury Donation</h3>
-      <button class="tier-btn" onclick="sendDonation(0.01)">FLOW DONATION (0.01 SOL)</button>
-      <button class="tier-btn" onclick="sendDonation(0.05)">AMATEUR DONATION (0.05 SOL)</button>
-      <button class="tier-btn" onclick="sendDonation(0.1)">PRO DONATION (0.1 SOL)</button>
-      <button onclick="closeTreasuryModal()" style="background:transparent; color:#888; border:none; cursor:pointer; margin-top: 10px;">Back</button>
+    <h3 id="modal-skater-title" style="color:var(--accent-gold); margin-bottom: 15px;">Sponsor Clip</h3>
+    <button onclick="selectAmount(0.01)" class="tier-btn">FLOW SPONSOR (0.01 SOL)</button>
+    <button onclick="selectAmount(0.05)" class="tier-btn">AMATEUR SPONSOR (0.05 SOL)</button>
+    <button onclick="selectAmount(0.1)" class="tier-btn">PRO SPONSOR (0.1 SOL)</button>
+    
+    <div style="margin-top: 15px;">
+        <button onclick="closeModal()" style="background:transparent; color:#888; border:none; cursor:pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">[ Close ]</button>
     </div>
+  </div>
+</div>
 </div>
 
 <div id="success-modal" class="modal-overlay">
