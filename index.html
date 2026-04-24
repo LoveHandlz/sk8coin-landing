@@ -33,7 +33,7 @@ body{
   color:var(--text-primary);
   font-family:'Orbitron',sans-serif;
   line-height: 1.6;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
 }
 
 header{
@@ -53,6 +53,8 @@ header{
   justify-content:space-between;
   align-items:center;
   padding:0 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .logo{height:40px;}
@@ -72,6 +74,7 @@ nav a:hover{color:var(--accent-gold);}
   color: #000;
   font-size: 0.7rem;
   transition: 0.3s;
+  white-space: nowrap;
 }
 
 #sol-balance {
@@ -93,10 +96,10 @@ main {
   padding-bottom: 60px;
 }
 
-/* --- HERO --- */
+/* --- HOME HERO & STATS --- */
 .hero { text-align: center; margin-bottom: 2.5rem; }
 .hero h1 { 
-  font-size: clamp(2.5rem, 8vw, 5rem); /* Responsive H1 */
+  font-size: clamp(2.5rem, 10vw, 5rem); 
   background: linear-gradient(to bottom, #fff, var(--accent-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -112,32 +115,37 @@ main {
   margin-top: 1.5rem;
   flex-wrap: wrap;
 }
-.stat { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; }
+.stat { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
 .stat-value { display: block; font-size: 1.5rem; color: var(--accent-gold); font-weight: 900; }
 
-/* --- MENU GRID - FIXED SCALING --- */
+/* --- MENU GRID --- */
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
 }
-
 .menu-item {
   background: var(--bg-panel);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.5rem;
   cursor: pointer;
   transition: 0.3s;
 }
+.menu-item:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-5px);
+}
+.menu-icon { font-size: 2rem; margin-bottom: 1rem; }
+.menu-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--accent-cyan); }
+.menu-desc { font-size: 0.8rem; color: var(--text-secondary); }
 
-/* --- VIDEO GRID - FIXED SCALING --- */
+/* --- VIDEO GRID --- */
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
 }
-
 .video-card {
   background: var(--bg-panel);
   border: 1px solid var(--card-border);
@@ -145,16 +153,15 @@ main {
   overflow: hidden;
   transition: 0.3s;
 }
-
 .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
 .video-wrapper iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:none; }
-.card-info { padding: 0.8rem; }
-.card-title { font-size: 0.75rem; font-weight: bold; margin-bottom: 0.5rem; height: 35px; overflow: hidden; }
+.card-info { padding: 1rem; }
+.card-title { font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem; height: 35px; overflow: hidden; }
 
 .skater-wallet-bal {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   color: var(--accent-cyan);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
   font-weight: bold;
 }
 
@@ -162,48 +169,13 @@ main {
   background: var(--accent-gold);
   color: #000;
   border: none;
-  padding: 8px 10px;
+  padding: 10px;
   border-radius: 4px;
   font-family: 'Orbitron';
   font-weight: 900;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   cursor: pointer;
   width: 100%;
-}
-
-/* --- TREASURY PANEL --- */
-.treasury-card {
-  background:var(--bg-panel); 
-  max-width:500px; 
-  margin:auto; 
-  padding:1.5rem; 
-  border-radius:20px; 
-  border:1px solid var(--accent-gold); 
-  text-align: center;
-}
-
-/* --- MEDIA QUERIES FOR MOBILE --- */
-@media (max-width: 1100px) {
-  .video-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (max-width: 850px) {
-  .video-grid { grid-template-columns: repeat(2, 1fr); }
-  .menu-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-}
-
-@media (max-width: 600px) {
-  .header-inner { flex-direction: column; gap: 10px; }
-  header { position: absolute; }
-  main { padding-top: 140px; }
-  .logo { height: 35px; }
-  nav ul { gap: 0.8rem; }
-  .video-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
-  .card-info { padding: 0.5rem; }
-  .card-title { font-size: 0.65rem; height: 30px; }
-  .menu-item { padding: 1.2rem; }
-  .menu-grid { grid-template-columns: 1fr; }
-  .stat-value { font-size: 1.2rem; }
 }
 
 /* --- MODALS --- */
@@ -213,7 +185,16 @@ main {
   padding: 15px;
 }
 .modal-content {
-  background:var(--bg-panel); padding:1.5rem; border-radius:20px; border:1px solid var(--accent-gold); width:100%; max-width:400px; text-align: center;
+  background:var(--bg-panel); padding:1.5rem; border-radius:20px; border:1px solid var(--accent-gold); width:100%; max-width:450px; text-align: center; position: relative;
+}
+
+/* --- MOBILE SPECIFIC FIXES --- */
+@media (max-width: 600px) {
+  header { padding: 0.5rem 0; }
+  .header-inner { justify-content: center; }
+  main { padding-top: 140px; }
+  .video-grid { grid-template-columns: 1fr; }
+  .menu-grid { grid-template-columns: 1fr; }
 }
 
 </style>
@@ -231,7 +212,7 @@ main {
       </ul>
     </nav>
     <div id="wallet-ui" style="display: flex; align-items: center; gap: 8px;">
-        <span id="sol-balance" style="display: none;">0.0000 SOL</span>
+        <span id="sol-balance" style="display: none;">0.00 SOL</span>
         <button id="connect-wallet-btn" class="wallet-btn" onclick="handleWalletAction()">CONNECT</button>
     </div>
   </div>
@@ -254,27 +235,25 @@ main {
 
     <div class="menu-grid">
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛠️</div>
-        <div style="font-weight: 900; color: var(--accent-cyan);">BUILD & MINT</div>
-        <div style="font-size: 0.75rem; color: var(--text-secondary);">Craft boards from parts — mint legendary NFTs</div>
+        <div class="menu-icon">🛠️</div>
+        <div class="menu-title">BUILD & MINT</div>
+        <div class="menu-desc">Craft boards from parts — mint NFTs & earn rewards</div>
       </div>
       <div class="menu-item" onclick="navigateTo('video')">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📺</div>
-        <div style="font-weight: 900; color: var(--accent-cyan);">SK8 VIDEOS</div>
-        <div style="font-size: 0.75rem; color: var(--text-secondary);">Watch clips & sponsor skaters directly</div>
+        <div class="menu-icon">📺</div>
+        <div class="menu-title">VIDEOS</div>
+        <div class="menu-desc">Watch clips & sponsor skaters directly on-chain.</div>
       </div>
       <div class="menu-item" onclick="navigateTo('donate')">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-gold);">💸</div>
-        <div style="font-weight: 900; color: var(--accent-gold);">TREASURY</div>
-        <div style="font-size: 0.75rem; color: var(--text-secondary);">Support the movement & fund real skaters</div>
+        <div class="menu-icon" style="color: var(--accent-gold);">💸</div>
+        <div class="menu-title" style="color: var(--accent-gold);">TREASURY</div>
+        <div class="menu-desc">Fuel real skaters & fund the revolution.</div>
       </div>
     </div>
   </div>
 
   <div id="video-content" style="display:none;">
-    <div class="hero">
-        <h1 style="font-size:2.5rem;">SK8 VIDEOS</h1>
-    </div>
+    <div class="hero"><h1 style="font-size:2.5rem;">SK8 VIDEOS</h1></div>
     <div class="video-grid">
       <div class="video-card">
         <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/On2BmcreKTM"></iframe></div>
@@ -297,10 +276,10 @@ main {
 
   <div id="donate-content" style="display:none;">
     <div class="hero"><h1>TREASURY</h1></div>
-    <div class="treasury-card">
-      <p style="margin-bottom: 5px; font-size: 0.7rem;">CURRENT FUNDS</p>
-      <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2rem; margin-bottom: 15px;">0.0000 SOL</h2>
-      <button onclick="openTreasuryModal()" style="width:100%; padding:15px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:50px; cursor:pointer; font-family: 'Orbitron'; font-size: 0.8rem;">CONTRIBUTE</button>
+    <div style="background:var(--bg-panel); max-width:500px; margin:auto; padding:2rem; border-radius:20px; border:1px solid var(--accent-gold); text-align: center;">
+      <p style="margin-bottom: 5px; font-size: 0.7rem; text-transform: uppercase;">Current Funds</p>
+      <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2rem; margin-bottom: 20px;">0.0000 SOL</h2>
+      <button onclick="openTreasuryModal()" style="width:100%; padding:15px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:50px; cursor:pointer; font-family: 'Orbitron';">CONTRIBUTE</button>
     </div>
   </div>
 
@@ -308,9 +287,9 @@ main {
 
 <div id="treasury-modal" class="modal-overlay">
     <div class="modal-content">
-      <h3 style="color:var(--accent-gold); margin-bottom: 15px;">Donate</h3>
-      <button onclick="sendDonation(0.01)" style="width:100%; padding:10px; margin-bottom:8px; background:none; border:1px solid var(--accent-gold); color:var(--accent-gold); font-family:'Orbitron';">0.01 SOL</button>
-      <button onclick="sendDonation(0.05)" style="width:100%; padding:10px; margin-bottom:15px; background:none; border:1px solid var(--accent-gold); color:var(--accent-gold); font-family:'Orbitron';">0.05 SOL</button>
+      <h3 style="color:var(--accent-gold); margin-bottom: 15px;">Treasury Donation</h3>
+      <button onclick="sendDonation(0.01)" style="width:100%; padding:10px; margin-bottom:10px; background:none; border:1px solid var(--accent-gold); color:var(--accent-gold); font-family:'Orbitron';">0.01 SOL</button>
+      <button onclick="sendDonation(0.05)" style="width:100%; padding:10px; margin-bottom:10px; background:none; border:1px solid var(--accent-gold); color:var(--accent-gold); font-family:'Orbitron';">0.05 SOL</button>
       <button onclick="closeTreasuryModal()" style="color:#888; border:none; background:none; cursor:pointer;">Close</button>
     </div>
 </div>
@@ -328,7 +307,7 @@ function getProvider() {
 
 async function handleWalletAction() {
     if (publicKey) {
-        if (confirm("Disconnect Wallet?")) {
+        if (confirm("Disconnect?")) {
             await provider.disconnect();
             publicKey = null;
             updateWalletUI();
@@ -340,7 +319,7 @@ async function handleWalletAction() {
 
 async function connectWallet() {
   provider = getProvider();
-  if (!provider) { alert("Please Install Phantom Wallet Extension"); return; }
+  if (!provider) { alert("Install Phantom Wallet"); return; }
   try {
     const resp = await provider.connect();
     publicKey = resp.publicKey.toString();
@@ -353,7 +332,7 @@ function updateWalletUI() {
     const btn = document.getElementById("connect-wallet-btn");
     const balEl = document.getElementById("sol-balance");
     if (publicKey) {
-        btn.innerText = publicKey.slice(0,4)+"..."+publicKey.slice(-2);
+        btn.innerText = publicKey.slice(0,4)+"..."+publicKey.slice(-4);
         balEl.style.display = "inline";
     } else {
         btn.innerText = "CONNECT";
@@ -367,7 +346,7 @@ async function fetchBalance() {
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
         document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
-    } catch (e) { console.error(e); }
+    } catch (e) { }
 }
 
 async function fetchTreasuryBalance() {
@@ -399,12 +378,12 @@ function navigateTo(page) {
 }
 
 function openTreasuryModal() {
-  if(!publicKey) { alert("Connect Wallet First"); return; }
-  document.getElementById("treasury-modal").style.display = "flex";
+    if(!publicKey) { alert("Connect Wallet First"); return; }
+    document.getElementById("treasury-modal").style.display = "flex";
 }
 function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
 
-async function sendDonation(amount) {
+async function sendDonation(amt) {
   try {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const fromPubkey = new solanaWeb3.PublicKey(publicKey);
@@ -414,7 +393,7 @@ async function sendDonation(amount) {
       solanaWeb3.SystemProgram.transfer({
         fromPubkey,
         toPubkey,
-        lamports: amount * solanaWeb3.LAMPORTS_PER_SOL,
+        lamports: amt * solanaWeb3.LAMPORTS_PER_SOL,
       })
     );
 
@@ -424,12 +403,10 @@ async function sendDonation(amount) {
 
     const signed = await provider.signTransaction(transaction);
     await connection.sendRawTransaction(signed.serialize());
-    alert("Donation Sent!");
+    alert("Sent!");
     closeTreasuryModal();
     fetchTreasuryBalance();
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { }
 }
 
 window.addEventListener('load', async () => {
