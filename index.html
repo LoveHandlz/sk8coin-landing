@@ -454,52 +454,136 @@ footer {
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
 <script>
-let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
-const RPC_URL = "https://solana-rpc.publicnode.com";
+/* ============================================================
+   1. CONFIG & GLOBAL STATE
+   ============================================================ */
+let publicKey = null;
+let provider = null;
+let solPrice = 0;
+let activeVideoId = null;
+let currentSkaterTarget = "";
+
+// Using a more robust public RPC endpoint
+const RPC_URL = "https://api.mainnet-beta.solana.com";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
+const SOL_MINT = "So11111111111111111111111111111111111111112";
+
+/* ============================================================
+   2. JUPITER PRICE & RPC DATA FETCHING (FIXED)
+   ============================================================ */
 
 async function getSolPrice() {
-    try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); const d = await r.json(); solPrice = d.solana.usd; } catch (e) {}
+    try { 
+        // Jupiter v3 Price API
+        const r = await fetch(`https://api.jup.ag/price/v3?ids=${SOL_MINT}`); 
+        const d = await r.json(); 
+        
+        if (d.data && d.data[SOL_MINT]) {
+            solPrice = parseFloat(d.data[SOL_MINT].price);
+            console.log("Jupiter Price Updated:", solPrice);
+        }
+    } catch (e) { 
+        console.error("Jupiter API Error, using fallback.");
+        if(solPrice === 0) solPrice = 145.00; // Realistic fallback
+    }
 }
+
+async function fetchBalance() {
+    if (!publicKey) return;
+    try {
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+        document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
+    } catch (e) { console.warn("Wallet balance throttle"); }
+}
+
+async function fetchSkaterBalances() {
+    // 1. Ensure we have a price first
+    if (solPrice === 0) await getSolPrice();
+    
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const els = document.querySelectorAll('.skater-wallet-bal');
+    
+    // 2. FIX: Iterate sequentially with a delay (300ms) to avoid 429 Rate Limits
+    for (const el of els) {
+        const address = el.dataset.address;
+        if (!address) continue;
+
+        try {
+            // Small pause so the RPC doesn't see us as a bot/spam
+            await new Promise(r => setTimeout(r, 300)); 
+            
+            const pubKey = new solanaWeb3.PublicKey(address);
+            const bal = await connection.getBalance(pubKey);
+            const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
+            
+            const usdValue = (sol * solPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${usdValue}</span>`;
+        } catch(e) { 
+            console.error("RPC Error on address:", address);
+            el.innerText = "Blessings: Refreshing..."; 
+        }
+    }
+}
+
+async function fetchTreasuryBalance() {
+    try {
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
+        const sol = balance / solanaWeb3.LAMPORTS_PER_SOL;
+        document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
+    } catch (e) { console.log("Treasury RPC throttled"); }
+}
+
+/* ============================================================
+   3. WALLET & UI LOGIC
+   ============================================================ */
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
 
 async function handleWalletAction() {
-    if (publicKey) { if (confirm("Disconnect?")) { await provider.disconnect(); publicKey = null; updateWalletUI(); } } 
-    else { provider = getProvider(); if (!provider) { alert("Install Phantom!"); return; } const resp = await provider.connect(); publicKey = resp.publicKey.toString(); updateWalletUI(); fetchBalance(); }
+    if (publicKey) { 
+        if (confirm("Disconnect?")) { 
+            await provider.disconnect(); 
+            publicKey = null; 
+            updateWalletUI(); 
+        } 
+    } else { 
+        provider = getProvider(); 
+        if (!provider) { alert("Install Phantom!"); return; } 
+        try {
+            const resp = await provider.connect(); 
+            publicKey = resp.publicKey.toString(); 
+            updateWalletUI(); 
+            fetchBalance(); 
+        } catch(e) { console.error("Connection cancelled"); }
+    }
 }
 
 function updateWalletUI() {
     const btn = document.getElementById("connect-wallet-btn");
     const balEl = document.getElementById("sol-balance");
-    if (publicKey) { btn.innerText = publicKey.slice(0,4)+"..."+publicKey.slice(-4); balEl.style.display = "inline"; } 
-    else { btn.innerText = "CONNECT WALLET"; balEl.style.display = "none"; }
-}
-
-async function fetchBalance() {
-    if (!publicKey) return;
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-    document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
-}
-
-async function fetchSkaterBalances() {
-    if (solPrice === 0) await getSolPrice();
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const els = document.querySelectorAll('.skater-wallet-bal');
-    for (let el of els) {
-        try {
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
-            const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
-            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
-        } catch(e) { el.innerText = "Check wallet..."; }
+    if (publicKey) { 
+        btn.innerText = publicKey.slice(0,4)+"..."+publicKey.slice(-4); 
+        balEl.style.display = "inline"; 
+    } else { 
+        btn.innerText = "CONNECT WALLET"; 
+        balEl.style.display = "none"; 
     }
 }
 
-async function fetchTreasuryBalance() {
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
-    document.getElementById("treasury-sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
+/* ============================================================
+   4. NAVIGATION & PERSISTENCE
+   ============================================================ */
+
+function navigateTo(page) {
+    document.getElementById("home-content").style.display = (page === 'home' ? 'block' : 'none');
+    document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
+    document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
+    
+    if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
+    if(page === 'donate') fetchTreasuryBalance();
 }
 
 function checkPersistence() {
@@ -514,48 +598,34 @@ function checkPersistence() {
     });
 }
 
-function navigateTo(page) {
-  document.getElementById("home-content").style.display = (page === 'home' ? 'block' : 'none');
-  document.getElementById("video-content").style.display = (page === 'video' ? 'block' : 'none');
-  document.getElementById("donate-content").style.display = (page === 'donate' ? 'block' : 'none');
-  if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
-  if(page === 'donate') fetchTreasuryBalance();
-}
-
-document.addEventListener('click', (e) => {
-    if (e.target && e.target.classList.contains('donate-btn')) {
-        if(!publicKey) { alert("Connect Wallet First"); return; }
-        currentSkaterTarget = e.target.dataset.address;
-        activeVideoId = e.target.dataset.target;
-        document.getElementById("sponsor-modal").style.display = "flex";
-    }
-});
-
-function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
-function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
-function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
-function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
-function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
-function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+/* ============================================================
+   5. TRANSACTION ENGINE
+   ============================================================ */
 
 async function sendSOL(amount, destination) {
   try {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const fromPubkey = new solanaWeb3.PublicKey(publicKey);
     const toPubkey = new solanaWeb3.PublicKey(destination);
-    const transaction = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey, toPubkey, lamports: amount * solanaWeb3.LAMPORTS_PER_SOL }));
+    
+    const transaction = new solanaWeb3.Transaction().add(
+        solanaWeb3.SystemProgram.transfer({ 
+            fromPubkey, 
+            toPubkey, 
+            lamports: amount * solanaWeb3.LAMPORTS_PER_SOL 
+        })
+    );
+
     const { blockhash } = await connection.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
+    transaction.recentBlockhash = blockhash; 
+    transaction.feePayer = fromPubkey;
+
     const signed = await provider.signTransaction(transaction);
     await connection.sendRawTransaction(signed.serialize());
 
-    // Trigger Audio immediately
-    document.getElementById('jingle').play().catch(e => console.log("Audio trigger failed"));
-
-    // Close inputs
+    document.getElementById('jingle').play().catch(e => {});
     closeModal(); closeTreasuryModal();
 
-    // Wait 3 seconds for confirm, then unlock and show confetti
     setTimeout(() => {
         if (activeVideoId) {
             localStorage.setItem(activeVideoId, 'true');
@@ -565,11 +635,23 @@ async function sendSOL(amount, destination) {
         }
         document.getElementById("success-modal").style.display = "flex";
         createConfetti();
-        fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
+        fetchBalance(); 
+        if (activeVideoId) fetchSkaterBalances();
     }, 3000);
 
-  } catch (err) { console.log("Failed or Cancelled"); }
+  } catch (err) { alert("Transaction failed or cancelled."); }
 }
+
+/* ============================================================
+   6. MODALS & UTILITIES
+   ============================================================ */
+
+function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
+function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
+function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
+function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
+function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
+function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
 
 function createConfetti() {
   for (let i = 0; i < 50; i++) {
@@ -585,12 +667,23 @@ function createConfetti() {
 
 function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
 
+/* ============================================================
+   7. INITIALIZATION
+   ============================================================ */
+
 window.onload = async () => {
     await getSolPrice();
     checkPersistence();
+
     const p = getProvider();
     if (p?.isPhantom) {
-        try { const resp = await p.connect({ onlyIfTrusted: true }); publicKey = resp.publicKey.toString(); provider = p; updateWalletUI(); fetchBalance(); } catch (e) {}
+        try { 
+            const resp = await p.connect({ onlyIfTrusted: true }); 
+            publicKey = resp.publicKey.toString(); 
+            provider = p; 
+            updateWalletUI(); 
+            fetchBalance(); 
+        } catch (e) { console.log("Manual login required"); }
     }
 };
 </script>
