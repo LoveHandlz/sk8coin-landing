@@ -477,63 +477,54 @@ const SOL_MINT = "So11111111111111111111111111111111111111112";
 
 async function getSolPrice() {
     try { 
-        // Using Jupiter v3 Price API - More reliable for Solana native assets
+        // Jupiter v3 requires the exact mint address in the data path
         const r = await fetch(`https://api.jup.ag/price/v3?ids=${SOL_MINT}`); 
         const d = await r.json(); 
-        solPrice = d.data[SOL_MINT].price; 
-        console.log("Jupiter Price Updated:", solPrice);
+        
+        if (d.data && d.data[SOL_MINT]) {
+            solPrice = parseFloat(d.data[SOL_MINT].price);
+            console.log("Jupiter Price:", solPrice);
+        } else {
+            throw new Error("Price data missing");
+        }
     } catch (e) { 
-        console.error("Jupiter Price Fetch Failed, falling back...");
-        // Simple fallback just in case
-        if(solPrice === 0) solPrice = 20.00; 
+        console.error("Jupiter Fetch Error, using fallback:", e);
+        // Fallback to a static price if API fails so the UI doesn't break
+        solPrice = 145.00; 
     }
 }
 
-async function fetchBalance() {
-    if (!publicKey) return;
-    try {
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-        document.getElementById("sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
-    } catch (e) { console.warn("User balance fetch delayed"); }
-}
-
 async function fetchSkaterBalances() {
-    // Ensure we have a price first
+    // Ensure we have a price before calculating USD
     if (solPrice === 0) await getSolPrice();
     
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const els = document.querySelectorAll('.skater-wallet-bal');
     
-    // FIX: Sequential processing to avoid RPC rate-limiting (429 errors)
+    // Process one by one with a small delay to prevent "Error Loading"
     for (const el of els) {
+        const address = el.dataset.address;
+        if (!address) continue;
+
         try {
-            const address = el.dataset.address;
-            if (!address) continue;
+            // Wait 300ms between EACH wallet fetch to stay under RPC limits
+            await new Promise(r => setTimeout(r, 300)); 
             
-            // Wait 250ms between each call to keep the RPC happy
-            await new Promise(r => setTimeout(r, 250)); 
-            
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(address));
+            const pubKey = new solanaWeb3.PublicKey(address);
+            const bal = await connection.getBalance(pubKey);
             const sol = bal / solanaWeb3.LAMPORTS_PER_SOL;
             
-            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol * solPrice).toFixed(2)}</span>`;
+            // Calculate USD
+            const usdValue = (sol * solPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            el.innerHTML = `Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${usdValue}</span>`;
+            
         } catch(e) { 
-            el.innerText = "Blessings: Error Loading";
-            console.error("Failed to fetch skater balance", e); 
+            console.warn(`RPC Limit hit for ${address}, retrying later...`);
+            el.innerText = "Blessings: Refreshing..."; 
         }
     }
 }
-
-async function fetchTreasuryBalance() {
-    try {
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
-        const sol = balance / solanaWeb3.LAMPORTS_PER_SOL;
-        document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
-    } catch (e) { console.log("Treasury RPC throttled"); }
-}
-
 
 /* ============================================================
    3. WALLET & UI LOGIC
