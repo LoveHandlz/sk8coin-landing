@@ -147,10 +147,9 @@ main {
   position: relative;
 }
 .video-card:hover { border-color: var(--accent-gold); transform: scale(1.02); }
-.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000;}
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
 .video-wrapper iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:none; z-index: 1;}
 
-/* LOCK OVERLAY */
 .video-mask {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(45deg, rgba(10,19,47,0.98), rgba(15,26,71,0.95));
@@ -240,9 +239,13 @@ footer {
 }
 
 .tier-btn {
-  width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+  width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
 }
 .tier-btn:hover { background: var(--accent-gold); color: #000; }
+
+.custom-donate-row { margin-top: 15px; }
+.custom-input { width:100%; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius: 8px; font-family: 'Orbitron'; margin-bottom: 10px;}
+.confirm-btn { width:100%; padding:12px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:8px; cursor:pointer; font-family: 'Orbitron'; text-transform: uppercase;}
 
 .confetti { position: absolute; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 100; }
 @keyframes fall { to { transform: translateY(450px) rotate(360deg); opacity: 0; } }
@@ -287,44 +290,28 @@ footer {
 
     <div class="menu-grid">
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/blends', '_blank')">
-        <div class="menu-icon">🛠️</div>
-        <div class="menu-title">BUILD & MINT</div>
-        <div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
+        <div class="menu-icon">🛠️</div><div class="menu-title">BUILD & MINT</div><div class="menu-desc">Craft complete boards from parts — mint legendary NFTs & earn rewards</div>
       </div>
       <div class="menu-item" onclick="window.open('https://neftyblocks.com/collection/skatecoinwax/drops', '_blank')">
-        <div class="menu-icon">🛒</div>
-        <div class="menu-title">PARTS MARKET</div>
-        <div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
+        <div class="menu-icon">🛒</div><div class="menu-title">PARTS MARKET</div><div class="menu-desc">Buy, sell & trade rare decks, wheels, trucks, bearings</div>
       </div>
       <div class="menu-item" onclick="alert('Entering Skate Shop...')">
-        <div class="menu-icon">🛹</div>
-        <div class="menu-title">SKATE SHOP</div>
-        <div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
+        <div class="menu-icon">🛹</div><div class="menu-title">SKATE SHOP</div><div class="menu-desc">Real merch & gear — pay with $SKATE for exclusive perks</div>
       </div>
       <div class="menu-item" onclick="navigateTo('video')">
-        <div class="menu-icon">📺</div>
-        <div class="menu-title">VIDEOS</div>
-        <div class="menu-desc">Watch videos, sponsor skaters by supporting them directly on-chain.</div>
+        <div class="menu-icon">📺</div><div class="menu-title">VIDEOS</div><div class="menu-desc">Watch videos, sponsor skaters by supporting them directly on-chain.</div>
       </div>
       <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
-        <div class="menu-icon">📖</div>
-        <div class="menu-title">METAZINE</div>
-        <div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
+        <div class="menu-icon">📖</div><div class="menu-title">METAZINE</div><div class="menu-desc">Exclusive NFT-gated skate stories, interviews & creator drops</div>
       </div>
       <div class="menu-item" onclick="window.open('https://discord.gg/hgWMGpRTaK', '_blank')">
-        <div class="menu-icon"><i class="fab fa-discord" style="color:#5865f2;"></i></div>
-        <div class="menu-title">DISCORD</div>
-        <div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
+        <div class="menu-icon"><i class="fab fa-discord" style="color:#5865f2;"></i></div><div class="menu-title">DISCORD</div><div class="menu-desc">Wallet-linked roles, alerts, battles & giveaways</div>
       </div>
       <div class="menu-item" onclick="window.open('https://fliphtml5.com/bookcase/fxvce/', '_blank')">
-        <div class="menu-icon" style="color: var(--accent-gold);">📜</div>
-        <div class="menu-title" style="color: var(--accent-gold);">WHITE PAPER</div>
-        <div class="menu-desc">Project Overview — Vision, Tokenomics, Roadmap & Skate2Earn mechanics</div>
+        <div class="menu-icon" style="color: var(--accent-gold);">📜</div><div class="menu-title" style="color: var(--accent-gold);">WHITE PAPER</div><div class="menu-desc">Project Overview — Vision, Tokenomics, Roadmap & Skate2Earn mechanics</div>
       </div>
       <div class="menu-item" onclick="navigateTo('donate')">
-        <div class="menu-icon" style="color: var(--accent-gold);">💸</div>
-        <div class="menu-title" style="color: var(--accent-gold);">SUPPORT THE MOVEMENT</div>
-        <div class="menu-desc">Fuel real skaters, fund drops & keep the revolution rolling</div>
+        <div class="menu-icon" style="color: var(--accent-gold);">💸</div><div class="menu-title" style="color: var(--accent-gold);">SUPPORT THE MOVEMENT</div><div class="menu-desc">Fuel real skaters, fund drops & keep the revolution rolling</div>
       </div>
     </div>
   </div>
@@ -399,45 +386,43 @@ footer {
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-about">
-      <h3>MISSION CONTROL</h3>
-      <p>Skate2earn is a new economic model for skateboarders all over the world using a decentralized peer-to-peer sponsorship model where anyone can help a skater progress through micro donations.</p>
-    </div>
+    <div class="footer-about"><h3>MISSION CONTROL</h3><p>Skate2earn is a decentralized economic model for skateboarders powered by peer-to-peer sponsorship.</p></div>
     <div class="footer-widgets">
       <h3>CONNECT</h3>
-      <div class="footer-socials">
-        <a href="#"><i class="fab fa-discord"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-      </div>
+      <div class="footer-socials"><a href="#"><i class="fab fa-discord"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div>
     </div>
     <div class="footer-logos">
       <h3>POWERED BY</h3>
-      <div class="logo-stack">
-        <img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="mini-logo" title="Solana">
-        <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" class="mini-logo" title="SK8COIN">
-      </div>
+      <div class="logo-stack"><img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="mini-logo"><img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" class="mini-logo"></div>
     </div>
   </div>
-  <div style="text-align: center; margin-top: 3rem; font-size: 0.7rem; color: #444; letter-spacing: 1px;">&copy; 2026 SKATE2EARN PROTOCOL.</div>
 </footer>
 
 <div id="treasury-modal" class="modal-overlay">
     <div class="modal-content">
       <h3 style="color:var(--accent-gold); margin-bottom: 15px;">Treasury Donation</h3>
-      <button class="tier-btn" onclick="sendDonation(0.01)">0.01 SOL</button>
-      <button class="tier-btn" onclick="sendDonation(0.05)">0.05 SOL</button>
-      <button onclick="closeTreasuryModal()" style="background:transparent; color:#888; border:none; cursor:pointer;">Back</button>
+      <button class="tier-btn" onclick="sendDonation(0.01)">Flow Donation (0.01 SOL)</button>
+      <button class="tier-btn" onclick="sendDonation(0.05)">Amateur Donation (0.05 SOL)</button>
+      <button class="tier-btn" onclick="sendDonation(0.1)">Pro Donation (0.1 SOL)</button>
+      <div class="custom-donate-row">
+        <input type="number" id="custom-treasury-amount" placeholder="Custom SOL" step="0.01" class="custom-input">
+        <button onclick="sendCustomTreasuryDonation()" class="confirm-btn">SEND CUSTOM</button>
+      </div>
+      <button onclick="closeTreasuryModal()" style="background:transparent; color:#888; border:none; cursor:pointer; margin-top:15px;">Back</button>
     </div>
 </div>
 
 <div id="sponsor-modal" class="modal-overlay">
   <div class="modal-content">
-    <h3 id="modal-skater-title" style="color:var(--accent-gold)">Sponsor Clip</h3>
-    <button onclick="selectAmount(0.01)" class="tier-btn">0.01 SOL</button>
-    <button onclick="selectAmount(0.05)" class="tier-btn">0.05 SOL</button>
-    <button onclick="closeModal()" style="background:transparent; color:#888; border:none; cursor:pointer;">Cancel</button>
+    <h3 id="modal-skater-title" style="color:var(--accent-gold); margin-bottom: 15px;">Sponsor Clip</h3>
+    <button class="tier-btn" onclick="selectAmount(0.01)">Flow Donation (0.01 SOL)</button>
+    <button class="tier-btn" onclick="selectAmount(0.05)">Amateur Donation (0.05 SOL)</button>
+    <button class="tier-btn" onclick="selectAmount(0.1)">Pro Donation (0.1 SOL)</button>
+    <div class="custom-donate-row">
+      <input type="number" id="custom-modal-amount" placeholder="Custom SOL" step="0.01" class="custom-input">
+      <button onclick="sendCustomModalAmount()" class="confirm-btn">CONFIRM</button>
+    </div>
+    <button onclick="closeModal()" style="background:transparent; color:#888; border:none; cursor:pointer; margin-top:15px;">Cancel</button>
   </div>
 </div>
 
@@ -497,14 +482,11 @@ async function fetchTreasuryBalance() {
     document.getElementById("treasury-sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
 }
 
-// PERSISTENCE LOGIC
 function checkPersistence() {
     document.querySelectorAll('.video-card').forEach(card => {
         if (localStorage.getItem(card.id) === 'true') {
             const iframe = card.querySelector('iframe');
-            if (iframe && (iframe.src === "" || iframe.src === window.location.href)) {
-                iframe.src = iframe.dataset.src;
-            }
+            if (iframe && (iframe.src === "" || iframe.src === window.location.href)) { iframe.src = iframe.dataset.src; }
             card.classList.add('unlocked');
         }
     });
@@ -523,6 +505,7 @@ document.addEventListener('click', (e) => {
         if(!publicKey) { alert("Connect Wallet First"); return; }
         currentSkaterTarget = e.target.dataset.address;
         activeVideoId = e.target.dataset.target;
+        document.getElementById("modal-skater-title").innerText = "Sponsoring: " + e.target.closest('.video-card').querySelector('.card-title').innerText;
         document.getElementById("sponsor-modal").style.display = "flex";
     }
 });
@@ -531,8 +514,17 @@ function closeModal() { document.getElementById("sponsor-modal").style.display =
 function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
 function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
 function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
+
 function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
 function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+function sendCustomModalAmount() {
+    const v = parseFloat(document.getElementById("custom-modal-amount").value);
+    if (v > 0) sendSOL(v, currentSkaterTarget);
+}
+function sendCustomTreasuryDonation() {
+    const v = parseFloat(document.getElementById("custom-treasury-amount").value);
+    if (v > 0) sendSOL(v, TREASURY_WALLET);
+}
 
 async function sendSOL(amount, destination) {
   try {
@@ -556,7 +548,7 @@ async function sendSOL(amount, destination) {
     document.getElementById('jingle').play();
     document.getElementById("success-modal").style.display = "flex";
     fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
-  } catch (err) { console.log("Failed"); }
+  } catch (err) { console.log("TX Failed"); }
 }
 
 function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
