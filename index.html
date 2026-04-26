@@ -486,7 +486,10 @@ footer {
     <div class="hero"><h1>COMMUNITY TREASURY</h1></div>
     <div style="background:var(--bg-panel); max-width:600px; margin:auto; padding:2rem; border-radius:20px; border:1px solid var(--accent-gold); text-align: center;">
       <p style="margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase;">Current Treasury Funds</p>
-      <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2.2rem; margin-bottom: 20px; word-break: break-all;">0.0000 SOL</h2>
+      
+      <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2.2rem; margin-bottom: 5px; word-break: break-all;">0.0000 SOL</h2>
+      <div id="treasury-usd-balance" style="color: var(--accent-green); font-size: 1.2rem; font-weight: 600; font-family: 'Inter', sans-serif; margin-bottom: 20px;">$0.00</div>
+      
       <div style="background:#000; padding:15px; border-radius:10px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
         <span id="treasury-addr-display">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
         <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold;">COPY</button>
@@ -595,10 +598,18 @@ async function fetchSkaterBalances() {
     }
 }
 
+/* UPDATED TREASURY FUNCTION TO CALCULATE USD */
 async function fetchTreasuryBalance() {
+    if (solPrice === 0) await getSolPrice(); // Make sure solPrice is fetched
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
-    document.getElementById("treasury-sol-balance").innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + " SOL";
+    const solValue = balance / solanaWeb3.LAMPORTS_PER_SOL;
+    
+    // Update SOL Text
+    document.getElementById("treasury-sol-balance").innerText = solValue.toFixed(4) + " SOL";
+    
+    // Update USD Text
+    document.getElementById("treasury-usd-balance").innerText = "$" + (solValue * solPrice).toFixed(2);
 }
 
 function checkPersistence() {
