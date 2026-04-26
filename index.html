@@ -121,6 +121,19 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
 .modal-content { background:var(--bg-panel); padding:2.5rem; border-radius:20px; border:1px solid var(--accent-gold); width:90%; max-width:450px; text-align: center; }
 .tier-btn { width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; text-transform: uppercase; font-weight: bold; }
+.tier-btn:hover { background: var(--accent-gold); color: #000; }
+
+/* CONFETTI LOGIC Restored from 4.1 */
+.confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 2000; }
+@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+@media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { 
+    .footer-inner { grid-template-columns: 1fr; gap: 3rem; text-align: center; } 
+    .footer-socials, .logo-stack { justify-content: center; }
+    .leaderboard-container { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) { .video-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 3rem; } }
 </style>
 </head>
 <body>
@@ -231,7 +244,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     <button onclick="selectAmount(0.1)" class="tier-btn" style="color:var(--gold-font)">PRO (0.1 SOL)</button>
     <button onclick="selectAmount(0.05)" class="tier-btn" style="color:var(--silver-font)">AMATEUR (0.05 SOL)</button>
     <button onclick="selectAmount(0.01)" class="tier-btn" style="color:var(--bronze-font)">FLOW (0.01 SOL)</button>
-    <button onclick="closeModal()">[ CLOSE ]</button>
+    <button onclick="closeModal()" style="background:transparent; color:#888; border:none; cursor:pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-top: 10px;">[ CLOSE ]</button>
   </div>
 </div>
 
@@ -240,9 +253,19 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     <h3 style="color:var(--accent-gold); margin-bottom:15px;">Treasury Support</h3>
     <button class="tier-btn" onclick="sendSOL(0.5, TREASURY_WALLET)">DIAMOND (0.5 SOL)</button>
     <button class="tier-btn" onclick="sendSOL(0.1, TREASURY_WALLET)">PRO (0.1 SOL)</button>
-    <button onclick="closeTreasuryModal()">[ CLOSE ]</button>
+    <button onclick="closeTreasuryModal()" style="background:transparent; color:#888; border:none; cursor:pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin-top: 10px;">[ CLOSE ]</button>
   </div>
 </div>
+
+<div id="success-modal" class="modal-overlay">
+    <div class="modal-content" id="success-box">
+      <h2 style="color:var(--accent-gold); font-family:'Bangers'; font-size: 3.5rem;">UNLOCKED!</h2>
+      <p style="margin-bottom: 20px; color: var(--text-secondary);">you just help power the revolution!</p>
+      <button onclick="closeSuccessModal()" class="wallet-btn" style="width:100%; margin-top:10px;">KEEP Skating</button>
+    </div>
+</div>
+
+<audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
 <script>
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
@@ -378,23 +401,72 @@ function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
 function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
 function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
 function openTreasuryModal() { document.getElementById("treasury-modal").style.display = "flex"; }
+function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
+
+function createConfetti() {
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = ['#ff2d55', '#ff9500', '#00f0ff', '#ffd700'][Math.floor(Math.random() * 4)];
+    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 5000);
+  }
+}
 
 async function sendSOL(amount, destination) {
   try {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+
+    // UI Processing Feedback
+    if(event && event.target && event.target.classList.contains('tier-btn')) {
+        event.target.innerText = "SENDING...";
+    }
+
     const transaction = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
         fromPubkey: new solanaWeb3.PublicKey(publicKey),
         toPubkey: new solanaWeb3.PublicKey(destination),
         lamports: amount * 1e9
     }));
+    
     const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = new solanaWeb3.PublicKey(publicKey);
+    
     const signed = await provider.signTransaction(transaction);
     await connection.sendRawTransaction(signed.serialize());
-    if(activeVideoId) { localStorage.setItem(activeVideoId, 'true'); checkPersistence(); }
-    closeModal(); closeTreasuryModal(); alert("Transaction Success!");
-  } catch (e) { alert("Error sending SOL"); }
+    
+    // Play Audio Jingle (from Codebase 4.1)
+    const jingle = document.getElementById('jingle');
+    jingle.currentTime = 0;
+    jingle.play().catch(e => console.log("Audio trigger failed/blocked"));
+
+    closeModal(); 
+    closeTreasuryModal();
+    
+    // Delayed Unlock, Modal, and Confetti (from Codebase 4.1)
+    setTimeout(() => {
+        if(activeVideoId) { 
+            localStorage.setItem(activeVideoId, 'true'); 
+            const card = document.getElementById(activeVideoId);
+            if(card) {
+                card.classList.add('unlocked');
+                const frame = card.querySelector('iframe');
+                if(!frame.src) frame.src = frame.dataset.src;
+            }
+        }
+        document.getElementById("success-modal").style.display = "flex";
+        createConfetti();
+        fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
+    }, 3000);
+
+  } catch (e) { 
+    alert("Error sending SOL"); 
+    if(event && event.target && event.target.classList.contains('tier-btn')) {
+        event.target.innerText = "TRY AGAIN";
+    }
+  }
 }
 
 function checkPersistence() {
