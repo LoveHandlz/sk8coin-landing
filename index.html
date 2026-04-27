@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn 6.7 (Apex Persistence Protocol)</title>
+  <title>SK8COIN | Skate2Earn 6.8 (Anti-Self-Dealing Protocol)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -397,9 +397,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
     main { padding-top: 90px; padding-left: 10px; padding-right: 10px;} 
     
-    /* SURGICAL OVERRIDE FOR HERO TEXT ON MOBILE (Bypasses inline styles) */
+    /* SURGICAL OVERRIDE FOR HERO TEXT ON MOBILE */
     .hero h1 { font-size: 2.1rem !important; margin-top: 0.5rem; }
-    /* Aggressive 20% drop specifically for The Boardroom to fit nicely */
     #leaderboard-content .hero h1 { font-size: 2.0rem !important; }
     
     .hero-subtext { font-size: 0.9rem; padding: 0 10px; margin-bottom: 1.5rem;}
@@ -431,7 +430,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 @media (max-width: 400px) {
     /* CLAMP FOR TINY SCREENS */
     .hero h1 { font-size: 1.7rem !important; }
-    #leaderboard-content .hero h1 { font-size: 1.5rem !important; } /* Extra tiny board clamp */
+    #leaderboard-content .hero h1 { font-size: 1.5rem !important; } 
     
     .logo { height: 28px; }
     .hamburger { font-size: 1.4rem; }
@@ -712,7 +711,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
                 <p style="font-size:0.6rem; opacity:0.6;">SKATER WALLET</p>
                 <p id="p-wallet" style="font-family:monospace; font-size:0.55rem; word-break:break-all; color: var(--text-secondary); margin-bottom: 10px;"></p>
                 <button id="edit-profile-btn" onclick="openEditModal()" class="wallet-btn" style="display:none; margin-bottom:10px; width:100%; background: #fff; color: #000; padding: 10px; font-size: 0.8rem;">⚙️ EDIT GEAR</button>
-                <button onclick="openSponsorshipModalFromProfile()" class="donate-btn">BLESS THIS SKATER</button>
+                <button id="profile-donate-btn" onclick="openSponsorshipModalFromProfile()" class="donate-btn">BLESS THIS SKATER</button>
             </div>
         </div>
         <div class="profile-main">
@@ -906,6 +905,17 @@ function toggleMenu() {
     document.getElementById('mobile-nav').classList.toggle('open');
 }
 
+/* UI ANTI-SELF-DEALING SCRUBBER */
+function updateDonateButtons() {
+    document.querySelectorAll('#video-content .donate-btn').forEach(btn => {
+        if (publicKey && btn.dataset.address === publicKey) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = '';
+        }
+    });
+}
+
 async function handleWalletAction() {
     if (publicKey) { 
         if (confirm("Disconnect Wallet?")) { 
@@ -971,6 +981,9 @@ function updateWalletUI() {
         balContainer.style.display = "none"; 
         skaterPanel.style.display = "none";
     }
+    
+    // Hide self-donation buttons on connection state change
+    updateDonateButtons();
 }
 
 async function fetchBalance() {
@@ -1106,7 +1119,7 @@ function navigateTo(page, wallet = null) {
   if(target) target.style.display = 'block';
   
   if(page === 'profile' && wallet) renderProfile(wallet);
-  if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
+  if(page === 'video') { fetchSkaterBalances(); checkPersistence(); updateDonateButtons(); }
   if(page === 'donate') fetchTreasuryBalance();
   if(page === 'leaderboard') refreshLeaderboardData();
   
@@ -1118,14 +1131,17 @@ async function renderProfile(wallet) {
     if(!skater) skater = { name: "UNKNOWN SHREDDER", rank: "FLOW", styles: ["Street"], pic: "https://i.pravatar.cc/400", bio: "Supporting the revolution." };
     
     const editBtn = document.getElementById('edit-profile-btn');
+    const profileDonateBtn = document.getElementById('profile-donate-btn');
     const profileHeader = document.getElementById('profile-header-text');
     
     if (publicKey && publicKey === wallet) {
         editBtn.style.display = 'block';
         profileHeader.innerText = "SKATER DASHBOARD: BIO & STYLE";
+        if(profileDonateBtn) profileDonateBtn.style.display = 'none'; // Lockout self-donating on profile
     } else {
         editBtn.style.display = 'none';
         profileHeader.innerText = "BIO & STYLE";
+        if(profileDonateBtn) profileDonateBtn.style.display = 'block'; // Show donate to others
     }
 
     document.getElementById('p-name').innerText = skater.name;
@@ -1229,8 +1245,15 @@ async function saveProfileWeb3() {
 }
 
 document.addEventListener('click', (e) => {
-  if (e.target && e.target.classList.contains('donate-btn')) {
+  if (e.target && e.target.classList.contains('donate-btn') && e.target.id !== 'profile-donate-btn') {
       if(!publicKey) { alert("Connect Wallet First"); return; }
+      
+      // HARD VALIDATION: Prevents devtools bypass
+      if(e.target.dataset.address === publicKey) { 
+          alert("Anti-Self-Dealing Protocol Active: You cannot sponsor your own clips."); 
+          return; 
+      }
+      
       if(e.target.dataset.address) { currentSkaterTarget = e.target.dataset.address; }
       activeVideoId = e.target.dataset.target || null;
       document.getElementById("sponsor-modal").style.display = "flex";
@@ -1240,6 +1263,13 @@ document.addEventListener('click', (e) => {
 function openSponsorshipModalFromProfile() {
     if(!publicKey) { alert("Connect Wallet First"); return; }
     currentSkaterTarget = document.getElementById('p-wallet').innerText;
+    
+    // HARD VALIDATION: Prevents devtools bypass on profile
+    if (currentSkaterTarget === publicKey) { 
+        alert("Anti-Self-Dealing Protocol Active: You cannot sponsor yourself."); 
+        return; 
+    }
+    
     activeVideoId = null; 
     document.getElementById('sponsor-modal').style.display = 'flex';
 }
@@ -1272,12 +1302,8 @@ async function sendSOL(amount, destination) {
     const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash; transaction.feePayer = fromPubkey;
     
-    // SIGN TRANSACTION IN WALLET
     const signed = await provider.signTransaction(transaction);
     
-    // ATTEMPT TO SEND TO BLOCKCHAIN
-    // We wrap this in a try/catch so that if the public RPC node fails/timeouts, 
-    // it doesn't break the UI demo loop and you still get your unlocked video.
     try {
         await connection.sendRawTransaction(signed.serialize());
     } catch (rpcErr) {
@@ -1287,7 +1313,6 @@ async function sendSOL(amount, destination) {
     document.getElementById('jingle').play().catch(e => console.log("Audio trigger failed"));
     closeModal(); closeTreasuryModal();
 
-    // INSTANTLY WRITE TO LOCAL STORAGE
     if (activeVideoId && publicKey) {
         let unlockedStr = localStorage.getItem('sk8_unlocks_' + publicKey);
         let unlockedVids = unlockedStr ? JSON.parse(unlockedStr) : [];
@@ -1302,7 +1327,7 @@ async function sendSOL(amount, destination) {
         document.getElementById("success-modal").style.display = "flex";
         createConfetti();
         fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
-        checkPersistence(); // FORCE RE-RENDER OF UNLOCKED IFRAMES
+        checkPersistence(); 
         
         if(document.getElementById('profile-content').style.display === 'block') {
             renderProfile(document.getElementById('p-wallet').innerText);
