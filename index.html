@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn 6.5 (Unified Apex Build)</title>
+  <title>SK8COIN | Skate2Earn 6.6 (Unified Apex Build & Boardroom Fix)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -362,7 +362,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 @media (max-width: 768px) { 
     .hamburger { display: block; } 
     
-    /* Strict 100% bounds for mobile menu to prevent right-side drift */
+    /* Strict 100% bounds for mobile menu */
     nav#mobile-nav {
         position: absolute;
         top: 100%; 
@@ -397,8 +397,11 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
     main { padding-top: 90px; padding-left: 10px; padding-right: 10px;} 
     
-    /* SURGICAL 10% SHRINK TO HERO TEXT (Home & Treasury) */
-    .hero h1 { font-size: 2.16rem; margin-top: 0.5rem; }
+    /* SURGICAL OVERRIDE FOR HERO TEXT ON MOBILE (Bypasses inline styles) */
+    .hero h1 { font-size: 2.1rem !important; margin-top: 0.5rem; }
+    /* Aggressive 20% drop specifically for The Boardroom to fit nicely */
+    #leaderboard-content .hero h1 { font-size: 2.0rem !important; }
+    
     .hero-subtext { font-size: 0.9rem; padding: 0 10px; margin-bottom: 1.5rem;}
     
     .menu-item { padding: 1.2rem; }
@@ -426,8 +429,10 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 }
 
 @media (max-width: 400px) {
-    /* SURGICAL 10% SHRINK TO HERO TEXT ON TINY SCREENS (Home & Treasury) */
-    .hero h1 { font-size: 1.8rem; }
+    /* CLAMP FOR TINY SCREENS */
+    .hero h1 { font-size: 1.7rem !important; }
+    #leaderboard-content .hero h1 { font-size: 1.5rem !important; } /* Extra tiny board clamp */
+    
     .logo { height: 28px; }
     .hamburger { font-size: 1.4rem; }
     #connect-wallet-btn { font-size: 0.65rem; padding: 0.5rem 0.8rem; }
