@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn 6.2 (Mobile Lockdown Update)</title>
+  <title>SK8COIN | Skate2Earn 6.3 (Desktop Centered & Final 10% Mobile Polish)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -64,20 +64,38 @@ header{
   justify-content:space-between;
   align-items:center;
   padding: 1rem 20px;
+  position: relative;
 }
 
-.logo{height:45px;}
+.logo{height:45px; z-index: 101;}
 
-/* Desktop Nav */
-nav { display: flex; align-items: center; }
-nav ul {display:flex;gap:1.4rem;list-style:none;}
-nav a{color:var(--text-secondary);text-decoration:none;font-weight:bold;transition:0.3s;font-size:0.9rem;}
-nav a:hover{color:var(--accent-gold);}
+/* PERFECT DESKTOP CENTERING */
+nav#mobile-nav { 
+    display: flex; 
+    flex: 1; 
+    justify-content: center; 
+}
+nav#mobile-nav ul {
+    display:flex;
+    gap:1.8rem;
+    list-style:none;
+}
+nav#mobile-nav a {
+    color:var(--text-secondary);
+    text-decoration:none;
+    font-weight:bold;
+    transition:0.3s;
+    font-size:0.9rem;
+    letter-spacing: 1px;
+}
+nav#mobile-nav a:hover{color:var(--accent-gold);}
 
 .header-controls {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 15px;
+    z-index: 101;
 }
 
 .hamburger {
@@ -140,7 +158,6 @@ main {
 
 .menu-grid {
   display: grid;
-  /* Hard reduction in min-width to prevent overflow */
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
 }
@@ -173,7 +190,7 @@ main {
   overflow: hidden;
   transition: 0.3s;
   position: relative;
-  width: 100%; /* Force containment */
+  width: 100%;
 }
 .video-card:hover { border-color: var(--accent-gold); transform: scale(1.02); }
 .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000;}
@@ -197,7 +214,7 @@ main {
   color: var(--accent-cyan);
   margin-bottom: 1rem;
   font-weight: bold;
-  word-break: break-all; /* Prevent overflow */
+  word-break: break-all;
 }
 
 .usd-val {
@@ -299,7 +316,20 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .mini-logo:hover { filter: none; opacity: 1; }
 
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
-.modal-content { background:var(--bg-panel); padding:2rem; border-radius:15px; border:1px solid var(--accent-gold); width:92%; max-width:400px; text-align: center; position: relative; margin: 0 auto; box-sizing: border-box; }
+.modal-content { 
+    background:var(--bg-panel); 
+    padding:2rem; 
+    border-radius:15px; 
+    border:1px solid var(--accent-gold); 
+    width:92%; 
+    max-width:400px; 
+    text-align: center; 
+    position: relative; 
+    margin: 0 auto; 
+    box-sizing: border-box;
+    max-height: 90vh; 
+    overflow-y: auto; /* Fallback for tiny screens so it never bleeds */
+}
 
 .tier-btn { width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: bold; border-radius: 6px; font-size: 0.8rem;}
 .tier-btn:hover { background: var(--accent-gold); color: #000; }
@@ -332,22 +362,30 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 @media (max-width: 768px) { 
     .hamburger { display: block; } 
     
-    nav {
+    /* Reposition mobile nav under the header */
+    nav#mobile-nav {
         position: absolute;
-        top: 65px; 
+        top: 100%; 
         left: 0;
         width: 100vw;
         background: rgba(10,19,47,0.98);
         border-bottom: 1px solid var(--accent-cyan);
+        border-top: 1px solid rgba(255,255,255,0.05);
         flex-direction: column;
         padding: 1.5rem 0;
-        transform: translateY(-200%); 
-        transition: transform 0.3s ease-in-out;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
         z-index: 99;
     }
-    nav.open { transform: translateY(0); } 
-    nav ul { flex-direction: column; width: 100%; text-align: center; gap: 1.5rem; }
-    nav a { font-size: 1.1rem; display: block; padding: 10px; }
+    nav#mobile-nav.open { 
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0); 
+    } 
+    nav#mobile-nav ul { flex-direction: column; width: 100%; text-align: center; gap: 1.5rem; }
+    nav#mobile-nav a { font-size: 1.1rem; display: block; padding: 10px; }
 
     .header-inner { padding: 10px 15px; }
     .logo { height: 35px; }
@@ -355,7 +393,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     /* IF CONNECTED: Aggressively stash UI to prevent horizontal blowout */
     body.wallet-connected #connect-wallet-btn { display: none !important; }
     body.wallet-connected #wallet-ui { flex-direction: column; align-items: flex-end; gap: 5px; }
-    #wallet-balance-container { cursor: pointer; } /* Allow tapping pill to disconnect */
+    #wallet-balance-container { cursor: pointer; } 
 
     main { padding-top: 90px; padding-left: 10px; padding-right: 10px;} 
     
@@ -380,7 +418,6 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     .menu-grid { grid-template-columns: 1fr; gap: 1rem; }
     .video-grid { grid-template-columns: 1fr; gap: 1rem;}
     
-    /* Force wrapping in feeds so amounts don't get pushed off screen */
     .leader-item { flex-direction: column; align-items: flex-start; gap: 5px; }
     .amt-tag { align-self: flex-start; margin-left: 1.8rem; }
     
@@ -393,11 +430,10 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     .hamburger { font-size: 1.4rem; }
     #connect-wallet-btn { font-size: 0.65rem; padding: 0.5rem 0.8rem; }
     
-    /* Shrink HUD Text */
     #wallet-balance-container { padding: 4px 8px; }
     #balance-emoji { font-size: 0.9rem; }
     #sol-balance { font-size: 0.6rem; }
-    #usd-balance { display: none; } /* Hide USD completely on tiny screens */
+    #usd-balance { display: none; } 
     
     .menu-icon { font-size: 1.8rem; }
     .menu-title { font-size: 1rem; }
@@ -413,6 +449,15 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
   <div class="header-inner">
     <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" class="logo" onclick="navigateTo('home')" style="cursor:pointer;">
     
+    <nav id="mobile-nav">
+        <ul>
+          <li><a href="javascript:void(0)" onclick="navigateTo('home')">HOME</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('video')">VIDEOS</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('leaderboard')">LEADERBOARD</a></li>
+          <li><a href="javascript:void(0)" onclick="navigateTo('donate')">TREASURY</a></li>
+        </ul>
+    </nav>
+
     <div class="header-controls">
         <div id="wallet-ui" style="display: flex; align-items: center; gap: 10px;">
             
@@ -437,15 +482,6 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
         </div>
     </div>
   </div>
-  
-  <nav id="mobile-nav">
-      <ul>
-        <li><a href="javascript:void(0)" onclick="navigateTo('home')">HOME</a></li>
-        <li><a href="javascript:void(0)" onclick="navigateTo('video')">VIDEOS</a></li>
-        <li><a href="javascript:void(0)" onclick="navigateTo('leaderboard')">LEADERBOARD</a></li>
-        <li><a href="javascript:void(0)" onclick="navigateTo('donate')">TREASURY</a></li>
-      </ul>
-  </nav>
 </header>
 
 <main>
@@ -904,7 +940,7 @@ function updateWalletUI() {
     const skaterPanel = document.getElementById("skater-auth-panel");
     
     if (publicKey) { 
-        document.body.classList.add("wallet-connected"); // Triggers the aggressive mobile CSS hide
+        document.body.classList.add("wallet-connected"); 
         btn.innerText = "CONNECTED"; 
         balContainer.style.display = "flex"; 
         
