@@ -345,7 +345,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
 
 /* ======================================================== */
-/* RUTHLESS MOBILE LOCKDOWN ARCHITECTURE                   */
+/* RUTHLESS MOBILE LOCKDOWN ARCHITECTURE                    */
 /* ======================================================== */
 @media (max-width: 1200px) { 
     .video-grid { grid-template-columns: repeat(2, 1fr); } 
@@ -865,11 +865,10 @@ let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId =
 const RPC_URL = "https://solana-rpc.publicnode.com";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
-// MEMO PROGRAM ID FOR ON-CHAIN WRITING
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
 const SKATER_REGISTRY = [
-    "Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6", "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ",
+    "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ",
     "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW",
     "BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi", "9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH",
     "5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm", "9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj",
@@ -878,7 +877,6 @@ const SKATER_REGISTRY = [
 ];
 
 const SKATER_PROFILES = [
-    { wallet: "Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6", name: "LEO STREETS", rank: "PRO", styles: ["Street", "Technical"], pic: "https://i.pravatar.cc/400?img=11", bio: "Tech street master from downtown LA." },
     { wallet: "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ", name: "GAP KILLER", rank: "AM", styles: ["Gaps", "Stairs"], pic: "https://i.pravatar.cc/400?img=12", bio: "Sending it over every stair set in sight." },
     { wallet: "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", name: "MANUAL MIKE", rank: "FLOW", styles: ["Balance", "Flatground"], pic: "https://i.pravatar.cc/400?img=13", bio: "Wheelie king of the local park." },
     { wallet: "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW", name: "VERT VICTOR", rank: "PRO", styles: ["Vert", "Transition"], pic: "https://i.pravatar.cc/400?img=14", bio: "Highest airs in the revolution." },
@@ -982,7 +980,6 @@ function updateWalletUI() {
         skaterPanel.style.display = "none";
     }
     
-    // Hide self-donation buttons on connection state change
     updateDonateButtons();
 }
 
@@ -1039,27 +1036,50 @@ function getRankDisplay(amount) {
     return { color: "var(--text-secondary)", icon: '', glow: '' };
 }
 
+/* REFACTORED LEADERBOARD SCAN: DESCENDING SORT & FLEX LOGIC */
 async function refreshLeaderboardData() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     
+    // TREASURY LEADERBOARD (THE FLEX LIST)
     const treasuryList = document.getElementById("treasury-sponsors-list");
     treasuryList.innerHTML = "<li>Synchronizing...</li>";
     try {
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 10 });
-        treasuryList.innerHTML = "";
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 12 });
+        let rawSponsors = [];
+
         for (let s of sigs) {
             const tx = await connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
             if (tx) {
-                const sponsor = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys[0].toString() : "Anonymous";
+                const sponsorAddr = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys[0].toString() : "Anonymous";
                 const amount = (tx.meta.preBalances[0] - tx.meta.postBalances[0] - tx.meta.fee) / solanaWeb3.LAMPORTS_PER_SOL;
                 if(amount > 0.001) {
-                    const rank = getRankDisplay(amount);
-                    treasuryList.innerHTML += `<li class="leader-item"><span class="addr-tag" style="color: ${rank.color}; font-weight: bold;">${rank.icon}${sponsor.slice(0,6)}...${sponsor.slice(-4)}</span> <span class="amt-tag" style="color: ${rank.color}; ${rank.glow}">${amount.toFixed(2)} SOL</span></li>`;
+                    rawSponsors.push({ addr: sponsorAddr, val: amount });
                 }
             }
         }
+
+        // SORT DESCENDING: Highest amount at the top
+        rawSponsors.sort((a, b) => b.val - a.val);
+
+        treasuryList.innerHTML = "";
+        rawSponsors.forEach((s, index) => {
+            const rank = getRankDisplay(s.val);
+            const isTopDog = index === 0 ? "border: 1px solid var(--accent-gold); background: rgba(255, 215, 0, 0.05); padding: 8px; border-radius: 8px;" : "";
+            const flexIcon = index === 0 ? '<i class="fas fa-crown" style="color:var(--accent-gold); margin-right:8px;"></i>' : '';
+            
+            treasuryList.innerHTML += `
+                <li class="leader-item" style="${isTopDog}">
+                    <span class="addr-tag" style="color: ${rank.color}; font-weight: bold;">
+                        ${flexIcon}${rank.icon}${s.addr.slice(0,6)}...${s.addr.slice(-4)}
+                    </span> 
+                    <span class="amt-tag" style="color: ${rank.color}; ${rank.glow}">${s.val.toFixed(2)} SOL</span>
+                </li>`;
+        });
+        if(rawSponsors.length === 0) treasuryList.innerHTML = "<li>No hits yet.</li>";
+
     } catch(e) { treasuryList.innerHTML = "<li>Node busy. Refresh soon.</li>"; }
 
+    // SKATER FEED (CHRONOLOGICAL HITS)
     const skaterList = document.getElementById("skater-sponsors-list");
     skaterList.innerHTML = "<li>Polling Skater Wallets...</li>";
     let entries = [];
@@ -1137,11 +1157,11 @@ async function renderProfile(wallet) {
     if (publicKey && publicKey === wallet) {
         editBtn.style.display = 'block';
         profileHeader.innerText = "SKATER DASHBOARD: BIO & STYLE";
-        if(profileDonateBtn) profileDonateBtn.style.display = 'none'; // Lockout self-donating on profile
+        if(profileDonateBtn) profileDonateBtn.style.display = 'none'; 
     } else {
         editBtn.style.display = 'none';
         profileHeader.innerText = "BIO & STYLE";
-        if(profileDonateBtn) profileDonateBtn.style.display = 'block'; // Show donate to others
+        if(profileDonateBtn) profileDonateBtn.style.display = 'block'; 
     }
 
     document.getElementById('p-name').innerText = skater.name;
@@ -1248,7 +1268,6 @@ document.addEventListener('click', (e) => {
   if (e.target && e.target.classList.contains('donate-btn') && e.target.id !== 'profile-donate-btn') {
       if(!publicKey) { alert("Connect Wallet First"); return; }
       
-      // HARD VALIDATION: Prevents devtools bypass
       if(e.target.dataset.address === publicKey) { 
           alert("Anti-Self-Dealing Protocol Active: You cannot sponsor your own clips."); 
           return; 
@@ -1264,7 +1283,6 @@ function openSponsorshipModalFromProfile() {
     if(!publicKey) { alert("Connect Wallet First"); return; }
     currentSkaterTarget = document.getElementById('p-wallet').innerText;
     
-    // HARD VALIDATION: Prevents devtools bypass on profile
     if (currentSkaterTarget === publicKey) { 
         alert("Anti-Self-Dealing Protocol Active: You cannot sponsor yourself."); 
         return; 
@@ -1295,6 +1313,13 @@ function sendCustomSponsor() {
 
 async function sendSOL(amount, destination) {
   try {
+    if (destination === publicKey) {
+        alert("PROTOCOL ERROR: Anti-Self-Dealing active. You cannot sponsor yourself.");
+        closeModal();
+        closeTreasuryModal();
+        return; 
+    }
+
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const fromPubkey = new solanaWeb3.PublicKey(publicKey);
     const toPubkey = new solanaWeb3.PublicKey(destination);
