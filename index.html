@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SK8COIN | Skate2Earn 5.9 (Fresh UI & Emoji Status Update)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SK8COIN | Skate2Earn 6.0 (Mobile Master Build)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -40,6 +40,7 @@ body{
   font-family:'Orbitron',sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
+  width: 100%;
 }
 
 header{
@@ -48,7 +49,6 @@ header{
   position:fixed;
   top:0;left:0;right:0;
   z-index:100;
-  padding:1rem 0;
   border-bottom:1px solid var(--card-border);
 }
 
@@ -58,10 +58,10 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:0 1rem;
+  padding:1rem 20px;
 }
 
-.logo{height:50px;}
+.logo{height:45px;}
 
 nav ul{display:flex;gap:1.4rem;list-style:none;}
 nav a{color:var(--text-secondary);text-decoration:none;font-weight:bold;transition:0.3s;font-size:0.9rem;}
@@ -77,10 +77,11 @@ nav a:hover{color:var(--accent-gold);}
   font-weight: bold;
   color: #000;
   transition: 0.3s;
+  white-space: nowrap;
 }
 
 main {
-  padding-top: 120px;
+  padding-top: 130px;
   max-width: 1440px;
   margin: auto;
   padding-left: 20px;
@@ -96,6 +97,14 @@ main {
   -webkit-text-fill-color: transparent;
   font-family: 'Orbitron', sans-serif;
   font-weight: 900;
+  line-height: 1.1;
+}
+
+.hero-subtext {
+  font-size: 1.5rem; 
+  margin: 1.2rem auto 2.2rem; 
+  color: var(--text-secondary); 
+  max-width: 720px;
 }
 
 .stats-row {
@@ -216,11 +225,6 @@ main {
     transition: 0.3s;
     font-size: 0.8rem;
 }
-.dash-nav-btn:hover {
-    background: var(--accent-cyan);
-    color: #000;
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-}
 
 /* PROFILE PAGE STYLES */
 #profile-content {
@@ -284,33 +288,81 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .mini-logo:hover { filter: none; opacity: 1; }
 
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
-.modal-content { background:var(--bg-panel); padding:2.5rem; border-radius:20px; border:1px solid var(--accent-gold); width:90%; max-width:450px; text-align: center; position: relative; }
+.modal-content { background:var(--bg-panel); padding:2.5rem; border-radius:20px; border:1px solid var(--accent-gold); width:90%; max-width:450px; text-align: center; position: relative; margin: 0 15px; }
 
-/* TIER MODAL BUTTON STYLES */
 .tier-btn { width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: bold; }
 .tier-btn:hover { background: var(--accent-gold); color: #000; }
-
 .tier-flow { border-color: var(--bronze-font) !important; color: var(--bronze-font) !important; }
 .tier-flow:hover { background: var(--bronze-font) !important; color: #000 !important; }
-
 .tier-am { border-color: var(--silver-font) !important; color: var(--silver-font) !important; }
 .tier-am:hover { background: var(--silver-font) !important; color: #000 !important; }
-
 .tier-pro { border-color: var(--gold-font) !important; color: var(--gold-font) !important; }
 .tier-pro:hover { background: var(--gold-font) !important; color: #000 !important; }
 
 .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 2000; }
 @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-@media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+/* ======================================================== */
+/* UPGRADED RESPONSIVE MOBILE ARCHITECTURE                 */
+/* ======================================================== */
+@media (max-width: 1200px) { 
+    .video-grid { grid-template-columns: repeat(2, 1fr); } 
+}
+
 @media (max-width: 900px) { 
     .footer-inner { grid-template-columns: 1fr; gap: 3rem; text-align: center; } 
     .footer-socials, .logo-stack { justify-content: center; }
     .leaderboard-container { grid-template-columns: 1fr; }
-    .profile-layout { grid-template-columns: 1fr; text-align: center; }
+    .profile-layout { grid-template-columns: 1fr; text-align: center; gap: 20px;}
     .profile-sidebar { border-right: none !important; padding-right: 0 !important; }
 }
-@media (max-width: 700px) { .video-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 3rem; } }
+
+@media (max-width: 768px) { 
+    .header-inner {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 10px;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    #wallet-ui {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    main { padding-top: 190px; } /* Prevent stacked header from crushing content */
+    
+    .hero h1 { font-size: 2.8rem; }
+    .hero-subtext { font-size: 1.1rem; padding: 0 10px; margin-bottom: 1.5rem;}
+    
+    .stats-row { 
+        flex-direction: column; 
+        gap: 1rem; 
+        background: rgba(0,0,0,0.2); 
+        padding: 20px; 
+        border-radius: 15px; 
+    }
+    
+    .menu-grid { grid-template-columns: 1fr; }
+    .video-grid { grid-template-columns: 1fr; }
+    
+    #profile-content { padding: 1.5rem; border-radius: 15px; }
+    
+    .modal-content { padding: 1.5rem; }
+    .tier-btn { font-size: 0.8rem; padding: 10px; }
+}
+
+@media (max-width: 400px) {
+    .hero h1 { font-size: 2.2rem; }
+    .logo { height: 35px; }
+    nav a { font-size: 0.8rem; }
+}
 </style>
 </head>
 <body>
@@ -327,19 +379,18 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
       </ul>
     </nav>
     
-    <div id="wallet-ui" style="display: flex; align-items: center; gap: 15px;">
+    <div id="wallet-ui" style="display: flex; align-items: center; gap: 10px;">
         
-        <div id="skater-auth-panel" style="display: none; align-items: center; gap: 12px; background: rgba(0, 240, 255, 0.05); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--accent-cyan);">
-            <span style="font-size: 0.7rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;">PRO</span></span>
-            <span style="font-size: 0.7rem; color: var(--text-secondary);">ID: <span id="auth-skater-id" style="font-family: monospace; color: #fff;"></span></span>
-            <button onclick="navigateTo('profile', publicKey)" style="background: var(--accent-cyan); color: #000; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;">⚙️ EDIT PROFILE</button>
+        <div id="skater-auth-panel" style="display: none; align-items: center; gap: 8px; background: rgba(0, 240, 255, 0.05); padding: 5px 12px; border-radius: 50px; border: 1px solid var(--accent-cyan);">
+            <span style="font-size: 0.65rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;">PRO</span></span>
+            <button onclick="navigateTo('profile', publicKey)" style="background: var(--accent-cyan); color: #000; border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;">⚙️ EDIT</button>
         </div>
 
-        <div id="wallet-balance-container" style="display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1);">
-            <span id="balance-emoji" style="font-size: 1.3rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5));">🛹</span>
+        <div id="wallet-balance-container" style="display: none; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1);">
+            <span id="balance-emoji" style="font-size: 1.1rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5));">🛹</span>
             <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                <span id="sol-balance" style="font-size: 0.75rem; color: #fff; font-weight: 900; letter-spacing: 0.5px;">0.0000 SOL</span>
-                <span id="usd-balance" style="font-size: 0.65rem; color: var(--accent-green); font-weight: 600; font-family: 'Inter', sans-serif;">$0.00 USD</span>
+                <span id="sol-balance" style="font-size: 0.7rem; color: #fff; font-weight: 900; letter-spacing: 0.5px;">0.0000 SOL</span>
+                <span id="usd-balance" style="font-size: 0.6rem; color: var(--accent-green); font-weight: 600; font-family: 'Inter', sans-serif;">$0.00 USD</span>
             </div>
         </div>
 
@@ -352,9 +403,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
   <div id="home-content">
     <section class="hero">
         <h1>SKATE2EARN</h1>
-        <p style="font-size: 1.5rem; margin: 1.2rem 0 2.2rem; color: var(--text-secondary); max-width: 720px; margin-left: auto; margin-right: auto;">
-          Collect, build & earn on-chain — tokenized GameFi meets street culture.
-        </p>
+        <p class="hero-subtext">Collect, build & earn on-chain — tokenized GameFi meets street culture.</p>
         <div class="stats-row">
           <div class="stat"><span class="stat-value">1.1k</span> Collectors</div>
           <div class="stat"><span class="stat-value">37.9k+</span> NFTs Minted</div>
@@ -409,8 +458,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
  <div id="video-content" style="display:none;">
     <div class="hero">
         <h1 style="font-size:3rem;">SK8 VIDEOS</h1>
-        <p style="color: var(--accent-gold); font-weight:bold;">PEER-TO-PEER SPONSORSHIP ACTIVE</p>
-        <p style="color: var(--text-secondary); max-width: 650px; margin: 15px auto 0; font-size: 1rem;">Scout raw talent. Drop on-chain blessings directly into skaters' wallets to unlock their footage and boost their rank. You control the meta.</p>
+        <p style="color: var(--accent-gold); font-weight:bold; font-size:0.8rem;">PEER-TO-PEER SPONSORSHIP ACTIVE</p>
+        <p class="hero-subtext" style="font-size: 0.95rem;">Scout raw talent. Drop on-chain blessings directly into skaters' wallets to unlock their footage and boost their rank. You control the meta.</p>
     </div>
     
     <div class="video-grid">
@@ -594,8 +643,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
   <div id="leaderboard-content" style="display:none;">
     <div class="hero">
-        <h1>THE BOARDROOM</h1>
-        <p style="color: var(--accent-gold); font-weight:bold;">LEGENDARY SPONSORS & RECENT BLESSINGS</p>
+        <h1 style="font-size: 3rem;">THE BOARDROOM</h1>
+        <p style="color: var(--accent-gold); font-weight:bold; font-size: 0.9rem;">LEGENDARY SPONSORS & RECENT BLESSINGS</p>
     </div>
     
     <div class="leaderboard-container">
@@ -616,8 +665,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
   <div id="donate-content" style="display:none;">
     <div class="hero">
-        <h1>COMMUNITY TREASURY</h1>
-        <p style="color: var(--text-secondary); max-width: 650px; margin: 15px auto 0; font-size: 1.1rem; line-height: 1.6;">Fuel the main engine. Drop SOL into the master vault to fund legendary IRL skate drops, push protocol upgrades, and level up the entire ecosystem. <a href="javascript:void(0)" onclick="navigateTo('leaderboard')" style="color: var(--accent-gold); font-weight: bold; text-decoration: underline; cursor: pointer;">Earn your spot on the Leaderboard.</a></p>
+        <h1 style="font-size: 3rem;">COMMUNITY TREASURY</h1>
+        <p class="hero-subtext" style="font-size: 1rem;">Fuel the main engine. Drop SOL into the master vault to fund legendary IRL skate drops, push protocol upgrades, and level up the entire ecosystem. <a href="javascript:void(0)" onclick="navigateTo('leaderboard')" style="color: var(--accent-gold); font-weight: bold; text-decoration: underline; cursor: pointer;">Earn your spot.</a></p>
     </div>
     <div style="background:var(--bg-panel); max-width:600px; margin:2rem auto auto; padding:2rem; border-radius:20px; border:1px solid var(--accent-gold); text-align: center;">
       <p style="margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase;">Current Treasury Funds</p>
@@ -625,9 +674,9 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
       <h2 id="treasury-sol-balance" style="color: var(--accent-gold); font-size: 2.2rem; margin-bottom: 5px; word-break: break-all;">0.0000 SOL</h2>
       <div id="treasury-usd-balance" style="color: var(--accent-green); font-size: 1.2rem; font-weight: 600; font-family: 'Inter', sans-serif; margin-bottom: 20px;">$0.00</div>
       
-      <div style="background:#000; padding:15px; border-radius:10px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+      <div style="background:#000; padding:15px; border-radius:10px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; word-break: break-all;">
         <span id="treasury-addr-display">5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc</span>
-        <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold;">COPY</button>
+        <button onclick="copyTreasuryAddress()" style="background:var(--accent-gold); border:none; padding:5px 10px; cursor:pointer; font-weight:bold; margin-left: 10px;">COPY</button>
       </div>
       <button onclick="openTreasuryModal()" style="width:100%; padding:20px; background:var(--accent-gold); color:#000; font-weight:bold; border:none; border-radius:50px; cursor:pointer; font-family: 'Orbitron';">CONTRIBUTE TO TREASURY</button>
     </div>
@@ -728,7 +777,6 @@ const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 // MEMO PROGRAM ID FOR ON-CHAIN WRITING
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
-// 1. ORIGINAL STRING ARRAY FOR SCANNER
 const SKATER_REGISTRY = [
     "Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6", "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ",
     "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW",
@@ -738,7 +786,6 @@ const SKATER_REGISTRY = [
     "E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7" 
 ];
 
-// 2. PARALLEL DATABASE FOR DEFAULT PROFILES
 const SKATER_PROFILES = [
     { wallet: "Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6", name: "LEO STREETS", rank: "PRO", styles: ["Street", "Technical"], pic: "https://i.pravatar.cc/400?img=11", bio: "Tech street master from downtown LA." },
     { wallet: "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ", name: "GAP KILLER", rank: "AM", styles: ["Gaps", "Stairs"], pic: "https://i.pravatar.cc/400?img=12", bio: "Sending it over every stair set in sight." },
@@ -759,22 +806,43 @@ async function getSolPrice() {
 
 function getProvider() { return ("phantom" in window) ? window.phantom?.solana : null; }
 
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 async function handleWalletAction() {
     if (publicKey) { 
         if (confirm("Disconnect Wallet?")) { 
             await provider.disconnect(); 
             publicKey = null; 
             updateWalletUI(); 
-            checkPersistence(); // Re-lock videos instantly on disconnect
+            checkPersistence(); 
         } 
     } else { 
         provider = getProvider(); 
-        if (!provider) { alert("Install Phantom!"); return; } 
-        const resp = await provider.connect(); 
-        publicKey = resp.publicKey.toString(); 
-        updateWalletUI(); 
-        fetchBalance(); 
-        checkPersistence(); // Unlock videos bound to this specific wallet
+        
+        if (!provider) { 
+            // THE 100-YEAR MOBILE FIX: Deep Link directly into Phantom's native browser
+            if(isMobile()) {
+                const dAppUrl = encodeURIComponent(window.location.href);
+                const ref = encodeURIComponent(window.location.origin);
+                window.location.href = `https://phantom.app/ul/browse/${dAppUrl}?ref=${ref}`;
+                return;
+            } else {
+                alert("Install Phantom Wallet Extension!"); 
+                return; 
+            }
+        } 
+
+        try {
+            const resp = await provider.connect(); 
+            publicKey = resp.publicKey.toString(); 
+            updateWalletUI(); 
+            fetchBalance(); 
+            checkPersistence();
+        } catch (e) {
+            console.log("Connection rejected", e);
+        }
     }
 }
 
@@ -787,20 +855,16 @@ function updateWalletUI() {
         btn.innerText = "CONNECTED"; 
         balContainer.style.display = "flex"; 
         
-        // Show the Skater HUD if they are a recognized skater
         const skater = SKATER_PROFILES.find(s => s.wallet === publicKey);
         if(skater) {
             skaterPanel.style.display = "flex";
             const authRank = document.getElementById("auth-skater-rank");
             authRank.innerText = skater.rank;
             
-            // Dynamic HUD Rank Color
             if (skater.rank === "FLOW") authRank.style.color = "var(--bronze-font)";
             else if (skater.rank === "AM") authRank.style.color = "var(--silver-font)";
             else if (skater.rank === "PRO") authRank.style.color = "var(--gold-font)";
             else authRank.style.color = "#fff";
-
-            document.getElementById("auth-skater-id").innerText = publicKey.slice(0,4) + "..." + publicKey.slice(-4);
         } else {
             skaterPanel.style.display = "none";
         }
@@ -824,14 +888,13 @@ async function fetchBalance() {
     const usdVal = solVal * solPrice;
     document.getElementById("usd-balance").innerText = "$" + usdVal.toFixed(2) + " USD";
 
-    // EMOJI STATUS TIER LOGIC
-    let emoji = "🛹"; // Default Starter
-    if (solVal === 0) emoji = "🪫"; // Empty
-    else if (solVal < 0.1) emoji = "🦐"; // Shrimp
-    else if (solVal < 1) emoji = "🐟"; // Fish
-    else if (solVal < 5) emoji = "🐬"; // Dolphin
-    else if (solVal < 10) emoji = "🦈"; // Shark
-    else emoji = "🐳"; // Whale
+    let emoji = "🛹"; 
+    if (solVal === 0) emoji = "🪫"; 
+    else if (solVal < 0.1) emoji = "🦐"; 
+    else if (solVal < 1) emoji = "🐟"; 
+    else if (solVal < 5) emoji = "🐬"; 
+    else if (solVal < 10) emoji = "🦈"; 
+    else emoji = "🐳"; 
 
     const emojiEl = document.getElementById("balance-emoji");
     if(emojiEl) emojiEl.innerText = emoji;
@@ -859,7 +922,6 @@ async function fetchTreasuryBalance() {
     document.getElementById("treasury-usd-balance").innerText = "$" + (solValue * solPrice).toFixed(2);
 }
 
-// Helper to calculate tier styles for the leaderboard feeds
 function getRankDisplay(amount) {
     if(amount >= 0.1) return { color: "var(--gold-font)", icon: '<i class="fas fa-trophy" style="margin-right:8px; color:var(--gold-font); text-shadow:0 0 5px rgba(255,215,0,0.5);"></i>', glow: 'text-shadow: 0 0 8px rgba(255,215,0,0.4); font-weight: 900;' };
     if(amount >= 0.05) return { color: "var(--silver-font)", icon: '<i class="fas fa-medal" style="margin-right:8px; color:var(--silver-font);"></i>', glow: 'font-weight: bold;' };
@@ -870,7 +932,6 @@ function getRankDisplay(amount) {
 async function refreshLeaderboardData() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     
-    // TREASURY FEED
     const treasuryList = document.getElementById("treasury-sponsors-list");
     treasuryList.innerHTML = "<li>Synchronizing...</li>";
     try {
@@ -889,7 +950,6 @@ async function refreshLeaderboardData() {
         }
     } catch(e) { treasuryList.innerHTML = "<li>Node busy. Refresh soon.</li>"; }
 
-    // SKATER FEED
     const skaterList = document.getElementById("skater-sponsors-list");
     skaterList.innerHTML = "<li>Polling Skater Wallets...</li>";
     let entries = [];
@@ -912,24 +972,20 @@ async function refreshLeaderboardData() {
     } catch(e) { skaterList.innerHTML = "<li>Feed cooling down...</li>"; }
 }
 
-// BULLETPROOF WALLET-BOUND PERSISTENCE LOGIC (USING SET/REMOVE ATTRIBUTE)
 function checkPersistence() {
     document.querySelectorAll('.video-card').forEach(card => {
         let iframe = card.querySelector('iframe');
         
-        // If no wallet is connected, physically strip the src attribute to ensure 100% lockout
         if (!publicKey) {
             card.classList.remove('unlocked');
             if (iframe) iframe.removeAttribute('src'); 
             return;
         }
         
-        // If a wallet is connected, check their personal on-chain vault memory
         let unlockedStr = localStorage.getItem('sk8_unlocks_' + publicKey);
         let unlockedVids = unlockedStr ? JSON.parse(unlockedStr) : [];
         
         if (unlockedVids.includes(card.id)) {
-            // Inject the unlisted URL ONLY when authorized by the wallet
             if (iframe && iframe.getAttribute('src') !== iframe.dataset.src) {
                 iframe.setAttribute('src', iframe.dataset.src);
             }
@@ -954,6 +1010,8 @@ function navigateTo(page, wallet = null) {
   if(page === 'video') { fetchSkaterBalances(); checkPersistence(); }
   if(page === 'donate') fetchTreasuryBalance();
   if(page === 'leaderboard') refreshLeaderboardData();
+  
+  window.scrollTo(0,0);
 }
 
 async function renderProfile(wallet) {
@@ -1121,7 +1179,6 @@ async function sendSOL(amount, destination) {
     closeModal(); closeTreasuryModal();
 
     setTimeout(() => {
-        // UPGRADED WALLET-BOUND PERSISTENCE SAVE
         if (activeVideoId && publicKey) {
             let unlockedStr = localStorage.getItem('sk8_unlocks_' + publicKey);
             let unlockedVids = unlockedStr ? JSON.parse(unlockedStr) : [];
@@ -1135,7 +1192,7 @@ async function sendSOL(amount, destination) {
         document.getElementById("success-modal").style.display = "flex";
         createConfetti();
         fetchBalance(); fetchSkaterBalances(); fetchTreasuryBalance();
-        checkPersistence(); // Re-trigger visual unlock immediately using bulletproof logic
+        checkPersistence(); 
         
         if(document.getElementById('profile-content').style.display === 'block') {
             renderProfile(document.getElementById('p-wallet').innerText);
@@ -1171,10 +1228,10 @@ window.onload = async () => {
             fetchBalance(); 
             checkPersistence();
         } catch (e) {
-            checkPersistence(); // Runs empty if not trusted/connected to lock down the site
+            checkPersistence(); 
         }
     } else {
-        checkPersistence(); // Hard lock if no Phantom detected
+        checkPersistence(); 
     }
 };
 </script>
