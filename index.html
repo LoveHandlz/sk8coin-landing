@@ -296,6 +296,21 @@ main {
     border: 1px solid var(--accent-cyan);
 }
 
+.gear-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    background: rgba(255, 215, 0, 0.05);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    font-size: 0.65rem;
+    margin: 4px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+}
+.gear-tag i { color: var(--accent-gold); margin-right: 5px; }
+
 /* LEADERBOARD STYLES */
 .leaderboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
 .leaderboard-box { background: var(--bg-panel); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 1.5rem; }
@@ -719,7 +734,10 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
             <img id="p-img" src="" class="profile-pic">
             <h2 id="p-name" style="font-family:'Bangers'; font-size:3rem;"></h2>
             <div id="p-tags"></div>
-            <div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:15px; margin-top:15px; border:1px dashed var(--accent-gold);">
+            
+            <div id="p-gear" style="margin-top: 10px; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center;"></div>
+            
+            <div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:15px; border:1px dashed var(--accent-gold);">
                 <p style="font-size:0.6rem; opacity:0.6;">WALLET</p>
                 <p id="p-wallet" style="font-family:monospace; font-size:0.55rem; word-break:break-all; color: var(--text-secondary); margin-bottom: 10px;"></p>
                 <button id="edit-profile-btn" onclick="openEditModal()" class="wallet-btn" style="display:none; margin-bottom:10px; width:100%; background: #fff; color: #000; padding: 10px; font-size: 0.8rem;">⚙️ EDIT GEAR</button>
@@ -729,7 +747,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
         <div class="profile-main">
             <h3 id="profile-header-text" style="color:var(--accent-gold); margin-bottom:15px;">BIO & STYLE</h3>
             <p id="p-bio" style="color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-size: 0.9rem;"></p>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom: 25px;">
                 <div style="background:var(--bg-panel); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
                     <p style="font-size:0.6rem; color: var(--text-secondary);">RANK</p>
                     <p id="p-rank" style="font-weight:900; font-size: 1.1rem;"></p>
@@ -739,7 +757,15 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
                     <p id="p-blessings" style="color:var(--accent-green); font-weight:900; font-size: 1.1rem;">0.00 SOL</p>
                 </div>
             </div>
-            <button onclick="navigateTo('home')" class="view-profile-btn" style="margin-top:30px; padding:12px; font-weight: bold; font-size: 0.8rem;">BACK TO HOME</button>
+            
+            <div id="p-sponsor-video-section" style="display:none; margin-bottom: 25px;">
+                <h3 style="color:var(--accent-gold); margin-bottom:15px; font-size: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 8px;">🎥 SPONSOR ME TAPE</h3>
+                <div class="video-wrapper" style="border: 1px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,240,255,0.1);">
+                    <iframe id="p-sponsor-video" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <button onclick="navigateTo('home')" class="view-profile-btn" style="padding:12px; font-weight: bold; font-size: 0.8rem;">BACK TO HOME</button>
         </div>
     </div>
   </div>
@@ -862,6 +888,28 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     <label style="font-size: 0.65rem; color: var(--text-secondary);">PROFILE PIC URL (IPFS or Direct Link)</label>
     <input type="text" id="edit-pic" style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-cyan); border-radius: 5px; font-size: 0.8rem;">
     
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+        <div>
+            <label style="font-size: 0.65rem; color: var(--text-secondary);">STANCE</label>
+            <input type="text" id="edit-stance" placeholder="Goofy, Regular..." style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--accent-gold); border-radius: 5px; font-size: 0.75rem;">
+        </div>
+        <div>
+            <label style="font-size: 0.65rem; color: var(--text-secondary);">DECK</label>
+            <input type="text" id="edit-deck" placeholder="8.25 Popsicle..." style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--accent-gold); border-radius: 5px; font-size: 0.75rem;">
+        </div>
+        <div>
+            <label style="font-size: 0.65rem; color: var(--text-secondary);">TRUCKS</label>
+            <input type="text" id="edit-trucks" placeholder="Indy 149s..." style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--accent-gold); border-radius: 5px; font-size: 0.75rem;">
+        </div>
+        <div>
+            <label style="font-size: 0.65rem; color: var(--text-secondary);">LOCAL SPOT</label>
+            <input type="text" id="edit-spot" placeholder="LA Courthouse..." style="width: 100%; padding: 8px; background: #000; color: #fff; border: 1px solid var(--accent-gold); border-radius: 5px; font-size: 0.75rem;">
+        </div>
+    </div>
+
+    <label style="font-size: 0.65rem; color: var(--accent-gold); font-weight: bold;">SPONSOR ME TAPE (YouTube Link)</label>
+    <input type="text" id="edit-yt" placeholder="https://youtu.be/..." style="width: 100%; padding: 8px; margin-bottom: 10px; background: rgba(255, 215, 0, 0.05); color: #fff; border: 1px dashed var(--accent-gold); border-radius: 5px; font-size: 0.8rem;">
+
     <label style="font-size: 0.65rem; color: var(--text-secondary);">BIO</label>
     <textarea id="edit-bio" rows="3" style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-cyan); border-radius: 5px; font-size: 0.8rem;"></textarea>
     
@@ -895,19 +943,19 @@ const SKATER_REGISTRY = [
     "E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7" 
 ];
 
-/* Hardcoded Ranks removed. System defaults to GROMMET unless they have received on-chain blessings. */
+/* Default Setup Gear and YouTube ID for Genesis Skaters */
 const SKATER_PROFILES = [
-    { wallet: "FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW", name: "GREG VALENCIA", styles: ["Street", "Flow"], pic: "https://i.pravatar.cc/400?img=11", bio: "Original Sk8Coin pioneer." },
-    { wallet: "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ", name: "GAP KILLER", styles: ["Gaps", "Stairs"], pic: "https://i.pravatar.cc/400?img=12", bio: "Sending it over every stair set in sight." },
-    { wallet: "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", name: "MANUAL MIKE", styles: ["Balance", "Flatground"], pic: "https://i.pravatar.cc/400?img=13", bio: "Wheelie king of the local park." },
-    { wallet: "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW", name: "VERT VICTOR", styles: ["Vert", "Transition"], pic: "https://i.pravatar.cc/400?img=14", bio: "Highest airs in the revolution." },
-    { wallet: "BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi", name: "SHREDDER 5", styles: ["Park", "Flow"], pic: "https://i.pravatar.cc/400?img=15", bio: "Style and flow over everything." },
-    { wallet: "9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH", name: "SHREDDER 6", styles: ["Street"], pic: "https://i.pravatar.cc/400?img=16", bio: "Raw street talent." },
-    { wallet: "5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm", name: "SHREDDER 7", styles: ["Technical"], pic: "https://i.pravatar.cc/400?img=17", bio: "Precision skating." },
-    { wallet: "9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj", name: "SHREDDER 8", styles: ["Big Rails"], pic: "https://i.pravatar.cc/400?img=18", bio: "Handrail specialist." },
-    { wallet: "HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq", name: "SHREDDER 9", styles: ["Gaps"], pic: "https://i.pravatar.cc/400?img=19", bio: "Big gap hunter." },
-    { wallet: "DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b", name: "SHREDDER 10", styles: ["Technical"], pic: "https://i.pravatar.cc/400?img=20", bio: "Ledge master." },
-    { wallet: "E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7", name: "SHREDDER 11", styles: ["Flatground"], pic: "https://i.pravatar.cc/400?img=21", bio: "Creative flatground skating." }
+    { wallet: "FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW", name: "GREG VALENCIA", styles: ["Street", "Flow"], stance: "Goofy", deck: "8.25 FA", trucks: "Indys 149", spot: "LA Courthouse", yt: "TkiDuln_Q28", pic: "https://i.pravatar.cc/400?img=11", bio: "Original Sk8Coin pioneer." },
+    { wallet: "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ", name: "GAP KILLER", styles: ["Gaps", "Stairs"], stance: "Regular", deck: "8.5 Baker", trucks: "Thunders", spot: "El Toro", yt: "3JZ_D3ELwOQ", pic: "https://i.pravatar.cc/400?img=12", bio: "Sending it over every stair set in sight." },
+    { wallet: "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", name: "MANUAL MIKE", styles: ["Balance", "Flatground"], stance: "Regular", deck: "8.0 Primitive", trucks: "Ventures", spot: "Muni", yt: "", pic: "https://i.pravatar.cc/400?img=13", bio: "Wheelie king of the local park." },
+    { wallet: "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW", name: "VERT VICTOR", styles: ["Vert", "Transition"], stance: "Goofy", deck: "8.75 Anti-Hero", trucks: "Indys 159", spot: "Vans Park", yt: "", pic: "https://i.pravatar.cc/400?img=14", bio: "Highest airs in the revolution." },
+    { wallet: "BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi", name: "SHREDDER 5", styles: ["Park", "Flow"], stance: "Regular", deck: "8.25 Girl", trucks: "Crailtap", spot: "Stoner Park", yt: "", pic: "https://i.pravatar.cc/400?img=15", bio: "Style and flow over everything." },
+    { wallet: "9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH", name: "SHREDDER 6", styles: ["Street"], yt: "", pic: "https://i.pravatar.cc/400?img=16", bio: "Raw street talent." },
+    { wallet: "5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm", name: "SHREDDER 7", styles: ["Technical"], yt: "", pic: "https://i.pravatar.cc/400?img=17", bio: "Precision skating." },
+    { wallet: "9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj", name: "SHREDDER 8", styles: ["Big Rails"], yt: "", pic: "https://i.pravatar.cc/400?img=18", bio: "Handrail specialist." },
+    { wallet: "HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq", name: "SHREDDER 9", styles: ["Gaps"], yt: "", pic: "https://i.pravatar.cc/400?img=19", bio: "Big gap hunter." },
+    { wallet: "DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b", name: "SHREDDER 10", styles: ["Technical"], yt: "", pic: "https://i.pravatar.cc/400?img=20", bio: "Ledge master." },
+    { wallet: "E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7", name: "SHREDDER 11", styles: ["Flatground"], yt: "", pic: "https://i.pravatar.cc/400?img=21", bio: "Creative flatground skating." }
 ];
 
 async function getSolPrice() {
@@ -1313,11 +1361,13 @@ async function renderProfile(wallet, forceView = null) {
     const blessEl = document.getElementById('p-blessings');
     const blessingsLabel = document.getElementById('blessings-label');
     const profileHeader = document.getElementById('profile-header-text');
+    const gearContainer = document.getElementById('p-gear');
 
     rankEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:4px;"></i> SYNCING...';
     blessEl.innerText = "SYNCING...";
     rankEl.style.color = "var(--text-secondary)";
     blessEl.style.color = "var(--text-secondary)";
+    gearContainer.innerHTML = ""; 
 
     const existingToggle = document.getElementById('dual-view-toggle');
     if(existingToggle) existingToggle.remove();
@@ -1341,9 +1391,37 @@ async function renderProfile(wallet, forceView = null) {
         };
     }
 
+    skater.stance = skater.stance || "";
+    skater.deck = skater.deck || "";
+    skater.trucks = skater.trucks || "";
+    skater.spot = skater.spot || "";
+    skater.yt = skater.yt || "";
+
+    // PULL FROM ON-CHAIN DATA FIRST
+    try {
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 20 });
+        for (let s of sigs) {
+            if(s.memo && s.memo.includes('"sk8":"v1"')) {
+                const jsonStr = s.memo.replace(/^\[\d+\]\s*/, '');
+                try {
+                    const onChainProfile = JSON.parse(jsonStr);
+                    if(onChainProfile.name) skater.name = onChainProfile.name;
+                    if(onChainProfile.pic) skater.pic = onChainProfile.pic;
+                    if(onChainProfile.bio) skater.bio = onChainProfile.bio;
+                    
+                    if(onChainProfile.stance) skater.stance = onChainProfile.stance;
+                    if(onChainProfile.deck) skater.deck = onChainProfile.deck;
+                    if(onChainProfile.trucks) skater.trucks = onChainProfile.trucks;
+                    if(onChainProfile.spot) skater.spot = onChainProfile.spot;
+                    if(onChainProfile.yt) skater.yt = onChainProfile.yt;
+                    break;
+                } catch(parseErr) { console.log("Memo parse error", parseErr); }
+            }
+        }
+    } catch(e) {}
+
     let activeView = forceView;
     if (!activeView) { 
-        // STRICT GATE: Default to skater ONLY if explicitly recognized as one
         activeView = (isGenesisSkater && !isSponsorOnly) ? 'skater' : 'sponsor'; 
     }
 
@@ -1379,6 +1457,12 @@ async function renderProfile(wallet, forceView = null) {
     document.getElementById('p-wallet').innerText = wallet;
     document.getElementById('p-tags').innerHTML = skater.styles.map(t => `<span class="style-tag">${t}</span>`).join('');
 
+    gearContainer.dataset.stance = skater.stance;
+    gearContainer.dataset.deck = skater.deck;
+    gearContainer.dataset.trucks = skater.trucks;
+    gearContainer.dataset.spot = skater.spot;
+    gearContainer.dataset.yt = skater.yt; 
+
     if (activeView === 'skater') {
         const sRank = getRankDisplay(stats.ins, true);
 
@@ -1394,6 +1478,24 @@ async function renderProfile(wallet, forceView = null) {
             const bal = await connection.getBalance(new solanaWeb3.PublicKey(wallet));
             blessEl.innerText = (bal / 1e9).toFixed(4) + " SOL";
         } catch(e) { blessEl.innerText = "0.00 SOL"; }
+
+        let gearHtml = "";
+        if(skater.stance) gearHtml += `<div class="gear-tag" title="Stance"><i class="fas fa-shoe-prints"></i> ${skater.stance}</div>`;
+        if(skater.deck) gearHtml += `<div class="gear-tag" title="Deck"><i class="fas fa-layer-group"></i> ${skater.deck}</div>`;
+        if(skater.trucks) gearHtml += `<div class="gear-tag" title="Trucks"><i class="fas fa-wrench"></i> ${skater.trucks}</div>`;
+        if(skater.spot) gearHtml += `<div class="gear-tag" title="Local Spot"><i class="fas fa-map-marker-alt"></i> ${skater.spot}</div>`;
+        gearContainer.innerHTML = gearHtml;
+
+        // SPONSOR ME TAPE LOGIC
+        const ytSection = document.getElementById('p-sponsor-video-section');
+        const ytPlayer = document.getElementById('p-sponsor-video');
+        if (skater.yt) {
+            ytSection.style.display = 'block';
+            ytPlayer.src = `https://www.youtube.com/embed/${skater.yt}`;
+        } else {
+            ytSection.style.display = 'none';
+            ytPlayer.src = "";
+        }
 
     } else {
         const spRank = getRankDisplay(stats.outs, false);
@@ -1413,29 +1515,27 @@ async function renderProfile(wallet, forceView = null) {
             rankEl.innerHTML = "🚫 POSER";
             rankEl.style.color = "var(--accent-red)";
         }
-    }
 
-    try {
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 20 });
-        for (let s of sigs) {
-            if(s.memo && s.memo.includes('"sk8":"v1"')) {
-                const jsonStr = s.memo.replace(/^\[\d+\]\s*/, '');
-                try {
-                    const onChainProfile = JSON.parse(jsonStr);
-                    if(onChainProfile.name) document.getElementById('p-name').innerText = onChainProfile.name;
-                    if(onChainProfile.pic) document.getElementById('p-img').src = onChainProfile.pic;
-                    if(onChainProfile.bio) document.getElementById('p-bio').innerText = onChainProfile.bio;
-                    break;
-                } catch(parseErr) { console.log("Memo parse error", parseErr); }
-            }
-        }
-    } catch(e) {}
+        // HIDE SPONSOR TAPE FOR SPONSORS
+        document.getElementById('p-sponsor-video-section').style.display = 'none';
+        document.getElementById('p-sponsor-video').src = "";
+    }
 }
 
 function openEditModal() {
     document.getElementById('edit-name').value = document.getElementById('p-name').innerText.replace(" (Syncing...)", "");
     document.getElementById('edit-pic').value = document.getElementById('p-img').src;
     document.getElementById('edit-bio').value = document.getElementById('p-bio').innerText;
+    
+    const gearData = document.getElementById('p-gear').dataset;
+    document.getElementById('edit-stance').value = gearData.stance || "";
+    document.getElementById('edit-deck').value = gearData.deck || "";
+    document.getElementById('edit-trucks').value = gearData.trucks || "";
+    document.getElementById('edit-spot').value = gearData.spot || "";
+    
+    // Reverse engineer the YT URL for the user to edit
+    document.getElementById('edit-yt').value = gearData.yt ? "https://youtu.be/" + gearData.yt : "";
+    
     document.getElementById('edit-modal').style.display = 'flex';
 }
 
@@ -1450,11 +1550,25 @@ async function saveProfileWeb3() {
         const name = document.getElementById("edit-name").value;
         const pic = document.getElementById("edit-pic").value;
         const bio = document.getElementById("edit-bio").value;
+        
+        const stance = document.getElementById("edit-stance").value;
+        const deck = document.getElementById("edit-deck").value;
+        const trucks = document.getElementById("edit-trucks").value;
+        const spot = document.getElementById("edit-spot").value;
+        
+        // YOUTUBE LINK SCRUBBER: Extract only the 11-char ID to save blockchain bytes
+        const rawYt = document.getElementById("edit-yt").value;
+        let yt = "";
+        if (rawYt) {
+            const match = rawYt.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+            yt = (match && match[2].length === 11) ? match[2] : "";
+        }
 
-        const profileData = JSON.stringify({ sk8: "v1", name, pic, bio });
+        const profileData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
         const encodedData = new TextEncoder().encode(profileData);
+        
         if (encodedData.length > 566) {
-            alert(`Profile too large! Max 566 bytes, you are at ${encodedData.length}. Use a shorter image URL or bio.`);
+            alert(`Profile too large! Max 566 bytes, you are at ${encodedData.length}. Use shorter tags or bio.`);
             btn.innerText = "SIGN & SAVE TO CHAIN";
             return; 
         }
