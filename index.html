@@ -350,7 +350,6 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 2000; }
 @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-
 /* ======================================================== */
 /* RUTHLESS MOBILE LOCKDOWN ARCHITECTURE                    */
 /* ======================================================== */
@@ -876,7 +875,12 @@ const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
-/* Ghost Wallet Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6 Purged Completely */
+/* EXCLUSION LIST: Wallets that have historical skater data on-chain but are now strictly Sponsors */
+const SPONSOR_ONLY_WALLETS = [
+    "Gek2TJ4ya1uU87jexKg38ao1eTbaGDkYUjBaVbBrLGE6"
+];
+
+/* Skater Registry */
 const SKATER_REGISTRY = [
     "FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW",
     "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ",
@@ -961,7 +965,7 @@ async function fetchWalletStats(wallet) {
 
 async function handleWalletAction() {
     if (publicKey) { 
-        // Pure silent disconnect execution. No annoying popups.
+        // Pure silent disconnect execution
         try {
             if (provider && provider.disconnect) await provider.disconnect();
         } catch(e) {}
@@ -1030,15 +1034,19 @@ async function fetchHeaderDualRank(wallet) {
     if (!skaterPanel || publicKey !== wallet) return;
 
     let isGenesisSkater = SKATER_REGISTRY.includes(wallet);
-    let isDual = isGenesisSkater && (stats.outs > 0);
+    let isSponsorOnly = SPONSOR_ONLY_WALLETS.includes(wallet);
+    
+    let isDual = isGenesisSkater && (stats.outs > 0) && !isSponsorOnly;
 
     let skaterRankDisplay = null;
     let sponsorRankDisplay = null;
 
-    if (isGenesisSkater || stats.ins > 0) {
+    // Explicitly override stats.ins if the wallet is marked Sponsor Only
+    if (!isSponsorOnly && (isGenesisSkater || stats.ins > 0)) {
         skaterRankDisplay = getRankDisplay(stats.ins, true);
     }
-    if (stats.outs > 0) {
+    
+    if (stats.outs > 0 || isSponsorOnly) {
         sponsorRankDisplay = getRankDisplay(stats.outs, false);
     }
 
@@ -1056,9 +1064,10 @@ async function fetchHeaderDualRank(wallet) {
             <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🛹⚙️</button>
         `;
     } else if (sponsorRankDisplay) {
+        // Direct injection to match requested "Sponsor" view
         skaterPanel.innerHTML = `
-            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">${sponsorRankDisplay.icon} SPONSOR</span></span>
-            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
+            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">SPONSOR</span></span>
+            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">⚙️</button>
         `;
     } else {
         skaterPanel.innerHTML = `
@@ -1316,22 +1325,27 @@ async function renderProfile(wallet, forceView = null) {
     const stats = await fetchWalletStats(wallet);
     
     let isGenesisSkater = SKATER_REGISTRY.includes(wallet);
+    let isSponsorOnly = SPONSOR_ONLY_WALLETS.includes(wallet);
     let skater = SKATER_PROFILES.find(s => s.wallet === wallet);
     let hasGiven = stats.outs > 0;
-    let isDual = isGenesisSkater && hasGiven;
+    
+    let isDual = isGenesisSkater && hasGiven && !isSponsorOnly;
 
     if(!skater) {
         let onChainName = await resolveWalletName(wallet);
         skater = { 
             name: onChainName, 
-            styles: stats.ins > 0 ? ["Organic Skater"] : ["Whale", "Sponsor"], 
+            styles: (!isSponsorOnly && stats.ins > 0) ? ["Organic Skater"] : ["Whale", "Sponsor"], 
             pic: "https://i.pravatar.cc/400?u=" + wallet, 
-            bio: stats.ins > 0 ? "A new skater forged on-chain." : "Fueling the revolution." 
+            bio: (!isSponsorOnly && stats.ins > 0) ? "A new skater forged on-chain." : "Fueling the revolution." 
         };
     }
 
     let activeView = forceView;
-    if (!activeView) { activeView = (isGenesisSkater || stats.ins > 0) ? 'skater' : 'sponsor'; }
+    if (!activeView) { 
+        // Force the active view to sponsor if they are on the exclusion list
+        activeView = (!isSponsorOnly && (isGenesisSkater || stats.ins > 0)) ? 'skater' : 'sponsor'; 
+    }
 
     if (isDual) {
         const toggleDiv = document.createElement('div');
