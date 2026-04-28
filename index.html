@@ -1064,10 +1064,10 @@ async function fetchHeaderDualRank(wallet) {
             <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🛹⚙️</button>
         `;
     } else if (sponsorRankDisplay) {
-        // Direct injection to match requested "Sponsor" view
+        // Direct injection to match requested "Sponsor" view with the correct Handshake Gear button
         skaterPanel.innerHTML = `
             <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">SPONSOR</span></span>
-            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">⚙️</button>
+            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
         `;
     } else {
         skaterPanel.innerHTML = `
