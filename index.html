@@ -1031,7 +1031,7 @@ function updateWalletUI() {
     updateDonateButtons();
 }
 
-// DYNAMIC HEADER
+// DYNAMIC HEADER - STRICT IDENTITY GATES APPLIED
 async function fetchHeaderDualRank(wallet) {
     const stats = await fetchWalletStats(wallet);
     const skaterPanel = document.getElementById("skater-auth-panel");
@@ -1045,12 +1045,13 @@ async function fetchHeaderDualRank(wallet) {
     let skaterRankDisplay = null;
     let sponsorRankDisplay = null;
 
-    // Explicitly override stats.ins if the wallet is marked Sponsor Only
-    if (!isSponsorOnly && (isGenesisSkater || stats.ins > 0)) {
+    // STRICT GATE: You are ONLY a skater if you are explicitly in the registry (Future NFT integration point)
+    if (isGenesisSkater && !isSponsorOnly) {
         skaterRankDisplay = getRankDisplay(stats.ins, true);
     }
     
-    if (stats.outs > 0 || isSponsorOnly) {
+    // SPONSOR GATE: Anyone else defaults to Sponsor status
+    if (stats.outs > 0 || !isGenesisSkater || isSponsorOnly) {
         sponsorRankDisplay = getRankDisplay(stats.outs, false);
     }
 
@@ -1067,16 +1068,10 @@ async function fetchHeaderDualRank(wallet) {
             <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${skaterRankDisplay.color}">${skaterRankDisplay.icon} ${skaterRankDisplay.title}</span></span>
             <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🛹⚙️</button>
         `;
-    } else if (sponsorRankDisplay) {
-        // Direct injection to match requested "Sponsor" view with the correct Handshake Gear button
-        skaterPanel.innerHTML = `
-            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">SPONSOR</span></span>
-            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
-        `;
     } else {
-        // NEW DEFAULT: If a wallet has 0 history, default them to the Sponsor UI with the gold handshake gear
+        // STRICT FALLBACK: All other users get the sponsor view natively
         skaterPanel.innerHTML = `
-            <span style="font-size: 0.6rem; color: var(--accent-red); font-weight: bold;">RANK: <span style="color:var(--accent-red)">🚫 POSER</span></span>
+            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">${sponsorRankDisplay.icon} ${sponsorRankDisplay.title}</span></span>
             <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
         `;
     }
@@ -1340,16 +1335,16 @@ async function renderProfile(wallet, forceView = null) {
         let onChainName = await resolveWalletName(wallet);
         skater = { 
             name: onChainName, 
-            styles: (!isSponsorOnly && stats.ins > 0) ? ["Organic Skater"] : ["Whale", "Sponsor"], 
+            styles: (isGenesisSkater) ? ["Organic Skater"] : ["Sponsor"], 
             pic: "https://i.pravatar.cc/400?u=" + wallet, 
-            bio: (!isSponsorOnly && stats.ins > 0) ? "A new skater forged on-chain." : "Fueling the revolution." 
+            bio: (isGenesisSkater) ? "A new skater forged on-chain." : "Fueling the revolution." 
         };
     }
 
     let activeView = forceView;
     if (!activeView) { 
-        // Force the active view to sponsor if they are on the exclusion list
-        activeView = (!isSponsorOnly && (isGenesisSkater || stats.ins > 0)) ? 'skater' : 'sponsor'; 
+        // STRICT GATE: Default to skater ONLY if explicitly recognized as one
+        activeView = (isGenesisSkater && !isSponsorOnly) ? 'skater' : 'sponsor'; 
     }
 
     if (isDual) {
