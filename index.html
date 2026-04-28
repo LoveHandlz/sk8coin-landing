@@ -278,6 +278,7 @@ main {
     border: 3px solid var(--accent-cyan);
     margin-bottom: 20px;
     object-fit: cover;
+    transition: all 0.3s ease;
 }
 
 .style-tag {
@@ -302,6 +303,12 @@ main {
 .amt-tag { color: var(--accent-green); font-weight: bold; white-space: nowrap; }
 .live-indicator { font-size: 0.6rem; color: var(--accent-red); float: right; animation: pulse 2s infinite; }
 @keyframes pulse { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
+
+/* UI UPDATE CLASSES */
+.led-green { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 10px var(--accent-green); display: inline-block; margin-right: 8px; animation: led-pulse 2s infinite; }
+@keyframes led-pulse { 0% {opacity:1; transform: scale(1);} 50% {opacity:0.4; transform: scale(0.9);} 100% {opacity:1; transform: scale(1);} }
+.addr-tag.clickable { cursor: pointer; transition: 0.2s; }
+.addr-tag.clickable:hover { color: var(--accent-cyan); text-decoration: underline; }
 
 footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); padding: 3rem 2rem 1.5rem; margin-top: 3rem; }
 .footer-inner { max-width: 1440px; margin: auto; display: grid; grid-template-columns: 2.5fr 1fr 1fr; gap: 3rem; }
@@ -469,7 +476,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
             
             <div id="skater-auth-panel" style="display: none; align-items: center; gap: 6px; background: rgba(0, 240, 255, 0.05); padding: 4px 10px; border-radius: 50px; border: 1px solid var(--accent-cyan);">
                 <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;">PRO</span></span>
-                <button onclick="navigateTo('profile', publicKey)" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;">⚙️</button>
+                <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;">⚙️</button>
             </div>
 
             <div id="wallet-balance-container" onclick="if(isMobile()) handleWalletAction();" style="display: none; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1);">
@@ -549,7 +556,9 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
  <div id="video-content" style="display:none;">
     <div class="hero">
         <h1 style="font-size:2.8rem;">SK8 VIDEOS</h1>
-        <p style="color: var(--accent-gold); font-weight:bold; font-size:0.75rem;">PEER-TO-PEER SPONSORSHIP ACTIVE</p>
+        <p style="color: var(--accent-gold); font-weight:bold; font-size:0.75rem; display: flex; align-items: center; justify-content: center;">
+            <span id="protocol-led" class="led-green" style="display: none;"></span>PEER-TO-PEER SPONSORSHIP ACTIVE
+        </p>
         <p class="hero-subtext" style="font-size: 0.85rem;">Scout raw talent. Drop on-chain blessings directly into skaters' wallets to unlock footage and boost rank.</p>
     </div>
     
@@ -708,10 +717,10 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
             <h2 id="p-name" style="font-family:'Bangers'; font-size:3rem;"></h2>
             <div id="p-tags"></div>
             <div style="background:rgba(0,0,0,0.4); padding:15px; border-radius:15px; margin-top:15px; border:1px dashed var(--accent-gold);">
-                <p style="font-size:0.6rem; opacity:0.6;">SKATER WALLET</p>
+                <p style="font-size:0.6rem; opacity:0.6;">WALLET</p>
                 <p id="p-wallet" style="font-family:monospace; font-size:0.55rem; word-break:break-all; color: var(--text-secondary); margin-bottom: 10px;"></p>
                 <button id="edit-profile-btn" onclick="openEditModal()" class="wallet-btn" style="display:none; margin-bottom:10px; width:100%; background: #fff; color: #000; padding: 10px; font-size: 0.8rem;">⚙️ EDIT GEAR</button>
-                <button id="profile-donate-btn" onclick="openSponsorshipModalFromProfile()" class="donate-btn">BLESS THIS SKATER</button>
+                <button id="profile-donate-btn" onclick="openSponsorshipModalFromProfile()" class="donate-btn">BLESS THIS USER</button>
             </div>
         </div>
         <div class="profile-main">
@@ -723,7 +732,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
                     <p id="p-rank" style="font-weight:900; font-size: 1.1rem;"></p>
                 </div>
                 <div style="background:var(--bg-panel); padding:15px; border-radius:10px; border:1px solid var(--card-border);">
-                    <p style="font-size:0.6rem; color: var(--text-secondary);">ON-CHAIN BLESSINGS</p>
+                    <p id="blessings-label" style="font-size:0.6rem; color: var(--text-secondary);">ON-CHAIN BLESSINGS</p>
                     <p id="p-blessings" style="color:var(--accent-green); font-weight:900; font-size: 1.1rem;">0.00 SOL</p>
                 </div>
             </div>
@@ -844,7 +853,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
   <div class="modal-content" style="text-align: left;">
     <h3 style="color:var(--accent-gold); margin-bottom: 15px; text-align:center; font-size: 1rem;">UPDATE ON-CHAIN PROFILE</h3>
     
-    <label style="font-size: 0.65rem; color: var(--text-secondary);">SKATER NAME</label>
+    <label style="font-size: 0.65rem; color: var(--text-secondary);">DISPLAY NAME</label>
     <input type="text" id="edit-name" style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-cyan); border-radius: 5px; font-size: 0.8rem;">
     
     <label style="font-size: 0.65rem; color: var(--text-secondary);">PROFILE PIC URL (IPFS or Direct Link)</label>
@@ -868,6 +877,7 @@ const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
 const SKATER_REGISTRY = [
+    "FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW",
     "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ",
     "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW",
     "BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi", "9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH",
@@ -877,6 +887,7 @@ const SKATER_REGISTRY = [
 ];
 
 const SKATER_PROFILES = [
+    { wallet: "FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW", name: "GREG VALENCIA", rank: "PRO", styles: ["Street", "Flow"], pic: "https://i.pravatar.cc/400?img=11", bio: "Original Sk8Coin pioneer." },
     { wallet: "GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ", name: "GAP KILLER", rank: "AM", styles: ["Gaps", "Stairs"], pic: "https://i.pravatar.cc/400?img=12", bio: "Sending it over every stair set in sight." },
     { wallet: "4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi", name: "MANUAL MIKE", rank: "FLOW", styles: ["Balance", "Flatground"], pic: "https://i.pravatar.cc/400?img=13", bio: "Wheelie king of the local park." },
     { wallet: "6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW", name: "VERT VICTOR", rank: "PRO", styles: ["Vert", "Transition"], pic: "https://i.pravatar.cc/400?img=14", bio: "Highest airs in the revolution." },
@@ -912,6 +923,30 @@ function updateDonateButtons() {
             btn.style.display = '';
         }
     });
+}
+
+// Master Blockchain Scanner for Ins (Received) and Outs (Given)
+async function fetchWalletStats(wallet) {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    let ins = 0; let outs = 0;
+    try {
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 25 });
+        for (let s of sigs) {
+            const tx = await connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
+            if (tx && tx.meta) {
+                const accountKeys = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys.map(k=>k.toString()) : [];
+                const wIdx = accountKeys.indexOf(wallet);
+                if(wIdx !== -1) {
+                    const pre = tx.meta.preBalances[wIdx];
+                    const post = tx.meta.postBalances[wIdx];
+                    const diff = (post - pre) / 1e9;
+                    if (diff < -0.001) outs += Math.abs(diff); // Sent (Sponsor Activity)
+                    else if (diff > 0.001) ins += diff;        // Received (Blessings)
+                }
+            }
+        }
+    } catch(e) { console.log("Ledger scan limited", e); }
+    return { ins, outs };
 }
 
 async function handleWalletAction() {
@@ -953,34 +988,81 @@ function updateWalletUI() {
     const btn = document.getElementById("connect-wallet-btn");
     const balContainer = document.getElementById("wallet-balance-container");
     const skaterPanel = document.getElementById("skater-auth-panel");
+    const protocolLed = document.getElementById("protocol-led");
     
     if (publicKey) { 
         document.body.classList.add("wallet-connected"); 
         btn.innerText = "CONNECTED"; 
         balContainer.style.display = "flex"; 
+        if(protocolLed) protocolLed.style.display = "inline-block";
         
-        const skater = SKATER_PROFILES.find(s => s.wallet === publicKey);
-        if(skater) {
-            skaterPanel.style.display = "flex";
-            const authRank = document.getElementById("auth-skater-rank");
-            authRank.innerText = skater.rank;
-            
-            if (skater.rank === "FLOW") authRank.style.color = "var(--bronze-font)";
-            else if (skater.rank === "AM") authRank.style.color = "var(--silver-font)";
-            else if (skater.rank === "PRO") authRank.style.color = "var(--gold-font)";
-            else authRank.style.color = "#fff";
-        } else {
-            skaterPanel.style.display = "none";
-        }
+        skaterPanel.style.display = "flex"; 
+        skaterPanel.innerHTML = '<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;"><i class="fas fa-spinner fa-spin" style="margin-right:4px;"></i> SYNCING...</span></span> <button onclick="navigateToProfileView(\'skater\')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; font-family: \'Orbitron\'; cursor: pointer;">⚙️</button>';
+        
+        fetchHeaderDualRank(publicKey);
     } 
     else { 
         document.body.classList.remove("wallet-connected");
         btn.innerText = "CONNECT"; 
         balContainer.style.display = "none"; 
         skaterPanel.style.display = "none";
+        if(protocolLed) protocolLed.style.display = "none";
     }
     
     updateDonateButtons();
+}
+
+// HEADER SPLICE: Let Skater dynamically choose which profile to edit
+async function fetchHeaderDualRank(wallet) {
+    const stats = await fetchWalletStats(wallet);
+    const skaterPanel = document.getElementById("skater-auth-panel");
+    if (!skaterPanel || publicKey !== wallet) return;
+
+    let isGenesisSkater = SKATER_REGISTRY.includes(wallet);
+    let isDual = isGenesisSkater && (stats.outs > 0);
+
+    let skaterRankDisplay = null;
+    let sponsorRankDisplay = null;
+
+    if (isGenesisSkater) {
+        let dummy = 0.01;
+        const skt = SKATER_PROFILES.find(s => s.wallet === wallet);
+        if(skt && skt.rank === "PRO") dummy = 0.1;
+        else if(skt && skt.rank === "AM") dummy = 0.05;
+        skaterRankDisplay = getRankDisplay(Math.max(dummy, stats.ins));
+    } else if (stats.ins > 0) {
+        skaterRankDisplay = getRankDisplay(stats.ins);
+    }
+
+    if (stats.outs > 0) {
+        sponsorRankDisplay = getRankDisplay(stats.outs);
+    }
+
+    // Dynamic Header Splice Logic
+    if (isDual) {
+        skaterPanel.innerHTML = `
+            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">DUAL RANK: 
+                <span style="color:${skaterRankDisplay.color}">${skaterRankDisplay.icon} SKATER</span> | <span style="color:${sponsorRankDisplay.color}">${sponsorRankDisplay.icon} SPONSOR</span>
+            </span>
+            <button onclick="navigateToProfileView('skater')" title="Edit Skater Profile" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🛹⚙️</button>
+            <button onclick="navigateToProfileView('sponsor')" title="Edit Sponsor Profile" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
+        `;
+    } else if (skaterRankDisplay) {
+        skaterPanel.innerHTML = `
+            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${skaterRankDisplay.color}">${skaterRankDisplay.icon} ${skaterRankDisplay.title}</span></span>
+            <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🛹⚙️</button>
+        `;
+    } else if (sponsorRankDisplay) {
+        skaterPanel.innerHTML = `
+            <span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sponsorRankDisplay.color}">${sponsorRankDisplay.icon} SPONSOR</span></span>
+            <button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">🤝⚙️</button>
+        `;
+    } else {
+        skaterPanel.innerHTML = `
+            <span style="font-size: 0.6rem; color: var(--accent-red); font-weight: bold;">RANK: <span style="color:var(--accent-red)">🚫 POSER</span></span>
+            <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">⚙️</button>
+        `;
+    }
 }
 
 async function fetchBalance() {
@@ -1030,22 +1112,42 @@ async function fetchTreasuryBalance() {
 }
 
 function getRankDisplay(amount) {
-    if(amount >= 0.1) return { color: "var(--gold-font)", icon: '<i class="fas fa-trophy" style="margin-right:8px; color:var(--gold-font); text-shadow:0 0 5px rgba(255,215,0,0.5);"></i>', glow: 'text-shadow: 0 0 8px rgba(255,215,0,0.4); font-weight: 900;' };
-    if(amount >= 0.05) return { color: "var(--silver-font)", icon: '<i class="fas fa-medal" style="margin-right:8px; color:var(--silver-font);"></i>', glow: 'font-weight: bold;' };
-    if(amount >= 0.01) return { color: "var(--bronze-font)", icon: '<i class="fas fa-medal" style="margin-right:8px; color:var(--bronze-font);"></i>', glow: 'font-weight: bold;' };
-    return { color: "var(--text-secondary)", icon: '', glow: '' };
+    if(amount >= 0.1) return { title: "PRO", color: "var(--gold-font)", icon: '<i class="fas fa-trophy" style="margin-right:8px; color:var(--gold-font); text-shadow:0 0 5px rgba(255,215,0,0.5);"></i>', glow: 'text-shadow: 0 0 8px rgba(255,215,0,0.4); font-weight: 900;' };
+    if(amount >= 0.05) return { title: "AM", color: "var(--silver-font)", icon: '<i class="fas fa-medal" style="margin-right:8px; color:var(--silver-font);"></i>', glow: 'font-weight: bold;' };
+    if(amount >= 0.01) return { title: "FLOW", color: "var(--bronze-font)", icon: '<i class="fas fa-medal" style="margin-right:8px; color:var(--bronze-font);"></i>', glow: 'font-weight: bold;' };
+    if(amount > 0) return { title: "SUPPORTER", color: "var(--text-secondary)", icon: '<i class="fas fa-handshake" style="margin-right:8px; color:var(--text-secondary);"></i>', glow: '' };
+    return { title: "POSER", color: "var(--accent-red)", icon: '🚫', glow: '' };
 }
 
-/* REFACTORED LEADERBOARD SCAN: DESCENDING SORT & FLEX LOGIC */
+async function resolveWalletName(wallet) {
+    if (wallet === "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc") return "Lovehandlz";
+    
+    let skater = SKATER_PROFILES.find(s => s.wallet === wallet);
+    if (skater) return skater.name;
+
+    try {
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 5 });
+        for (let s of sigs) {
+            if(s.memo && s.memo.includes('"sk8":"v1"')) {
+                const jsonStr = s.memo.replace(/^\[\d+\]\s*/, '');
+                const data = JSON.parse(jsonStr);
+                if(data.name) return data.name;
+            }
+        }
+    } catch(e) {}
+
+    return "Anon Sponsor";
+}
+
 async function refreshLeaderboardData() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     
-    // TREASURY LEADERBOARD (THE FLEX LIST)
     const treasuryList = document.getElementById("treasury-sponsors-list");
     treasuryList.innerHTML = "<li>Synchronizing...</li>";
     try {
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 12 });
-        let rawSponsors = [];
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 15 });
+        let aggregatedSponsors = {};
 
         for (let s of sigs) {
             const tx = await connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
@@ -1053,13 +1155,18 @@ async function refreshLeaderboardData() {
                 const sponsorAddr = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys[0].toString() : "Anonymous";
                 const amount = (tx.meta.preBalances[0] - tx.meta.postBalances[0] - tx.meta.fee) / solanaWeb3.LAMPORTS_PER_SOL;
                 if(amount > 0.001) {
-                    rawSponsors.push({ addr: sponsorAddr, val: amount });
+                    if(!aggregatedSponsors[sponsorAddr]) aggregatedSponsors[sponsorAddr] = 0;
+                    aggregatedSponsors[sponsorAddr] += amount;
                 }
             }
         }
 
-        // SORT DESCENDING: Highest amount at the top
+        let rawSponsors = Object.keys(aggregatedSponsors).map(addr => ({ addr, val: aggregatedSponsors[addr] }));
         rawSponsors.sort((a, b) => b.val - a.val);
+
+        await Promise.all(rawSponsors.map(async (s) => {
+            s.name = await resolveWalletName(s.addr);
+        }));
 
         treasuryList.innerHTML = "";
         rawSponsors.forEach((s, index) => {
@@ -1069,9 +1176,12 @@ async function refreshLeaderboardData() {
             
             treasuryList.innerHTML += `
                 <li class="leader-item" style="${isTopDog}">
-                    <span class="addr-tag" style="color: ${rank.color}; font-weight: bold;">
-                        ${flexIcon}${rank.icon}${s.addr.slice(0,6)}...${s.addr.slice(-4)}
-                    </span> 
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="addr-tag clickable" style="color: ${rank.color}; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='var(--accent-cyan)'; this.style.textDecoration='underline';" onmouseout="this.style.color='${rank.color}'; this.style.textDecoration='none';" onclick="navigateTo('profile', '${s.addr}')">
+                            ${flexIcon}${rank.icon} ${s.name} <span style="font-size:0.6rem; opacity:0.7; margin-left:5px;">[${rank.title}]</span>
+                        </span> 
+                        <a href="https://solscan.io/account/${s.addr}" target="_blank" style="font-family: monospace; font-size: 0.65rem; color: var(--text-secondary); text-decoration: none; margin-top: 2px;" onmouseover="this.style.color='var(--accent-cyan)'" onmouseout="this.style.color='var(--text-secondary)'" onclick="event.stopPropagation();"><i class="fas fa-external-link-alt" style="font-size: 0.55rem; margin-right: 3px;"></i>${s.addr.slice(0,6)}...${s.addr.slice(-4)}</a>
+                    </div>
                     <span class="amt-tag" style="color: ${rank.color}; ${rank.glow}">${s.val.toFixed(2)} SOL</span>
                 </li>`;
         });
@@ -1079,7 +1189,6 @@ async function refreshLeaderboardData() {
 
     } catch(e) { treasuryList.innerHTML = "<li>Node busy. Refresh soon.</li>"; }
 
-    // SKATER FEED (CHRONOLOGICAL HITS)
     const skaterList = document.getElementById("skater-sponsors-list");
     skaterList.innerHTML = "<li>Polling Skater Wallets...</li>";
     let entries = [];
@@ -1091,13 +1200,25 @@ async function refreshLeaderboardData() {
                 if (sTx) {
                     const sp = sTx.transaction.message.staticAccountKeys[0].toString();
                     const am = (sTx.meta.preBalances[0] - sTx.meta.postBalances[0] - sTx.meta.fee) / solanaWeb3.LAMPORTS_PER_SOL;
-                    if(am > 0.001) entries.push({ addr: sp, val: am, skater: `Skater ${i+1}` });
+                    const skaterName = await resolveWalletName(SKATER_REGISTRY[i]);
+                    if(am > 0.001) entries.push({ addr: sp, val: am, skater: skaterName });
                 }
             }
         }
+        
+        await Promise.all(entries.map(async (e) => {
+            e.name = await resolveWalletName(e.addr);
+        }));
+
         skaterList.innerHTML = entries.map(e => {
             const rank = getRankDisplay(e.val);
-            return `<li class="leader-item"><span class="addr-tag" style="color: ${rank.color}; font-weight: bold;">${rank.icon}${e.addr.slice(0,4)}... helped ${e.skater}</span> <span class="amt-tag" style="color: ${rank.color}; ${rank.glow}">${e.val.toFixed(2)} SOL</span></li>`;
+            return `<li class="leader-item">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="addr-tag clickable" style="color: ${rank.color}; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='var(--accent-cyan)'; this.style.textDecoration='underline';" onmouseout="this.style.color='${rank.color}'; this.style.textDecoration='none';" onclick="navigateTo('profile', '${e.addr}')">${rank.icon} ${e.name} helped ${e.skater}</span> 
+                    <a href="https://solscan.io/account/${e.addr}" target="_blank" style="font-family: monospace; font-size: 0.65rem; color: var(--text-secondary); text-decoration: none; margin-top: 2px;" onmouseover="this.style.color='var(--accent-cyan)'" onmouseout="this.style.color='var(--text-secondary)'" onclick="event.stopPropagation();"><i class="fas fa-external-link-alt" style="font-size: 0.55rem; margin-right: 3px;"></i>${e.addr.slice(0,4)}...${e.addr.slice(-4)}</a>
+                </div>
+                <span class="amt-tag" style="color: ${rank.color}; ${rank.glow}">${e.val.toFixed(2)} SOL</span>
+            </li>`;
         }).join('') || "<li>No recent hits.</li>";
     } catch(e) { skaterList.innerHTML = "<li>Feed cooling down...</li>"; }
 }
@@ -1127,6 +1248,18 @@ function checkPersistence() {
     });
 }
 
+function navigateToProfileView(viewType) {
+    if(!publicKey) return;
+    document.getElementById('mobile-nav').classList.remove('open');
+    ["home", "video", "leaderboard", "donate"].forEach(id => {
+        const el = document.getElementById(id + "-content");
+        if(el) el.style.display = 'none';
+    });
+    document.getElementById("profile-content").style.display = 'block';
+    renderProfile(publicKey, viewType);
+    window.scrollTo(0,0);
+}
+
 function navigateTo(page, wallet = null) {
   document.getElementById('mobile-nav').classList.remove('open');
     
@@ -1138,7 +1271,7 @@ function navigateTo(page, wallet = null) {
   const target = document.getElementById(page + "-content");
   if(target) target.style.display = 'block';
   
-  if(page === 'profile' && wallet) renderProfile(wallet);
+  if(page === 'profile' && wallet) renderProfile(wallet, null);
   if(page === 'video') { fetchSkaterBalances(); checkPersistence(); updateDonateButtons(); }
   if(page === 'donate') fetchTreasuryBalance();
   if(page === 'leaderboard') refreshLeaderboardData();
@@ -1146,21 +1279,72 @@ function navigateTo(page, wallet = null) {
   window.scrollTo(0,0);
 }
 
-async function renderProfile(wallet) {
-    let skater = SKATER_PROFILES.find(s => s.wallet === wallet);
-    if(!skater) skater = { name: "UNKNOWN SHREDDER", rank: "FLOW", styles: ["Street"], pic: "https://i.pravatar.cc/400", bio: "Supporting the revolution." };
+// PROFILE EVOLUTION: 2 Distinct Toggleable Profile Pages
+async function renderProfile(wallet, forceView = null) {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const profilePicEl = document.getElementById('p-img');
+    const rankEl = document.getElementById('p-rank');
+    const blessEl = document.getElementById('p-blessings');
+    const blessingsLabel = document.getElementById('blessings-label');
+    const profileHeader = document.getElementById('profile-header-text');
+
+    rankEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:4px;"></i> SYNCING...';
+    blessEl.innerText = "SYNCING...";
+    rankEl.style.color = "var(--text-secondary)";
+    blessEl.style.color = "var(--text-secondary)";
+
+    // Clean up dynamic Toggle Injector
+    const existingToggle = document.getElementById('dual-view-toggle');
+    if(existingToggle) existingToggle.remove();
+
+    // 1. Fetch Objective Blockchain Reality
+    const stats = await fetchWalletStats(wallet);
     
+    // 2. Identify Status
+    let isGenesisSkater = SKATER_REGISTRY.includes(wallet);
+    let skater = SKATER_PROFILES.find(s => s.wallet === wallet);
+    let hasGiven = stats.outs > 0;
+    let isDual = isGenesisSkater && hasGiven;
+
+    if(!skater) {
+        let onChainName = await resolveWalletName(wallet);
+        skater = { 
+            name: onChainName, 
+            styles: stats.ins > 0 ? ["Organic Skater"] : ["Whale", "Sponsor"], 
+            pic: "https://i.pravatar.cc/400?u=" + wallet, 
+            bio: stats.ins > 0 ? "A new skater forged on-chain." : "Fueling the revolution." 
+        };
+    }
+
+    // Determine Active Page View
+    let activeView = forceView;
+    if (!activeView) { activeView = isGenesisSkater ? 'skater' : 'sponsor'; }
+
+    // 3. Inject DUAL Profile UI Toggle Switch (Surgical DOM Splice)
+    if (isDual) {
+        const toggleDiv = document.createElement('div');
+        toggleDiv.id = 'dual-view-toggle';
+        toggleDiv.style.cssText = "display:flex; gap:10px; margin-bottom: 15px; width: 100%; justify-content:center;";
+        
+        const skStyle = activeView === 'skater' ? 'background:var(--accent-cyan); color:#000; border:none;' : 'background:transparent; color:var(--text-secondary); border:1px solid var(--accent-cyan);';
+        const spStyle = activeView === 'sponsor' ? 'background:var(--accent-gold); color:#000; border:none;' : 'background:transparent; color:var(--text-secondary); border:1px solid var(--accent-gold);';
+
+        toggleDiv.innerHTML = `
+            <button onclick="renderProfile('${wallet}', 'skater')" style="flex:1; padding:10px; border-radius:6px; cursor:pointer; font-family:'Orbitron'; font-weight:bold; font-size:0.75rem; transition:0.3s; text-transform:uppercase; ${skStyle}">🛹 SKATER PAGE</button>
+            <button onclick="renderProfile('${wallet}', 'sponsor')" style="flex:1; padding:10px; border-radius:6px; cursor:pointer; font-family:'Orbitron'; font-weight:bold; font-size:0.75rem; transition:0.3s; text-transform:uppercase; ${spStyle}">🤝 SPONSOR PAGE</button>
+        `;
+        document.getElementById('p-tags').insertAdjacentElement('afterend', toggleDiv);
+    }
+
+    // 4. Update Static UI Meta
     const editBtn = document.getElementById('edit-profile-btn');
     const profileDonateBtn = document.getElementById('profile-donate-btn');
-    const profileHeader = document.getElementById('profile-header-text');
     
     if (publicKey && publicKey === wallet) {
         editBtn.style.display = 'block';
-        profileHeader.innerText = "SKATER DASHBOARD: BIO & STYLE";
         if(profileDonateBtn) profileDonateBtn.style.display = 'none'; 
     } else {
         editBtn.style.display = 'none';
-        profileHeader.innerText = "BIO & STYLE";
         if(profileDonateBtn) profileDonateBtn.style.display = 'block'; 
     }
 
@@ -1169,24 +1353,50 @@ async function renderProfile(wallet) {
     document.getElementById('p-bio').innerText = skater.bio;
     document.getElementById('p-wallet').innerText = wallet;
     document.getElementById('p-tags').innerHTML = skater.styles.map(t => `<span class="style-tag">${t}</span>`).join('');
-    
-    const rankEl = document.getElementById('p-rank');
-    rankEl.innerText = skater.rank;
-    if (skater.rank === "FLOW") rankEl.style.color = "var(--bronze-font)";
-    else if (skater.rank === "AM") rankEl.style.color = "var(--silver-font)";
-    else if (skater.rank === "PRO") rankEl.style.color = "var(--gold-font)";
-    else rankEl.style.color = "var(--accent-cyan)";
-    
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    try {
-        const bal = await connection.getBalance(new solanaWeb3.PublicKey(wallet));
-        document.getElementById('p-blessings').innerText = (bal / 1e9).toFixed(4) + " SOL";
-    } catch(e) { document.getElementById('p-blessings').innerText = "0.00 SOL"; }
 
-    try {
-        document.getElementById('p-name').innerText += " (Syncing...)";
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 20 });
+    // 5. Render Page Payload based on Mode
+    if (activeView === 'skater') {
+        let dummy = 0.01;
+        if(skater.rank === "PRO") dummy = 0.1;
+        else if(skater.rank === "AM") dummy = 0.05;
+        const sRank = getRankDisplay(Math.max(dummy, stats.ins));
+
+        profileHeader.innerText = "SKATER IDENTITY & BIO";
+        rankEl.innerHTML = sRank.icon + " " + sRank.title;
+        rankEl.style.color = sRank.color;
+        profilePicEl.style.borderColor = sRank.color;
+        profilePicEl.style.boxShadow = `0 0 25px ${sRank.color}`;
+
+        blessingsLabel.innerText = "BLESSINGS RECEIVED";
+        blessEl.style.color = "var(--accent-green)";
+        try {
+            const bal = await connection.getBalance(new solanaWeb3.PublicKey(wallet));
+            blessEl.innerText = (bal / 1e9).toFixed(4) + " SOL";
+        } catch(e) { blessEl.innerText = "0.00 SOL"; }
+
+    } else {
+        const spRank = getRankDisplay(stats.outs);
         
+        profileHeader.innerText = "SPONSOR PHILANTHROPY & BIO";
+        rankEl.innerHTML = spRank.icon + " " + spRank.title;
+        rankEl.style.color = spRank.color;
+        profilePicEl.style.borderColor = spRank.color;
+        profilePicEl.style.boxShadow = `0 0 25px ${spRank.color}`;
+
+        blessingsLabel.innerText = "TOTAL GIVEN TO COMMUNITY";
+        blessEl.innerText = stats.outs.toFixed(4) + " SOL";
+        blessEl.style.color = "var(--accent-green)";
+        
+        if (stats.outs === 0) {
+            blessEl.style.color = "var(--accent-red)";
+            rankEl.innerHTML = "🚫 POSER";
+            rankEl.style.color = "var(--accent-red)";
+        }
+    }
+
+    // 6. Secondary Memo Sync
+    try {
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 20 });
         for (let s of sigs) {
             if(s.memo && s.memo.includes('"sk8":"v1"')) {
                 const jsonStr = s.memo.replace(/^\[\d+\]\s*/, '');
@@ -1199,11 +1409,7 @@ async function renderProfile(wallet) {
                 } catch(parseErr) { console.log("Memo parse error", parseErr); }
             }
         }
-        document.getElementById('p-name').innerText = document.getElementById('p-name').innerText.replace(" (Syncing...)", "");
-    } catch(e) {
-        console.log("No on-chain profile found or RPC busy.");
-        document.getElementById('p-name').innerText = document.getElementById('p-name').innerText.replace(" (Syncing...)", "");
-    }
+    } catch(e) {}
 }
 
 function openEditModal() {
@@ -1357,6 +1563,7 @@ async function sendSOL(amount, destination) {
         if(document.getElementById('profile-content').style.display === 'block') {
             renderProfile(document.getElementById('p-wallet').innerText);
         }
+        fetchHeaderDualRank(publicKey); 
     }, 1500);
 
   } catch (err) { 
