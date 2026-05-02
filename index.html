@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn Master Protocol 8.1</title>
+  <title>SK8COIN | Skate2Earn Master Protocol V9 (Godmode)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -821,13 +821,19 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
 <script>
+// ==========================================
+// MASTER CONFIGURATION & GLOBALS
+// ==========================================
+const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
+const HELIUS_RPC = RPC_URL; // Alias for explicitly Helius-bound calls
+
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
 
 // JUPITER SWAP GLOBALS
 let currentQuoteResponse = null;
 let quoteTimeout = null;
-let isSolToUsdc = true; // Swap toggle state
+let isSolToUsdc = true; 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 let currentInputMint = SOL_MINT;
@@ -844,11 +850,9 @@ let feedRenderLimit = 12;
 let activeDaoTab = 'active'; 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-// FORCING LOCAL STORAGE AS SECONDARY CACHE ONLY
+// LOCAL STORAGE CACHE
 let DAO_MOTIONS = JSON.parse(localStorage.getItem('sk8_dao_motions_v3')) || [];
 
-// HELIUS API KEY
-const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 const VOTE_COST = 0.001; 
@@ -1231,7 +1235,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// JUPITER V6 INTEGRATION (PROXY WATERFALL)
+// V9 GODMODE JUPITER SWAP INTEGRATION 
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1275,6 +1279,7 @@ async function fetchJupiterQuote() {
 
     outputInput.value = "Routing...";
     
+    // Convert to lamports/decimals
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
     const amountInLamports = Math.floor(parseFloat(amountInput) * inputDecimals);
@@ -1282,21 +1287,19 @@ async function fetchJupiterQuote() {
     try {
         if (amountInLamports === 0) throw new Error("Amount too small");
 
+        // Direct Client-Side Fetch to Jupiter API (Bypasses Vercel/Cloudflare blocks)
         const targetUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
-        let quoteResponse = null;
+        
+        const response = await fetch(targetUrl, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
 
-        try {
-            // STRATEGY 1: Direct Web3 Hit
-            const response = await fetch(targetUrl);
-            if (!response.ok) throw new Error("Direct route blocked");
-            quoteResponse = await response.json();
-        } catch (err) {
-            // STRATEGY 2: Godmode Stealth Proxy (Bypasses Adblockers & Vercel Blocks)
-            console.warn("Direct route blocked by browser. Engaging stealth tunnel...");
-            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl);
-            const response = await fetch(proxyUrl);
-            quoteResponse = await response.json();
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
         }
+
+        const quoteResponse = await response.json();
 
         if (quoteResponse && quoteResponse.error) {
             outputInput.value = "Route error";
@@ -1313,8 +1316,14 @@ async function fetchJupiterQuote() {
             currentQuoteResponse = null;
         }
     } catch (error) {
+        console.error("Quote Fetch Error:", error);
         outputInput.value = "Err: Network Blocked";
         currentQuoteResponse = null;
+        
+        // Graceful fallback warning for adblockers
+        if (error.message.includes('Failed to fetch')) {
+            console.warn("If you are using Brave or strict adblockers, please lower shields to fetch Web3 quotes.");
+        }
     }
 }
 
@@ -1334,46 +1343,56 @@ async function executeJupiterSwap() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING TRANSACTION...';
 
     try {
-        const payload = {
-            quoteResponse: currentQuoteResponse,
-            userPublicKey: publicKey,
-            wrapAndUnwrapSol: true
-        };
+        // 1. Request the serialized transaction from Jupiter directly
+        const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                quoteResponse: currentQuoteResponse,
+                userPublicKey: publicKey,
+                wrapAndUnwrapSol: true,
+                dynamicComputeUnitLimit: true, // Pro feature for better success rates
+                prioritizationFeeLamports: "auto" // Pro feature to beat network congestion
+            })
+        });
 
-        let swapTransaction = null;
-        const targetUrl = 'https://quote-api.jup.ag/v6/swap';
-
-        try {
-            // Execute POST directly
-            const response = await fetch(targetUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!response.ok) throw new Error("POST Blocked");
-            const data = await response.json();
-            swapTransaction = data.swapTransaction;
-        } catch (err) {
-            // If the browser intercepts the POST request, prompt the user gracefully
-            alert("Your browser's strict privacy shields are blocking the Web3 Swap Engine. Please temporarily disable Brave Shields or your Adblocker for this site to sign the transaction.");
-            btn.innerHTML = 'SWAP FAILED';
-            setTimeout(() => btn.innerHTML = 'SWAP', 3000);
-            return;
+        if (!swapResponse.ok) {
+            throw new Error("Failed to generate swap transaction from Jupiter.");
         }
+
+        const swapData = await swapResponse.json();
         
-        if (!swapTransaction) {
-            throw new Error("Failed to generate swap transaction.");
+        if (!swapData.swapTransaction) {
+            throw new Error("No transaction returned from routing engine.");
         }
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
 
-        const swapTransactionBuf = buffer.Buffer.from(swapTransaction, 'base64');
+        // 2. Deserialize the transaction
+        const swapTransactionBuf = buffer.Buffer.from(swapData.swapTransaction, 'base64');
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
-        const signature = await provider.signAndSendTransaction(transaction);
+        // 3. Connect to Helius and Send
+        const connection = new solanaWeb3.Connection(HELIUS_RPC, "confirmed");
+        
+        // Sign with Phantom
+        const signedTransaction = await provider.signTransaction(transaction);
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
+
+        // Broadcast to the network via Helius
+        const rawTransaction = signedTransaction.serialize();
+        const txid = await connection.sendRawTransaction(rawTransaction, {
+            skipPreflight: true,
+            maxRetries: 2
+        });
+
+        // Wait for confirmation
+        await connection.confirmTransaction(txid, 'confirmed');
         
         btn.innerHTML = 'SWAP COMPLETE!';
         
+        // UI Clean up and celebrations
         document.getElementById('jingle').play().catch(e => {});
         createConfetti();
         document.getElementById('swap-input-amount').value = "";
@@ -1383,13 +1402,18 @@ async function executeJupiterSwap() {
         setTimeout(() => {
             btn.innerHTML = 'SWAP';
             fetchBalance(); 
+            fetchSwapBalances();
         }, 3000);
 
     } catch (error) {
         console.error("Swap Execution Error:", error);
-        if (!error.message?.includes("User rejected")) {
+        
+        if (error.message?.includes("Failed to fetch")) {
+            alert("Your browser's privacy shields are blocking the Web3 Swap Engine. Please temporarily disable Brave Shields or your Adblocker for this site.");
+        } else if (!error.message?.includes("User rejected")) {
             alert("Swap failed: " + (error.message || "Unknown error"));
         }
+        
         btn.innerHTML = 'SWAP FAILED';
         setTimeout(() => btn.innerHTML = 'SWAP', 3000);
     }
@@ -2234,7 +2258,6 @@ async function publishToFeed() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
         const { blockhash } = await conn.getLatestBlockhash();
         tx.recentBlockhash = blockhash; 
@@ -2294,7 +2317,6 @@ async function saveProfileWeb3() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
         const { blockhash } = await conn.getLatestBlockhash();
         tx.recentBlockhash = blockhash; 
@@ -2322,7 +2344,6 @@ async function sendOnChainReaction(type) {
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
         const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(
             new solanaWeb3.TransactionInstruction({ 
                 keys: [{ pubkey: from, isSigner: true, isWritable: true }], 
@@ -2402,7 +2423,6 @@ async function sendSOL(amount, dest) {
   try {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
     
-    // FIX: Native Phantom Broadcasting
     const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(dest), lamports: Math.floor(amount * 1e9) }));
     const { blockhash } = await conn.getLatestBlockhash();
     tx.recentBlockhash = blockhash; 
