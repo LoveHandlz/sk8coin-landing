@@ -827,16 +827,26 @@ const HELIUS_RPC = RPC_URL;
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
 
-// JUPITER SWAP GLOBALS
+// ==========================================
+// JUPITER V6 SWAP GLOBALS & CONFIG
+// ==========================================
 let currentQuoteResponse = null;
 let quoteTimeout = null;
 let isSolToUsdc = true; 
-const SOL_MINT = "So11111111111111111111111111111111111111112";
-const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-let currentInputMint = SOL_MINT;
-let currentOutputMint = USDC_MINT;
+let quoteAbortController = null;
 
+const JUPITER_QUOTE_API = "https://quote-api.jup.ag/v6/quote";
+const TOKENS = {
+  SOL:  { mint: "So11111111111111111111111111111111111111112", decimals: 9 },
+  USDC: { mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", decimals: 6 }
+};
+
+let currentInputMint = TOKENS.SOL.mint;
+let currentOutputMint = TOKENS.USDC.mint;
+
+// ==========================================
 // LEADERBOARD & FEED GLOBALS
+// ==========================================
 let allTreasurySponsors = [];
 let allSkaterHits = [];
 let activeFeedWallet = "";
@@ -1232,13 +1242,13 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9.2.2 GODMODE SWAP: PROVABLE POLLING ENGINE & DYNAMIC FEES
+// V9.2.2 GODMODE SWAP: JUPITER V6 + DYNAMIC FEES
 // ==========================================
 
 function toggleSwapDirection() {
     isSolToUsdc = !isSolToUsdc;
-    currentInputMint = isSolToUsdc ? SOL_MINT : USDC_MINT;
-    currentOutputMint = isSolToUsdc ? USDC_MINT : SOL_MINT;
+    currentInputMint = isSolToUsdc ? TOKENS.SOL.mint : TOKENS.USDC.mint;
+    currentOutputMint = isSolToUsdc ? TOKENS.USDC.mint : TOKENS.SOL.mint;
     
     document.getElementById('swap-input-symbol').innerText = isSolToUsdc ? "SOL" : "USDC";
     document.getElementById('swap-output-symbol').innerText = isSolToUsdc ? "USDC" : "SOL";
@@ -1304,7 +1314,7 @@ async function getRecentPriorityFee() {
     return FLOOR;
 }
 
-// REPLACEMENT fetchJupiterQuote — adds abort timeout + cleaner error states
+// V6 COMPLIANT QUOTE WITH ABORT CONTROLLER
 async function fetchJupiterQuote() {
     const amountInput = document.getElementById('swap-input-amount').value;
     const outputInput = document.getElementById('swap-output-amount');
@@ -1317,30 +1327,26 @@ async function fetchJupiterQuote() {
 
     outputInput.value = "Routing...";
 
-    const inputDecimals  = isSolToUsdc ? 1e9 : 1e6;
-    const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
-    const lamports = Math.round(parseFloat(amountInput) * inputDecimals).toString();
+    // Use clean token map based on current toggle state
+    const inputToken = isSolToUsdc ? TOKENS.SOL : TOKENS.USDC;
+    const outputToken = isSolToUsdc ? TOKENS.USDC : TOKENS.SOL;
 
-    if (lamports === "0") {
-        outputInput.value = "Amount too small";
-        currentQuoteResponse = null;
-        return;
+    const lamports = Math.floor(parseFloat(amountInput) * (10 ** inputToken.decimals)).toString();
+
+    // Cancel previous request if user is typing fast
+    if (quoteAbortController) {
+        quoteAbortController.abort();
     }
-
-    // Abort controller — kills stale requests after 8s
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    quoteAbortController = new AbortController();
 
     try {
-        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`;
+        const url = `${JUPITER_QUOTE_API}?inputMint=${inputToken.mint}&outputMint=${outputToken.mint}&amount=${lamports}&slippageBps=100`;
 
         const res = await fetch(url, {
             method: 'GET',
             headers: { 'Accept': 'application/json' },
-            signal: controller.signal
+            signal: quoteAbortController.signal
         });
-
-        clearTimeout(timeoutId);
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
@@ -1349,12 +1355,15 @@ async function fetchJupiterQuote() {
 
         const data = await res.json();
 
+        // JUPITER V6 FIX: The data IS the quote object
         if (data.error) throw new Error(data.error);
 
         currentQuoteResponse = data;
-        const outAmountParsed = (data.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
+        
+        // Calculate the readable output amount
+        const outAmountParsed = (data.outAmount / (10 ** outputToken.decimals)).toFixed(isSolToUsdc ? 2 : 4);
         outputInput.value = outAmountParsed;
-
+        
         // Show price impact warning inline if > 1%
         const impact = parseFloat(data.priceImpactPct || 0);
         if (impact > 1) {
@@ -1366,12 +1375,10 @@ async function fetchJupiterQuote() {
         }
 
     } catch (error) {
-        clearTimeout(timeoutId);
-        currentQuoteResponse = null;
+        if (error.name === "AbortError") return; // Silently ignore aborted requests
 
-        if (error.name === "AbortError") {
-            outputInput.value = "Timeout — retry";
-        } else if (error.message && error.message.includes("ROUTE_NOT_FOUND")) {
+        currentQuoteResponse = null;
+        if (error.message && error.message.includes("ROUTE_NOT_FOUND")) {
             outputInput.value = "No route found";
         } else {
             outputInput.value = "Quote failed";
@@ -1381,6 +1388,7 @@ async function fetchJupiterQuote() {
     }
 }
 
+// ROBUST SWAP EXECUTOR
 async function executeJupiterSwap() {
     if (!publicKey) {
         alert("Please connect your wallet first.");
@@ -1806,7 +1814,7 @@ async function fetchSwapBalances() {
     try {
         const usdcAccount = await connection.getParsedTokenAccountsByOwner(
             new solanaWeb3.PublicKey(publicKey),
-            { mint: new solanaWeb3.PublicKey(USDC_MINT) }
+            { mint: new solanaWeb3.PublicKey(TOKENS.USDC.mint) }
         );
         if (usdcAccount.value.length > 0) {
             usdcBalParsed = usdcAccount.value[0].account.data.parsed.info.tokenAmount.uiAmount.toFixed(2);
