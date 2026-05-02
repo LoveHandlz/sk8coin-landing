@@ -1279,7 +1279,6 @@ async function fetchJupiterQuote() {
 
     outputInput.value = "Routing...";
     
-    // Convert to lamports/decimals
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
     const amountInLamports = Math.floor(parseFloat(amountInput) * inputDecimals);
@@ -1287,16 +1286,18 @@ async function fetchJupiterQuote() {
     try {
         if (amountInLamports === 0) throw new Error("Amount too small");
 
-        // Direct Client-Side Fetch to Jupiter API (Bypasses Vercel/Cloudflare blocks)
         const targetUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
-        
-        const response = await fetch(targetUrl, {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-        });
+        let response;
 
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+        try {
+            // STRATEGY 1: Direct Web3 Hit
+            response = await fetch(targetUrl);
+            if (!response.ok) throw new Error("Direct route blocked");
+        } catch (err) {
+            // STRATEGY 2: The Final Godmode Proxy
+            console.warn("Direct route blocked by browser. Engaging corsproxy tunnel...");
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+            response = await fetch(proxyUrl);
         }
 
         const quoteResponse = await response.json();
@@ -1319,11 +1320,6 @@ async function fetchJupiterQuote() {
         console.error("Quote Fetch Error:", error);
         outputInput.value = "Err: Network Blocked";
         currentQuoteResponse = null;
-        
-        // Graceful fallback warning for adblockers
-        if (error.message.includes('Failed to fetch')) {
-            console.warn("If you are using Brave or strict adblockers, please lower shields to fetch Web3 quotes.");
-        }
     }
 }
 
@@ -1343,21 +1339,34 @@ async function executeJupiterSwap() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING TRANSACTION...';
 
     try {
-        // 1. Request the serialized transaction from Jupiter directly
-        const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                quoteResponse: currentQuoteResponse,
-                userPublicKey: publicKey,
-                wrapAndUnwrapSol: true,
-                dynamicComputeUnitLimit: true, // Pro feature for better success rates
-                prioritizationFeeLamports: "auto" // Pro feature to beat network congestion
-            })
-        });
+        const payload = {
+            quoteResponse: currentQuoteResponse,
+            userPublicKey: publicKey,
+            wrapAndUnwrapSol: true,
+            dynamicComputeUnitLimit: true,
+            prioritizationFeeLamports: "auto"
+        };
 
-        if (!swapResponse.ok) {
-            throw new Error("Failed to generate swap transaction from Jupiter.");
+        const targetUrl = 'https://quote-api.jup.ag/v6/swap';
+        let swapResponse;
+
+        try {
+            // STRATEGY 1: Direct Web3 POST
+            swapResponse = await fetch(targetUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!swapResponse.ok) throw new Error("Direct POST blocked");
+        } catch (err) {
+            // STRATEGY 2: Proxy Web3 POST
+            console.warn("Direct POST blocked by browser. Engaging corsproxy tunnel...");
+            const proxySwapUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+            swapResponse = await fetch(proxySwapUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
         }
 
         const swapData = await swapResponse.json();
@@ -1368,31 +1377,25 @@ async function executeJupiterSwap() {
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
 
-        // 2. Deserialize the transaction
         const swapTransactionBuf = buffer.Buffer.from(swapData.swapTransaction, 'base64');
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
-        // 3. Connect to Helius and Send
-        const connection = new solanaWeb3.Connection(HELIUS_RPC, "confirmed");
-        
-        // Sign with Phantom
+        // Broadcast via your Helius RPC
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const signedTransaction = await provider.signTransaction(transaction);
         
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
 
-        // Broadcast to the network via Helius
         const rawTransaction = signedTransaction.serialize();
         const txid = await connection.sendRawTransaction(rawTransaction, {
             skipPreflight: true,
             maxRetries: 2
         });
 
-        // Wait for confirmation
         await connection.confirmTransaction(txid, 'confirmed');
         
         btn.innerHTML = 'SWAP COMPLETE!';
         
-        // UI Clean up and celebrations
         document.getElementById('jingle').play().catch(e => {});
         createConfetti();
         document.getElementById('swap-input-amount').value = "";
@@ -1407,13 +1410,9 @@ async function executeJupiterSwap() {
 
     } catch (error) {
         console.error("Swap Execution Error:", error);
-        
-        if (error.message?.includes("Failed to fetch")) {
-            alert("Your browser's privacy shields are blocking the Web3 Swap Engine. Please temporarily disable Brave Shields or your Adblocker for this site.");
-        } else if (!error.message?.includes("User rejected")) {
-            alert("Swap failed: " + (error.message || "Unknown error"));
+        if (!error.message?.includes("User rejected")) {
+            alert("Swap failed. The Web3 routing network rejected the connection.");
         }
-        
         btn.innerHTML = 'SWAP FAILED';
         setTimeout(() => btn.innerHTML = 'SWAP', 3000);
     }
