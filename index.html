@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SK8COIN | Skate2Earn Master Protocol 7.6</title>
-
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -128,7 +125,8 @@ main { padding-top: 120px; max-width: 1440px; margin: auto; padding-left: 20px; 
 .reaction-btn:hover { background: rgba(255,215,0,0.1); border-color: var(--accent-gold); transform: scale(1.05); }
 .reaction-btn span { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #fff; font-weight: bold; }
 
-/* LEADERBOARD STYLES */
+/* LEADERBOARD STYLES (Adjusted 20% Text Reduction) */
+#leaderboard-content { font-size: 80%; }
 .leaderboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
 .leaderboard-box { background: var(--bg-panel); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 1.5rem; }
 .leaderboard-box h2 { font-size: 0.64rem; color: var(--accent-gold); margin-bottom: 1.2rem; text-transform: uppercase; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
@@ -310,6 +308,13 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 }
 </style>
 </head>
+
+
+
+
+  
+
+
 <body>
 
 <header>
@@ -820,6 +825,14 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
+
+
+
+
+
+
+
+
 <script>
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
@@ -827,7 +840,7 @@ let adminAddSelectedRole = "skater";
 // JUPITER SWAP GLOBALS
 let currentQuoteResponse = null;
 let quoteTimeout = null;
-let isSolToUsdc = true; // Swap toggle state
+let isSolToUsdc = true; 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 let currentInputMint = SOL_MINT;
@@ -844,7 +857,6 @@ let feedRenderLimit = 12;
 let activeDaoTab = 'active'; 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-// FORCING LOCAL STORAGE AS SECONDARY CACHE ONLY
 let DAO_MOTIONS = JSON.parse(localStorage.getItem('sk8_dao_motions_v3')) || [];
 
 // HELIUS API KEY
@@ -877,7 +889,14 @@ async function getSolPrice() { try { const r = await fetch('https://api.coingeck
 function getProvider() { if ("phantom" in window) { const p = window.phantom?.solana; if (p?.isPhantom) return p; } return null; }
 function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 function toggleMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
-function updateDonateButtons() { document.querySelectorAll('#video-content .donate-btn').forEach(btn => { if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; else btn.style.display = ''; }); }
+
+// SECURE: Enforce wash-trading protection by visually dropping elements
+function updateDonateButtons() { 
+    document.querySelectorAll('#video-content .donate-btn').forEach(btn => { 
+        if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none !important'; 
+        else btn.style.display = ''; 
+    }); 
+}
 
 // ==========================================
 // GOVERNANCE TITLES LOGIC
@@ -926,7 +945,6 @@ function switchDaoTab(tab) {
     renderDaoFeed();
 }
 
-// ON-CHAIN DAO SYNCER
 async function syncDaoFromChain() {
     const container = document.getElementById("dao-feed-container");
     if(container) container.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--accent-cyan); border: 1px dashed var(--card-border); border-radius: 12px;"><i class="fas fa-spinner fa-spin" style="margin-right:8px; font-size:1.5rem;"></i> Scanning Solana Blockchain for Motions...</div>';
@@ -989,6 +1007,7 @@ function renderDaoFeed() {
     container.innerHTML = "";
     let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
 
+    // SECURE: Render ALL active motions directly to the container for universal visibility
     let motionsToRender = DAO_MOTIONS.filter(m => m.tab === activeDaoTab);
 
     if (motionsToRender.length === 0) {
@@ -1258,7 +1277,6 @@ function toggleSwapDirection() {
 
 function debounceQuote() {
     clearTimeout(quoteTimeout);
-    // HACK: Increased from 500ms to 800ms to prevent Jupiter 429 Rate Limiting
     quoteTimeout = setTimeout(() => {
         fetchJupiterQuote();
     }, 800); 
@@ -1283,8 +1301,6 @@ async function fetchJupiterQuote() {
     try {
         if (amountInLamports === 0) throw new Error("Amount too small");
 
-        // HACK: Bumped slippage to 100 (1%) to prevent "No Route Found" errors 
-        // Added explicit headers to prevent strict-browser CORS drops
         const response = await fetch(`https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`, {
             method: 'GET',
             headers: {
@@ -1292,7 +1308,6 @@ async function fetchJupiterQuote() {
             }
         });
 
-        // HACK: Catch rate limits directly so the UI doesn't just look broken
         if (response.status === 429) {
             outputInput.value = "Rate Limited (Wait 10s)";
             currentQuoteResponse = null;
@@ -1301,7 +1316,6 @@ async function fetchJupiterQuote() {
 
         const quoteResponse = await response.json();
 
-        // If Jupiter explicitly returns an error message inside the JSON payload
         if (quoteResponse.error) {
             outputInput.value = "Error: " + quoteResponse.error;
             currentQuoteResponse = null;
@@ -1386,7 +1400,7 @@ async function executeJupiterSwap() {
 }
 
 // ==========================================
-// RENDER PROFILE (INJECT GOVERNANCE TITLES)
+// RENDER PROFILE & VIDEO LOGIC
 // ==========================================
 async function renderProfile(wallet, forceView = null) {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -1532,6 +1546,9 @@ function renderVideoGrid() {
         indexCount++;
         let vidId = skater.yt || "kJQP7kiw5Fk"; 
         
+        // SECURE: Filter out self-donations strictly
+        let donateBtnHtml = (publicKey === skater.wallet) ? '' : `<button class="donate-btn" data-target="vid-${indexCount}" data-address="${skater.wallet}">SPONSOR</button>`;
+
         let cardHTML = `
         <div class="video-card" id="vid-${indexCount}">
             <div class="video-wrapper">
@@ -1541,7 +1558,7 @@ function renderVideoGrid() {
             <div class="card-info">
               <div class="card-title" style="text-transform: uppercase;">${skater.name}</div>
               <div class="skater-wallet-bal" data-address="${skater.wallet}">Blessings: ...</div>
-              <button class="donate-btn" data-target="vid-${indexCount}" data-address="${skater.wallet}">SPONSOR</button>
+              ${donateBtnHtml}
               <button class="view-profile-btn" onclick="navigateTo('profile', '${skater.wallet}')">VIEW PROFILE</button>
             </div>
         </div>`;
@@ -2224,7 +2241,6 @@ async function publishToFeed() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
         const { blockhash } = await conn.getLatestBlockhash();
         tx.recentBlockhash = blockhash; 
@@ -2284,7 +2300,6 @@ async function saveProfileWeb3() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
         const { blockhash } = await conn.getLatestBlockhash();
         tx.recentBlockhash = blockhash; 
@@ -2312,7 +2327,6 @@ async function sendOnChainReaction(type) {
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
         const from = new solanaWeb3.PublicKey(publicKey);
         
-        // FIX: Native Phantom Broadcasting
         const tx = new solanaWeb3.Transaction().add(
             new solanaWeb3.TransactionInstruction({ 
                 keys: [{ pubkey: from, isSigner: true, isWritable: true }], 
@@ -2392,7 +2406,6 @@ async function sendSOL(amount, dest) {
   try {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
     
-    // FIX: Native Phantom Broadcasting
     const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(dest), lamports: Math.floor(amount * 1e9) }));
     const { blockhash } = await conn.getLatestBlockhash();
     tx.recentBlockhash = blockhash; 
@@ -2439,3 +2452,15 @@ window.addEventListener('load', async () => {
 </script>
 </body>
 </html>
+
+
+
+
+  
+
+
+
+
+
+
+  
