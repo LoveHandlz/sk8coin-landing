@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SK8COIN | Skate2Earn Master Protocol 9.2 (Godmode)</title>
 
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Bangers&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -283,7 +281,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
     #wallet-balance-container { cursor: pointer; } 
     main { padding-top: 90px; padding-left: 10px; padding-right: 10px;} 
     .hero h1 { font-size: 2.1rem !important; margin-top: 0.5rem; }
-    #leaderboard-content .hero h1 { font-size: 1.76rem !important; }
+    #leaderboard-content .hero h1 { font-size: 1.4rem !important; }
     .hero-subtext { font-size: 0.9rem; padding: 0 10px; margin-bottom: 1.5rem;}
     .menu-item { padding: 1.2rem; } .video-card { margin-bottom: 10px; }
     .leaderboard-box { padding: 1.2rem; } #profile-content { padding: 1.2rem; border-radius: 15px; }
@@ -298,7 +296,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 
 @media (max-width: 480px) {
     .hero h1 { font-size: 1.7rem !important; }
-    #leaderboard-content .hero h1 { font-size: 1.5rem !important; } 
+    #leaderboard-content .hero h1 { font-size: 1.3rem !important; } 
     .logo { height: 28px; } .hamburger { font-size: 1.4rem; }
     #connect-wallet-btn { font-size: 0.65rem; padding: 0.5rem 0.8rem; }
     #wallet-balance-container { padding: 4px 8px; } #balance-emoji { font-size: 0.9rem; }
@@ -523,7 +521,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 
   <div id="leaderboard-content" style="display:none;">
     <div class="hero">
-        <h1 style="font-size: 1.76rem;">THE BOARDROOM</h1>
+        <h1 style="font-size: 1.4rem;">THE BOARDROOM</h1>
         <p style="color: var(--accent-gold); font-weight:bold; font-size: 0.8rem;">LEGENDARY SPONSORS & RECENT BLESSINGS</p>
         <p class="hero-subtext" style="font-size:0.9rem; max-width:700px; margin: 15px auto;">Sponsors are the lifeblood of the Skate2Earn ecosystem. This Boardroom immortalizes the legends who fuel the community treasury and drop direct, on-chain blessings to raw talent. Secure your spot, fund the revolution, and achieve legendary status.</p>
     </div>
@@ -819,7 +817,6 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 </div>
 
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
-
 <script>
 // ==========================================
 // MASTER CONFIGURATION & GLOBALS
@@ -830,7 +827,7 @@ const HELIUS_RPC = RPC_URL;
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
 
-// JUPITER SWAP GLOBALS
+// JUPITER SWAP GLOBALS (V6 Route API enforced)
 let currentQuoteResponse = null;
 let quoteTimeout = null;
 let isSolToUsdc = true; 
@@ -993,6 +990,7 @@ function renderDaoFeed() {
     container.innerHTML = "";
     let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
 
+    // Filter motions directly by tab for general rendering
     let motionsToRender = DAO_MOTIONS.filter(m => m.tab === activeDaoTab);
 
     if (motionsToRender.length === 0) {
@@ -1235,7 +1233,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9.2 GODMODE SWAP: RAW ERROR CAPTURE & NATIVE DECODE
+// V9.2 GODMODE SWAP: JUPITER V6 EXCLUSIVE
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1282,41 +1280,26 @@ async function fetchJupiterQuote() {
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
     
-    // BIGINT LAMPORT ENFORCEMENT
     const lamports = BigInt(Math.floor(parseFloat(amountInput) * inputDecimals)).toString();
 
     try {
         if (lamports === "0") throw new Error("Amount too small");
 
-        // LITE-API GATEWAY BYPASS
-        const endpoints = [
-            `https://lite-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`,
-            `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`
-        ];
+        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
 
-        let quoteResponse = null;
-        for (const url of endpoints) {
-            try {
-                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-                if (!res.ok) continue; 
-                const data = await res.json();
-                if (!data.error) {
-                    quoteResponse = data;
-                    console.log("[Godmode] Route secured via:", url.split('?')[0]);
-                    break;
-                }
-            } catch (e) { console.warn("Endpoint failed, cascading..."); }
+        if (!res.ok) throw new Error("Jupiter Route API error");
+        const data = await res.json();
+
+        if (!data.error) {
+            currentQuoteResponse = data;
+            const outAmountParsed = (data.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
+            outputInput.value = outAmountParsed;
+            console.log("[Godmode] Route secured via:", url.split('?')[0]);
+        } else {
+            throw new Error(data.error);
         }
 
-        if (!quoteResponse) {
-            outputInput.value = "Route unavailable";
-            currentQuoteResponse = null;
-            return;
-        }
-
-        currentQuoteResponse = quoteResponse;
-        const outAmountParsed = (quoteResponse.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
-        outputInput.value = outAmountParsed;
     } catch (error) {
         console.error("Quote Fetch Error:", error);
         outputInput.value = "Err: Network";
@@ -1348,22 +1331,13 @@ async function executeJupiterSwap() {
             prioritizationFeeLamports: "auto"
         };
 
-        let swapResponse;
-        
-        try {
-            swapResponse = await fetch('https://lite-api.jup.ag/v6/swap', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!swapResponse.ok) throw new Error("Lite API blocked");
-        } catch(err) {
-            swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        }
+        const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!swapResponse.ok) throw new Error("Swap API failure");
 
         const swapData = await swapResponse.json();
         
@@ -1373,7 +1347,6 @@ async function executeJupiterSwap() {
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
 
-        // NATIVE BROWSER DESERIALIZATION (No Buffer polyfill needed)
         const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
