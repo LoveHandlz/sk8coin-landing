@@ -519,7 +519,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
     </div>
   </div>
 
-  <div id="leaderboard-content" style="display:none;">
+ <div id="leaderboard-content" style="display:none;">
     <div class="hero">
         <h1 style="font-size: 1.4rem;">THE BOARDROOM</h1>
         <p style="color: var(--accent-gold); font-weight:bold; font-size: 0.8rem;">LEGENDARY SPONSORS & RECENT BLESSINGS</p>
@@ -528,11 +528,11 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
     
     <div class="leaderboard-container">
         <div class="leaderboard-box">
-            <h2>TOP 10 GLOBAL SPONSORS <span class="live-indicator">● LIVE SCAN</span></h2>
+            <h2>TOP 100 GLOBAL SPONSORS <span class="live-indicator">● LIVE SCAN</span></h2>
             <ul class="leader-list" id="treasury-sponsors-list"></ul>
         </div>
         <div class="leaderboard-box">
-            <h2>RECENT SKATER BLESSINGS <span class="live-indicator">● LIVE SCAN</span></h2>
+            <h2>LAST 100 SKATER BLESSINGS <span class="live-indicator">● LIVE SCAN</span></h2>
             <ul class="leader-list" id="skater-sponsors-list"></ul>
         </div>
     </div>
@@ -1423,6 +1423,150 @@ async function fetchTreasuryBalance() {
     document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
     document.getElementById("treasury-usd-balance").innerText = "$" + (sol * solPrice).toFixed(2);
 }
+
+// ==========================================
+// LEADERBOARD LOGIC
+// ==========================================
+async function refreshLeaderboardData() {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    
+    const sponsorList = document.getElementById("treasury-sponsors-list");
+    const skaterList = document.getElementById("skater-sponsors-list");
+    
+    sponsorList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Calculating Top Sponsors...</li>";
+    skaterList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain Activity...</li>";
+
+    let aggregatedSponsors = {};
+    SPONSOR_PROFILES.forEach(sp => { aggregatedSponsors[sp.wallet] = sp.baseline || 0; });
+    let recentHits = [];
+
+    try {
+        // Increased limit to 150 to ensure we find enough top sponsors
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 150 });
+        for (let i = 0; i < sigs.length; i += 3) {
+            const chunk = sigs.slice(i, i + 3);
+            const txs = await Promise.all(chunk.map(s => connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
+            
+            for (let tx of txs) {
+                if (tx && tx.meta && !tx.meta.err && tx.transaction && tx.transaction.message) {
+                    const msg = tx.transaction.message;
+                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
+                    const tIdx = keys.indexOf(TREASURY_WALLET);
+                    
+                    if(tIdx !== -1) {
+                        const amount = (tx.meta.postBalances[tIdx] - tx.meta.preBalances[tIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
+                        if(amount > 0.001) {
+                            const sponsorAddr = keys[0];
+                            if(sponsorAddr !== TREASURY_WALLET) {
+                                aggregatedSponsors[sponsorAddr] = (aggregatedSponsors[sponsorAddr] || 0) + amount;
+                            }
+                        }
+                    }
+                }
+            }
+            await pingDelay(300); 
+        }
+    } catch(e) {}
+
+    try {
+        for (let skaterWallet of SKATER_REGISTRY) {
+            // Increased limit to find more recent hits
+            const sSigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterWallet), { limit: 15 });
+            const chunk = sSigs.slice(0, 15);
+            const txs = await Promise.all(chunk.map(ss => connection.getTransaction(ss.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
+            
+            for (let sTx of txs) {
+                if (sTx && sTx.meta && !sTx.meta.err && sTx.transaction && sTx.transaction.message) {
+                    const msg = sTx.transaction.message;
+                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
+                    const skaterIdx = keys.indexOf(skaterWallet);
+                    
+                    if (skaterIdx !== -1) {
+                        const am = (sTx.meta.postBalances[skaterIdx] - sTx.meta.preBalances[skaterIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
+                        const sp = keys[0]; 
+                        
+                        if(am > 0.001) {
+                            if(sp !== skaterWallet && sp !== TREASURY_WALLET) {
+                                aggregatedSponsors[sp] = (aggregatedSponsors[sp] || 0) + am;
+                                recentHits.push({ sponsor: sp, skater: skaterWallet, amount: am, time: sTx.blockTime });
+                            }
+                        }
+                    }
+                }
+            }
+            await pingDelay(300); 
+        }
+    } catch(e) { console.error(e); }
+
+    let rawSponsors = Object.keys(aggregatedSponsors).map(addr => ({ addr, val: aggregatedSponsors[addr] }));
+    rawSponsors.sort((a, b) => b.val - a.val);
+    
+    // Expanded limits to 100
+    allTreasurySponsors = rawSponsors.slice(0, 100);
+    
+    for(let j=0; j<allTreasurySponsors.length; j++) {
+        allTreasurySponsors[j].name = await getSkaterNameSafe(allTreasurySponsors[j].addr);
+    }
+    renderTreasuryFeed();
+
+    recentHits.sort((a, b) => b.time - a.time);
+    allSkaterHits = recentHits.slice(0, 100);
+    
+    for(let j=0; j<allSkaterHits.length; j++) {
+        allSkaterHits[j].sponsorName = await getSkaterNameSafe(allSkaterHits[j].sponsor);
+        allSkaterHits[j].skaterName = await getSkaterNameSafe(allSkaterHits[j].skater);
+    }
+    renderSkaterFeed();
+}
+
+function renderTreasuryFeed() {
+    const list = document.getElementById("treasury-sponsors-list");
+    list.innerHTML = "";
+    
+    allTreasurySponsors.forEach((s, index) => {
+        const rank = getRankDisplay(s.val, false);
+        const pos = index + 1;
+
+        list.innerHTML += `
+            <li class="leader-item">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="addr-tag clickable" style="color: ${rank.color}; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='var(--accent-cyan)'; this.style.textDecoration='underline';" onmouseout="this.style.color='${rank.color}'; this.style.textDecoration='none';" onclick="navigateTo('profile', '${s.addr}')">
+                        #${pos} ${rank.icon} <span style="text-transform: uppercase;">${s.name}</span> <span style="font-size:0.6rem; opacity:0.7; margin-left:5px;">[${rank.title}]</span>
+                    </span> 
+                    <a href="https://solscan.io/account/${s.addr}" target="_blank" style="font-family: monospace; font-size: 0.65rem; color: var(--text-secondary); text-decoration: none; margin-top: 4px;" onmouseover="this.style.color='var(--accent-cyan)'" onmouseout="this.style.color='var(--text-secondary)'" onclick="event.stopPropagation();"><i class="fas fa-external-link-alt" style="font-size: 0.55rem; margin-right: 3px;"></i>${s.addr.slice(0,6)}...${s.addr.slice(-4)}</a>
+                </div>
+                <span class="amt-tag" style="color: ${rank.color};">${s.val.toFixed(2)} SOL</span>
+            </li>`;
+    });
+    
+    if(allTreasurySponsors.length === 0) list.innerHTML = "<li>No global sponsors found.</li>";
+}
+
+function renderSkaterFeed() {
+    const list = document.getElementById("skater-sponsors-list");
+    list.innerHTML = "";
+    
+    allSkaterHits.forEach((e) => {
+        const timeAgo = Math.floor(Date.now() / 1000) - e.time;
+        let timeStr = timeAgo < 60 ? "Just now" : timeAgo < 3600 ? Math.floor(timeAgo / 60) + "m ago" : Math.floor(timeAgo / 3600) + "h ago";
+
+        list.innerHTML += `
+        <li class="leader-item">
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 0.75rem;">
+                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-gold); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.sponsor}')">${e.sponsorName}</span> 
+                    <span style="color:var(--text-secondary); font-family:'Inter'; font-size:0.65rem;">blessed</span> 
+                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-cyan); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.skater}')">${e.skaterName}</span>
+                </span>
+                <span style="color: var(--text-secondary); font-size: 0.6rem; margin-top: 4px; font-family:'Inter';"><i class="far fa-clock" style="margin-right:3px;"></i>${timeStr}</span>
+            </div>
+            <span class="amt-tag" style="color: var(--accent-green); align-self: flex-start; font-size: 0.75rem;">+${e.amount.toFixed(2)} SOL</span>
+        </li>`;
+    });
+    
+    if(allSkaterHits.length === 0) list.innerHTML = "<li>No recent blessings found.</li>";
+}
+
 
 // ==========================================
 // ON-CHAIN WRITE TRANSACTIONS
