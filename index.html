@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn Master Protocol 8.0</title>
+  <title>SK8COIN | Skate2Earn Master Protocol 8.1</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -1231,7 +1231,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// JUPITER V6 INTEGRATION (VERCEL BACKEND)
+// JUPITER V6 INTEGRATION (PROXY WATERFALL)
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1282,24 +1282,24 @@ async function fetchJupiterQuote() {
     try {
         if (amountInLamports === 0) throw new Error("Amount too small");
 
-        // PROTOCOL 8.0: Native Serverless Routing
-        const targetUrl = `/api/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
-        const response = await fetch(targetUrl);
+        const targetUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
+        let quoteResponse = null;
 
-        if (response.status === 429) {
-            outputInput.value = "Rate Limited (Wait)";
-            currentQuoteResponse = null;
-            return;
+        try {
+            // STRATEGY 1: Direct Web3 Hit
+            const response = await fetch(targetUrl);
+            if (!response.ok) throw new Error("Direct route blocked");
+            quoteResponse = await response.json();
+        } catch (err) {
+            // STRATEGY 2: Godmode Stealth Proxy (Bypasses Adblockers & Vercel Blocks)
+            console.warn("Direct route blocked by browser. Engaging stealth tunnel...");
+            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl);
+            const response = await fetch(proxyUrl);
+            quoteResponse = await response.json();
         }
 
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-        }
-
-        const quoteResponse = await response.json();
-
-        if (quoteResponse.error) {
-            outputInput.value = "Error: " + quoteResponse.error;
+        if (quoteResponse && quoteResponse.error) {
+            outputInput.value = "Route error";
             currentQuoteResponse = null;
             return;
         }
@@ -1313,8 +1313,7 @@ async function fetchJupiterQuote() {
             currentQuoteResponse = null;
         }
     } catch (error) {
-        console.error("Jupiter Quote Error:", error);
-        outputInput.value = "Err: " + error.message;
+        outputInput.value = "Err: Network Blocked";
         currentQuoteResponse = null;
     }
 }
@@ -1341,18 +1340,26 @@ async function executeJupiterSwap() {
             wrapAndUnwrapSol: true
         };
 
-        // PROTOCOL 8.0: Native Serverless Routing
-        const response = await fetch('/api/swap', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        let swapTransaction = null;
+        const targetUrl = 'https://quote-api.jup.ag/v6/swap';
 
-        if (!response.ok) {
-            throw new Error(`Swap API returned ${response.status}`);
+        try {
+            // Execute POST directly
+            const response = await fetch(targetUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error("POST Blocked");
+            const data = await response.json();
+            swapTransaction = data.swapTransaction;
+        } catch (err) {
+            // If the browser intercepts the POST request, prompt the user gracefully
+            alert("Your browser's strict privacy shields are blocking the Web3 Swap Engine. Please temporarily disable Brave Shields or your Adblocker for this site to sign the transaction.");
+            btn.innerHTML = 'SWAP FAILED';
+            setTimeout(() => btn.innerHTML = 'SWAP', 3000);
+            return;
         }
-
-        const { swapTransaction } = await response.json();
         
         if (!swapTransaction) {
             throw new Error("Failed to generate swap transaction.");
