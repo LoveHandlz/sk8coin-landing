@@ -1233,7 +1233,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9.2 GODMODE SWAP: JUPITER V6 EXCLUSIVE
+// V9.2.1 GODMODE SWAP: JUPITER V6 RESILIENCE PATCH
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1280,29 +1280,40 @@ async function fetchJupiterQuote() {
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
     
-    const lamports = BigInt(Math.floor(parseFloat(amountInput) * inputDecimals)).toString();
+    // FIX 1: Math.round prevents floating point decimals which Jupiter API rejects
+    const lamports = Math.round(parseFloat(amountInput) * inputDecimals).toString();
 
     try {
         if (lamports === "0") throw new Error("Amount too small");
 
         const url = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        
+        // FIX 2: Explicit headers and GET method
+        const res = await fetch(url, { 
+            method: 'GET',
+            headers: { 'Accept': 'application/json' } 
+        });
 
-        if (!res.ok) throw new Error("Jupiter Route API error");
+        // FIX 3: Catch detailed HTTP errors from Jupiter instead of generic network fails
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `HTTP Error: ${res.status}`);
+        }
+        
         const data = await res.json();
 
         if (!data.error) {
             currentQuoteResponse = data;
             const outAmountParsed = (data.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
             outputInput.value = outAmountParsed;
-            console.log("[Godmode] Route secured via:", url.split('?')[0]);
+            console.log("[Godmode] Route secured:", url.split('?')[0]);
         } else {
             throw new Error(data.error);
         }
 
     } catch (error) {
-        console.error("Quote Fetch Error:", error);
-        outputInput.value = "Err: Network";
+        console.error("Quote Fetch Error:", error.message);
+        outputInput.value = "Err: Network/Congestion";
         currentQuoteResponse = null;
     }
 }
@@ -1327,17 +1338,20 @@ async function executeJupiterSwap() {
             quoteResponse: currentQuoteResponse,
             userPublicKey: publicKey,
             wrapAndUnwrapSol: true,
-            dynamicComputeUnitLimit: true,
-            prioritizationFeeLamports: "auto"
+            dynamicComputeUnitLimit: true, // Crucial for current Solana network conditions
+            prioritizationFeeLamports: "auto" // Let Jupiter dynamically bid for block space
         };
 
         const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (!swapResponse.ok) throw new Error("Swap API failure");
+        if (!swapResponse.ok) {
+            const errData = await swapResponse.json().catch(() => ({}));
+            throw new Error(errData.error || `Swap API HTTP Error: ${swapResponse.status}`);
+        }
 
         const swapData = await swapResponse.json();
         
@@ -1356,12 +1370,20 @@ async function executeJupiterSwap() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
 
         const rawTransaction = signedTransaction.serialize();
+        
+        // FIX 4: Max retries added to force transaction through network congestion
         const txid = await connection.sendRawTransaction(rawTransaction, {
             skipPreflight: true,
-            maxRetries: 2
+            maxRetries: 5 
         });
 
-        await connection.confirmTransaction(txid, 'confirmed');
+        // FIX 5: Modern transaction confirmation block
+        const latestBlockhash = await connection.getLatestBlockhash();
+        await connection.confirmTransaction({
+            signature: txid,
+            blockhash: latestBlockhash.blockhash,
+            lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
         
         btn.innerHTML = 'SWAP COMPLETE!';
         
@@ -1378,9 +1400,9 @@ async function executeJupiterSwap() {
         }, 3000);
 
     } catch (error) {
-        console.error("Swap Execution Error:", error);
+        console.error("Swap Execution Error:", error.message || error);
         if (!error.message?.includes("User rejected")) {
-            alert("Swap failed. API Congestion or network rejected the connection.");
+            alert(`Swap failed: ${error.message || "API Congestion or network rejected the connection."}`);
         }
         btn.innerHTML = 'SWAP FAILED';
         setTimeout(() => btn.innerHTML = 'SWAP', 3000);
