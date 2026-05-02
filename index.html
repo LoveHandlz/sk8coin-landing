@@ -1339,7 +1339,7 @@ async function executeJupiterSwap() {
             userPublicKey: publicKey,
             wrapAndUnwrapSol: true,
             dynamicComputeUnitLimit: true, // Crucial for current Solana network conditions
-            prioritizationFeeLamports: "auto" // Let Jupiter dynamically bid for block space
+            prioritizationFeeLamports: 100000 // Let Jupiter dynamically bid for block space
         };
 
         const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
@@ -1364,26 +1364,28 @@ async function executeJupiterSwap() {
         const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        // FIX 2: Fast polling commitment via Helius RPC
+        const connection = new solanaWeb3.Connection(RPC_URL, "processed"); 
         const signedTransaction = await provider.signTransaction(transaction);
         
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
 
         const rawTransaction = signedTransaction.serialize();
         
-        // FIX 4: Max retries added to force transaction through network congestion
+        // FIX 3: Increased retries and skipPreflight to force it into the mempool
         const txid = await connection.sendRawTransaction(rawTransaction, {
             skipPreflight: true,
-            maxRetries: 5 
+            maxRetries: 10 
         });
 
-        // FIX 5: Modern transaction confirmation block
-        const latestBlockhash = await connection.getLatestBlockhash();
+        // FIX 4: Aggressive Confirmation Strategy
+        const latestBlockhash = await connection.getLatestBlockhash("processed");
+        
         await connection.confirmTransaction({
             signature: txid,
             blockhash: latestBlockhash.blockhash,
             lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
-        }, 'confirmed');
+        }, 'processed');
         
         btn.innerHTML = 'SWAP COMPLETE!';
         
@@ -1402,7 +1404,7 @@ async function executeJupiterSwap() {
     } catch (error) {
         console.error("Swap Execution Error:", error.message || error);
         if (!error.message?.includes("User rejected")) {
-            alert(`Swap failed: ${error.message || "API Congestion or network rejected the connection."}`);
+            alert(`Swap failed: ${error.message || "Network heavily congested. The transaction timed out."}`);
         }
         btn.innerHTML = 'SWAP FAILED';
         setTimeout(() => btn.innerHTML = 'SWAP', 3000);
