@@ -817,7 +817,10 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 </div>
 
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
-<script>
+
+
+
+  <script>
 // ==========================================
 // MASTER CONFIGURATION & GLOBALS
 // ==========================================
@@ -890,9 +893,6 @@ function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile
 function toggleMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
 function updateDonateButtons() { document.querySelectorAll('#video-content .donate-btn').forEach(btn => { if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; else btn.style.display = ''; }); }
 
-// ==========================================
-// GOVERNANCE TITLES LOGIC
-// ==========================================
 function getGovTitle(amount) {
     if(amount >= 100) return "EMPEROR";
     if(amount >= 50) return "PRESIDENT";
@@ -911,9 +911,6 @@ function getRankDisplay(amount, isSkater = false) {
     return amount > 0 ? { title: "SUPPORTER", color: "var(--text-secondary)", icon: '<i class="fas fa-handshake"></i>' } : { title: "POSER", color: "var(--accent-red)", icon: '🚫' };
 }
 
-// ==========================================
-// DYNAMIC DAO ENGINE & TIMERS
-// ==========================================
 function checkDaoTimers() {
     let updated = false;
     const now = Date.now();
@@ -935,63 +932,6 @@ function switchDaoTab(tab) {
     document.getElementById('tab-active').className = tab === 'active' ? 'dao-tab-btn active' : 'dao-tab-btn';
     document.getElementById('tab-vetoed').className = tab === 'vetoed' ? 'dao-tab-btn vetoed-active' : 'dao-tab-btn';
     renderDaoFeed();
-}
-
-// ON-CHAIN DAO SYNCER
-async function syncDaoFromChain() {
-    const container = document.getElementById("dao-feed-container");
-    if(container) container.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--accent-cyan); border: 1px dashed var(--card-border); border-radius: 12px;"><i class="fas fa-spinner fa-spin" style="margin-right:8px; font-size:1.5rem;"></i> Scanning Solana Blockchain for Motions...</div>';
-
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let onChainMotions = {};
-
-    try {
-        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 120 });
-        
-        sigs.reverse().forEach(s => {
-            if (s.memo && s.memo.includes('"sk8dao":"v1"')) {
-                try {
-                    const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                    if (d.action === "propose") {
-                        onChainMotions[d.id] = {
-                            id: d.id,
-                            title: d.title,
-                            desc: d.desc || "On-chain proposal.",
-                            proposerRank: "Senator", 
-                            secRank: null,
-                            status: "pending",
-                            tab: "active",
-                            votesFor: 0,
-                            votesAgainst: 0,
-                            createdAt: d.time || s.blockTime * 1000,
-                            expiresAt: (d.time || s.blockTime * 1000) + SEVEN_DAYS_MS,
-                            voters: [] 
-                        };
-                    } else if (d.action === "second" && onChainMotions[d.id]) {
-                        onChainMotions[d.id].status = "active";
-                        onChainMotions[d.id].secRank = "Congressman";
-                    } else if (d.action === "vote" && onChainMotions[d.id]) {
-                        if (!onChainMotions[d.id].voters.includes(s.signature)) {
-                            if(d.choice === "for") onChainMotions[d.id].votesFor++;
-                            else if (d.choice === "against") onChainMotions[d.id].votesAgainst++;
-                            onChainMotions[d.id].voters.push(s.signature);
-                        }
-                    }
-                } catch(e) {}
-            }
-        });
-
-        DAO_MOTIONS = Object.values(onChainMotions).reverse();
-        localStorage.setItem('sk8_dao_motions_v3', JSON.stringify(DAO_MOTIONS));
-        
-        checkDaoTimers();
-        renderDaoFeed();
-
-    } catch (err) {
-        console.error("DAO Sync error", err);
-        DAO_MOTIONS = JSON.parse(localStorage.getItem('sk8_dao_motions_v3')) || [];
-        renderDaoFeed();
-    }
 }
 
 function renderDaoFeed() {
@@ -1078,172 +1018,167 @@ function renderDaoFeed() {
     });
 }
 
-async function checkDaoEligibility(action) {
-    if (!publicKey) return false;
-    const stats = await fetchWalletStats(publicKey);
-    const maxVal = Math.max(stats.ins, stats.outs);
+function renderTreasuryFeed() {
+    const list = document.getElementById("treasury-sponsors-list");
+    list.innerHTML = "";
     
-    if (action === 'vote') {
-        return SKATER_REGISTRY.includes(publicKey) || SPONSOR_REGISTRY.includes(publicKey);
-    }
-    if (action === 'second') {
-        return maxVal >= 0.05 || ADMIN_WALLETS.includes(publicKey);
-    }
-    if (action === 'propose') {
-        return maxVal >= 0.1 || ADMIN_WALLETS.includes(publicKey);
-    }
-    return false;
+    allTreasurySponsors.forEach((s, index) => {
+        const rank = getRankDisplay(s.val, false);
+        const pos = index + 1;
+        
+        const isTopDog = index === 0 ? "border: 1px solid var(--accent-gold); background: rgba(255, 215, 0, 0.05); padding: 12px; border-radius: 8px; box-shadow: 0 0 15px rgba(255,215,0,0.1);" : 
+                         index === 1 ? "border: 1px solid var(--silver-font); background: rgba(192, 192, 192, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;" :
+                         index === 2 ? "border: 1px solid var(--bronze-font); background: rgba(205, 127, 50, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;" : "";
+                         
+        const flexIcon = index === 0 ? '<i class="fa-solid fa-crown" style="color:#FFD700; filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); font-size: 1.2rem; margin-right:8px; animation: pulse 2s infinite;"></i>' : 
+                         index === 1 ? '<i class="fa-solid fa-medal" style="color:var(--silver-font); font-size: 1.1rem; margin-right:8px;"></i>' :
+                         index === 2 ? '<i class="fa-solid fa-medal" style="color:var(--bronze-font); font-size: 1.0rem; margin-right:8px;"></i>' : '';
+
+        list.innerHTML += `
+            <li class="leader-item" style="${isTopDog}">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="addr-tag clickable" style="color: ${rank.color}; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='var(--accent-cyan)'; this.style.textDecoration='underline';" onmouseout="this.style.color='${rank.color}'; this.style.textDecoration='none';" onclick="navigateTo('profile', '${s.addr}')">
+                        #${pos} ${flexIcon}${rank.icon} <span style="text-transform: uppercase;">${s.name}</span> <span style="font-size:0.6rem; opacity:0.7; margin-left:5px;">[${rank.title}]</span>
+                    </span> 
+                    <a href="https://solscan.io/account/${s.addr}" target="_blank" style="font-family: monospace; font-size: 0.65rem; color: var(--text-secondary); text-decoration: none; margin-top: 4px;" onmouseover="this.style.color='var(--accent-cyan)'" onmouseout="this.style.color='var(--text-secondary)'" onclick="event.stopPropagation();"><i class="fas fa-external-link-alt" style="font-size: 0.55rem; margin-right: 3px;"></i>${s.addr.slice(0,6)}...${s.addr.slice(-4)}</a>
+                </div>
+                <span class="amt-tag" style="color: ${rank.color};">${s.val.toFixed(2)} SOL</span>
+            </li>`;
+    });
+    
+    if(allTreasurySponsors.length === 0) list.innerHTML = "<li>No global sponsors found.</li>";
 }
 
-async function handleDaoPropose() {
-    if (!publicKey) { alert("Connect Wallet to propose a motion."); return; }
-    const isEligible = await checkDaoEligibility('propose');
-    const stats = await fetchWalletStats(publicKey);
-    const maxVal = Math.max(stats.ins, stats.outs);
-    const proposerGovTitle = getGovTitle(maxVal);
+function renderSkaterFeed() {
+    const list = document.getElementById("skater-sponsors-list");
+    list.innerHTML = "";
     
-    if (!isEligible) { 
-        if(!confirm(`Access Denied: You must be a SENATOR (0.10 SOL+) to propose a motion.\nYour Current Rank: ${proposerGovTitle}\n\n[TESTING BYPASS DETECTED] Force create motion anyway?`)) return;
-    }
+    allSkaterHits.forEach((e) => {
+        const timeAgo = Math.floor(Date.now() / 1000) - e.time;
+        let timeStr = timeAgo < 60 ? "Just now" : timeAgo < 3600 ? Math.floor(timeAgo / 60) + "m ago" : Math.floor(timeAgo / 3600) + "h ago";
+
+        list.innerHTML += `
+        <li class="leader-item">
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 0.75rem;">
+                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-gold); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.sponsor}')">${e.sponsorName}</span> 
+                    <span style="color:var(--text-secondary); font-family:'Inter'; font-size:0.65rem;">blessed</span> 
+                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-cyan); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.skater}')">${e.skaterName}</span>
+                </span>
+                <span style="color: var(--text-secondary); font-size: 0.6rem; margin-top: 4px; font-family:'Inter';"><i class="far fa-clock" style="margin-right:3px;"></i>${timeStr}</span>
+            </div>
+            <span class="amt-tag" style="color: var(--accent-green); align-self: flex-start; font-size: 0.75rem;">+${e.amount.toFixed(2)} SOL</span>
+        </li>`;
+    });
     
-    const title = prompt("Enter Motion Title (e.g., SIP-4: Whitelist $BONK):");
-    if(!title) return;
-    const desc = prompt("Enter Motion Description:");
-    if(!desc) return;
-
-    const btn = document.getElementById("dao-propose-btn");
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
-
-    try {
-        const motionId = Date.now();
-        const payload = JSON.stringify({ sk8dao: "v1", action: "propose", id: motionId, title: title.slice(0,40), desc: desc.slice(0,100) });
-        const encoded = new TextEncoder().encode(payload);
-        
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
-
-        const tx = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(TREASURY_WALLET), lamports: 1000 }),
-            new solanaWeb3.TransactionInstruction({ 
-                keys: [{ pubkey: from, isSigner: true, isWritable: true }], 
-                programId: MEMO_PROGRAM_ID, 
-                data: encoded 
-            })
-        );
-        
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        
-        await provider.signAndSendTransaction(tx);
-
-        alert("Motion Proposed! Syncing with blockchain...");
-        setTimeout(() => syncDaoFromChain(), 2000);
-
-    } catch(err) {
-        if (!err.message?.includes("User rejected")) alert("Transaction failed or was rejected.");
-    }
-    
-    btn.innerHTML = originalText;
+    if(allSkaterHits.length === 0) list.innerHTML = "<li>No recent blessings found.</li>";
 }
 
-async function handleDaoSecond(motionId) {
-    if (!publicKey) { alert("Connect Wallet to second a motion."); return; }
-    const isEligible = await checkDaoEligibility('second');
-    const stats = await fetchWalletStats(publicKey);
-    const maxVal = Math.max(stats.ins, stats.outs);
-    const secGovTitle = getGovTitle(maxVal);
-
-    if (!isEligible) { 
-        if(!confirm(`Access Denied: You must be a CONGRESSMAN (0.05 SOL+) to second a motion.\nYour Current Rank: ${secGovTitle}\n\n[TESTING BYPASS DETECTED] Force second motion anyway?`)) return;
+function renderFeedGrid(isBlurred) {
+    const container = document.getElementById('actual-feed-items');
+    const loadMoreBtn = document.getElementById('load-more-feed-btn');
+    if (currentSkaterPosts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;">No feed entries found on-chain.</div>`;
+        return;
     }
-    
-    try {
-        const payload = JSON.stringify({ sk8dao: "v1", action: "second", id: motionId });
-        const encoded = new TextEncoder().encode(payload);
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
+    let toRender = currentSkaterPosts.slice(0, feedRenderLimit);
+    let html = "";
+    let isOwner = (publicKey === activeFeedWallet);
 
-        const tx = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(TREASURY_WALLET), lamports: 1000 }),
-            new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded })
-        );
+    toRender.forEach(p => {
+        let dateStr = new Date(p.time * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        let mediaHtml = ""; let platformIcon = "";
         
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        
-        await provider.signAndSendTransaction(tx);
-        
-        alert(`Motion seconded! Syncing with blockchain...`);
-        setTimeout(() => syncDaoFromChain(), 2000);
-    } catch(err) {
-        if (!err.message?.includes("User rejected")) alert("Transaction failed or was rejected.");
-    }
-}
-
-async function handleDaoVote(motionId, choice) {
-    if (!publicKey) { alert("Connect Wallet to vote."); return; }
-
-    const isEligible = await checkDaoEligibility('vote');
-    if (!isEligible && !ADMIN_WALLETS.includes(publicKey)) { alert("Access Denied: You must be a registered CITIZEN to vote."); return; }
-    
-    const confirmVote = confirm(`Casting your vote will route ${VOTE_COST} SOL to the Treasury. Continue?`);
-    if(!confirmVote) return;
-
-    try {
-        const payload = JSON.stringify({ sk8dao: "v1", action: "vote", id: motionId, choice: choice });
-        const encoded = new TextEncoder().encode(payload);
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
-
-        const tx = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(TREASURY_WALLET), lamports: Math.floor(VOTE_COST * 1e9) }),
-            new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded })
-        );
-        
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        
-        await provider.signAndSendTransaction(tx);
-        
-        alert(`Your vote has been recorded on-chain! Syncing...`);
-        fetchTreasuryBalance();
-        setTimeout(() => syncDaoFromChain(), 2000);
-    } catch(err) {
-        if (!err.message?.includes("User rejected")) alert("Voting transaction failed or was rejected.");
-    }
-}
-
-function handleDaoVeto(motionId) {
-    if (!publicKey || !ADMIN_WALLETS.includes(publicKey)) return;
-    const confirmVeto = confirm(`WARNING: Veto requested for SIP-${motionId}. This kills the motion and moves it to the Vetoed Board. Proceed?`);
-    if(confirmVeto) {
-        let m = DAO_MOTIONS.find(x => x.id === motionId);
-        if(m) {
-            m.status = 'vetoed';
-            m.tab = 'vetoed';
-            localStorage.setItem('sk8_dao_motions_v3', JSON.stringify(DAO_MOTIONS));
-            renderDaoFeed();
+        if(p.yt) {
+            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-youtube" style="color:#ff2d55;"></i></div>`;
+            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.youtube.com/embed/${p.yt}" allowfullscreen></iframe></div>`;
+        } else if (p.ig) {
+            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-instagram" style="color:#ff2d55;"></i></div>`;
+            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.instagram.com/p/${p.ig}/embed" scrolling="no" allowtransparency="true"></iframe></div>`;
+        } else {
+            mediaHtml = `<div class="feed-grid-media" style="background: linear-gradient(45deg, #0a132f, #0f1a47); display:flex; align-items:center; justify-content:center;"><i class="fas fa-skating" style="font-size:3rem; color:rgba(0,240,255,0.1);"></i></div>`;
         }
+        let blessBtn = isOwner ? "" : `<button class="feed-bless-btn" onclick="openSponsorshipModalFromFeed()">BLESS CLIP</button>`;
+        html += `<div class="feed-grid-item" style="${isBlurred ? 'filter: blur(8px); opacity: 0.5;' : ''}">
+                    ${mediaHtml}
+                    <div class="feed-grid-content">
+                        <div class="feed-grid-text">${p.text || ""}</div>
+                        <div class="feed-grid-date" style="margin-bottom: ${isOwner ? '0' : '10px'};">${dateStr}</div>
+                        ${blessBtn}
+                    </div>
+                 </div>`;
+    });
+    container.innerHTML = html;
+    if(!isBlurred && currentSkaterPosts.length > feedRenderLimit) { loadMoreBtn.style.display = "block"; } else { loadMoreBtn.style.display = "none"; }
+}
+
+function loadMoreFeed() { feedRenderLimit += 12; renderFeedGrid(false); }
+
+function updateWalletUI() {
+    const btn = document.getElementById("connect-wallet-btn");
+    const balContainer = document.getElementById("wallet-balance-container");
+    const skaterPanel = document.getElementById("skater-auth-panel");
+    const protocolLed = document.getElementById("protocol-led");
+    if (publicKey) { 
+        document.body.classList.add("wallet-connected"); btn.innerText = "CONNECTED"; balContainer.style.display = "flex"; 
+        if(protocolLed) protocolLed.style.display = "inline-block";
+        
+        skaterPanel.style.display = "flex"; 
+        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;"><i class="fas fa-spinner fa-spin"></i></span></span> <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;">⚙️</button>`;
+        
+        fetchHeaderDualRank(publicKey);
+        
+        if (document.getElementById('swap-content').style.display === 'block') {
+            fetchSwapBalances();
+        }
+    } else { document.body.classList.remove("wallet-connected"); btn.innerText = "CONNECT"; balContainer.style.display = "none"; skaterPanel.style.display = "none"; if(protocolLed) protocolLed.style.display = "none"; }
+    updateDonateButtons();
+}
+
+function checkPersistence() {
+    let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        let iframe = card.querySelector('iframe');
+        
+        if (!publicKey) { 
+            card.classList.remove('unlocked'); 
+            if (iframe) iframe.src = ""; 
+            return; 
+        }
+        
+        let unlocked = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
+        
+        if (isAdmin || unlocked.includes(card.id)) { 
+            if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
+            card.classList.add('unlocked'); 
+        } else { 
+            card.classList.remove('unlocked'); 
+            if (iframe) iframe.src = ""; 
+        }
+    });
+}
+
+function checkAdminStatus() {
+    const adminPanel = document.getElementById('admin-panel');
+    if (publicKey && ADMIN_WALLETS.includes(publicKey)) {
+        adminPanel.style.display = 'block';
+    } else {
+        adminPanel.style.display = 'none';
     }
 }
 
-function handleDaoRemove(motionId) {
-    if (!publicKey || !ADMIN_WALLETS.includes(publicKey)) return;
-    const confirmRemove = confirm(`DANGER: This will permanently delete SIP-${motionId} from the JSON array. Use only for spam/scams. Proceed?`);
-    if(confirmRemove) {
-        DAO_MOTIONS = DAO_MOTIONS.filter(x => x.id !== motionId);
-        localStorage.setItem('sk8_dao_motions_v3', JSON.stringify(DAO_MOTIONS));
-        renderDaoFeed();
+function toggleRoleButtons() {
+    const isChecked = document.getElementById('tos-checkbox').checked;
+    const sBtn = document.getElementById('btn-role-skater');
+    const pBtn = document.getElementById('btn-role-sponsor');
+    
+    if(isChecked) {
+        sBtn.classList.add('active'); pBtn.classList.add('active');
+    } else {
+        sBtn.classList.remove('active'); pBtn.classList.remove('active');
     }
 }
-
-// ==========================================
-// V9.2.2 GODMODE SWAP: JUPITER V6 + DYNAMIC FEES
-// ==========================================
 
 function toggleSwapDirection() {
     isSolToUsdc = !isSolToUsdc;
@@ -1274,287 +1209,308 @@ function debounceQuote() {
     }, 800); 
 }
 
-// NEW HELPER — fetches real-time priority fee from Helius
-async function getRecentPriorityFee() {
-    const FLOOR = 50000;   // 0.00005 SOL floor — enough for quiet periods
-    const CAP   = 500000;  // 0.0005 SOL cap — prevents ruinous fees during spikes
-
-    try {
-        const response = await fetch(HELIUS_RPC, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                jsonrpc: "2.0",
-                id: "sk8swap-fee",
-                method: "getRecentPrioritizationFees",
-                // Jupiter's programs — fee estimate is accurate to this set
-                params: [["JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"]]
-            })
-        });
-
-        if (!response.ok) throw new Error("Fee RPC failed");
-        const data = await response.json();
-
-        if (data.result && data.result.length > 0) {
-            // Sort ascending and take the 75th percentile — reliable but not max
-            const fees = data.result
-                .map(f => f.prioritizationFee)
-                .sort((a, b) => a - b);
-            const p75index = Math.floor(fees.length * 0.75);
-            const p75fee = fees[p75index] || FLOOR;
-
-            const fee = Math.min(Math.max(p75fee, FLOOR), CAP);
-            console.log(`[SK8SWAP] Priority fee: ${fee} lamports (75th pct from ${fees.length} samples)`);
-            return fee;
-        }
-    } catch (e) {
-        console.warn("[SK8SWAP] Priority fee fetch failed, using floor:", FLOOR, e.message);
-    }
-
-    return FLOOR;
+function openSponsorshipModalFromProfile() {
+    currentSkaterTarget = document.getElementById('p-wallet').innerText;
+    if (currentSkaterTarget === publicKey) { alert("Cannot sponsor yourself."); return; }
+    activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex';
 }
 
-// V6 COMPLIANT QUOTE WITH ABORT CONTROLLER
-async function fetchJupiterQuote() {
-    const amountInput = document.getElementById('swap-input-amount').value;
-    const outputInput = document.getElementById('swap-output-amount');
+function openSponsorshipModalFromFeed() { currentSkaterTarget = activeFeedWallet; activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex'; }
+function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
+function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
+function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
+function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
+function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
+function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+function sendCustomTreasury() { const amt = parseFloat(document.getElementById('custom-treasury-amt').value); if(amt > 0) sendDonation(amt); }
+function sendCustomSponsor() { const amt = parseFloat(document.getElementById('custom-sponsor-amt').value); if(amt > 0) selectAmount(amt); }
 
-    if (!amountInput || parseFloat(amountInput) <= 0) {
-        outputInput.value = "0.00";
-        currentQuoteResponse = null;
-        return;
+function openEditModal() {
+    document.getElementById('edit-name').value = document.getElementById('p-name').innerText;
+    document.getElementById('edit-pic').value = document.getElementById('p-img').src;
+    document.getElementById('edit-bio').value = document.getElementById('p-bio').innerText;
+    
+    const isSponOnly = SPONSOR_REGISTRY.includes(publicKey);
+    document.getElementById('edit-skater-gear-section').style.display = isSponOnly ? 'none' : 'block';
+    
+    if (!isSponOnly) {
+        const d = document.getElementById('p-gear').dataset;
+        document.getElementById('edit-stance').value = d.stance || ""; 
+        document.getElementById('edit-deck').value = d.deck || "";
+        document.getElementById('edit-trucks').value = d.trucks || ""; 
+        document.getElementById('edit-spot').value = d.spot || "";
+        document.getElementById('edit-yt').value = d.yt ? "https://youtu.be/" + d.yt : "";
     }
+    document.getElementById('edit-modal').style.display = 'flex';
+}
 
-    outputInput.value = "Routing...";
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
-    // Use clean token map based on current toggle state
-    const inputToken = isSolToUsdc ? TOKENS.SOL : TOKENS.USDC;
-    const outputToken = isSolToUsdc ? TOKENS.USDC : TOKENS.SOL;
+function createConfetti() {
+  for (let i = 0; i < 50; i++) {
+    const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 95 + '%'; 
+    c.style.backgroundColor = ['#ff2d55','#ff9500','#00f0ff','#ffd700'][Math.floor(Math.random() * 4)];
+    c.style.animationDuration = (Math.random() * 3 + 2) + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
+  }
+}
 
-    const lamports = Math.floor(parseFloat(amountInput) * (10 ** inputToken.decimals)).toString();
+function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
 
-    // Cancel previous request if user is typing fast
-    if (quoteAbortController) {
-        quoteAbortController.abort();
-    }
-    quoteAbortController = new AbortController();
+// UI Nav Logic
+function navigateToProfileView(viewType) {
+    if(!publicKey) return; document.getElementById('mobile-nav').classList.remove('open');
+    ["home", "video", "leaderboard", "donate", "feed", "dao", "swap"].forEach(id => {
+        let el = document.getElementById(id + "-content");
+        if(el) el.style.display = 'none';
+    });
+    document.getElementById("profile-content").style.display = 'block';
+    renderProfile(publicKey, viewType); window.scrollTo(0,0);
+}
 
+function navigateTo(page, wallet = null) {
+  document.getElementById('mobile-nav').classList.remove('open');
+  ["home", "video", "leaderboard", "donate", "profile", "feed", "dao", "swap"].forEach(id => {
+      let el = document.getElementById(id + "-content");
+      if(el) el.style.display = 'none';
+  });
+  document.getElementById(page + "-content").style.display = 'block';
+  if(page === 'profile' && wallet) renderProfile(wallet, null);
+  if(page === 'video') { renderVideoGrid(); }
+  if(page === 'donate') fetchTreasuryBalance();
+  if(page === 'leaderboard') refreshLeaderboardData();
+  if(page === 'dao') syncDaoFromChain();
+  if(page === 'swap') { fetchSwapBalances(); }
+  window.scrollTo(0,0);
+}
+
+// Click Listeners
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.classList.contains('donate-btn') && e.target.id !== 'profile-donate-btn') {
+      if(!publicKey) { alert("Connect Wallet First"); return; }
+      if(e.target.dataset.address === publicKey) { alert("Cannot sponsor yourself."); return; }
+      currentSkaterTarget = e.target.dataset.address; activeVideoId = e.target.dataset.target || null;
+      document.getElementById("sponsor-modal").style.display = "flex";
+  }
+});
+
+
+
+    // ==========================================
+// WEB3 DATA FETCHING
+// ==========================================
+async function resolveWalletName(wallet) {
+    if (wallet === TREASURY_WALLET) return "Lovehandlz";
+    let sp = SPONSOR_PROFILES.find(s => s.wallet === wallet); if (sp) return sp.name;
+    let sk = SKATER_PROFILES.find(s => s.wallet === wallet); if (sk) return sk.name;
     try {
-        const url = `${JUPITER_QUOTE_API}?inputMint=${inputToken.mint}&outputMint=${outputToken.mint}&amount=${lamports}&slippageBps=100`;
+        const sigs = await new solanaWeb3.Connection(RPC_URL, "confirmed").getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 5 });
+        for (let s of sigs) { if(s.memo && s.memo.includes('"sk8":"v1"')) { const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, '')); if(d.name) return d.name; } }
+    } catch(e) {} 
+    return "Anon Sponsor";
+}
 
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' },
-            signal: quoteAbortController.signal
-        });
+const pingDelay = ms => new Promise(res => setTimeout(res, ms));
+let nameCache = {};
+async function getSkaterNameSafe(wallet) {
+    if(nameCache[wallet]) return nameCache[wallet];
+    let name = await resolveWalletName(wallet);
+    nameCache[wallet] = name;
+    return name;
+}
 
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || `HTTP ${res.status}`);
+async function fetchWalletStats(wallet) {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    let ins = 0; let outs = 0;
+    try {
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 25 });
+        for (let s of sigs) {
+            const tx = await connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
+            if (tx && tx.meta) {
+                const accountKeys = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys.map(k=>k.toString()) : [];
+                const wIdx = accountKeys.indexOf(wallet);
+                if(wIdx !== -1) {
+                    const pre = tx.meta.preBalances[wIdx]; const post = tx.meta.postBalances[wIdx];
+                    const diff = (post - pre) / 1e9;
+                    if (diff < -0.001) outs += Math.abs(diff); else if (diff > 0.001) ins += diff;        
+                }
+            }
         }
+    } catch(e) {}
+    
+    let sponsorProf = SPONSOR_PROFILES.find(sp => sp.wallet === wallet);
+    if(sponsorProf && sponsorProf.baseline) { outs = Math.max(outs, sponsorProf.baseline); }
+    return { ins, outs };
+}
 
-        const data = await res.json();
+async function fetchSwapBalances() {
+    if (!publicKey) return;
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+    const solBalParsed = (balance / 1e9).toFixed(4);
+    document.getElementById("swap-sol-bal").innerText = solBalParsed;
 
-        // JUPITER V6 FIX: The data IS the quote object
-        if (data.error) throw new Error(data.error);
-
-        currentQuoteResponse = data;
-        
-        // Calculate the readable output amount
-        const outAmountParsed = (data.outAmount / (10 ** outputToken.decimals)).toFixed(isSolToUsdc ? 2 : 4);
-        outputInput.value = outAmountParsed;
-        
-        // Show price impact warning inline if > 1%
-        const impact = parseFloat(data.priceImpactPct || 0);
-        if (impact > 1) {
-            outputInput.style.color = "var(--accent-orange)";
-            outputInput.title = `Warning: ${impact.toFixed(2)}% price impact`;
-        } else {
-            outputInput.style.color = "var(--accent-green)";
-            outputInput.title = "";
+    let usdcBalParsed = "0.00";
+    try {
+        const usdcAccount = await connection.getParsedTokenAccountsByOwner(
+            new solanaWeb3.PublicKey(publicKey),
+            { mint: new solanaWeb3.PublicKey(TOKENS.USDC.mint) }
+        );
+        if (usdcAccount.value.length > 0) {
+            usdcBalParsed = usdcAccount.value[0].account.data.parsed.info.tokenAmount.uiAmount.toFixed(2);
         }
+    } catch(e) {}
+    
+    document.getElementById("swap-usdc-bal").innerText = usdcBalParsed;
 
-    } catch (error) {
-        if (error.name === "AbortError") return; // Silently ignore aborted requests
+    document.getElementById('swap-input-bal-label').innerText = isSolToUsdc ? solBalParsed : usdcBalParsed;
+    document.getElementById('swap-output-bal-label').innerText = isSolToUsdc ? usdcBalParsed : solBalParsed;
+}
 
-        currentQuoteResponse = null;
-        if (error.message && error.message.includes("ROUTE_NOT_FOUND")) {
-            outputInput.value = "No route found";
-        } else {
-            outputInput.value = "Quote failed";
-        }
-        outputInput.style.color = "var(--accent-red)";
-        console.warn("[SK8SWAP] Quote error:", error.message);
+async function fetchHeaderDualRank(wallet) {
+    const stats = await fetchWalletStats(wallet);
+    const skaterPanel = document.getElementById("skater-auth-panel");
+    if (!skaterPanel || publicKey !== wallet) return;
+    
+    let isGen = SKATER_REGISTRY.includes(wallet); 
+    let isSpon = SPONSOR_REGISTRY.includes(wallet);
+    
+    let sRank = (isGen && !isSpon) ? getRankDisplay(stats.ins, true) : null;
+    let spRank = (stats.outs > 0 || !isGen || isSpon) ? getRankDisplay(stats.outs, false) : null;
+    
+    if (isGen && !isSpon && stats.outs > 0) {
+        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">DUAL RANK: <span style="color:${sRank.color}">${sRank.icon}</span> | <span style="color:${spRank.color}">${spRank.icon}</span></span><button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🛹⚙️</button><button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🤝⚙️</button>`;
+    } else if (isGen && !isSpon) {
+        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sRank.color}">${sRank.icon} ${sRank.title}</span></span><button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🛹⚙️</button>`;
+    } else {
+        let spDisp = spRank || getRankDisplay(0, false);
+        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${spDisp.color}">${spDisp.icon} ${spDisp.title}</span></span><button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🤝⚙️</button>`;
     }
 }
 
-// ROBUST SWAP EXECUTOR
-async function executeJupiterSwap() {
-    if (!publicKey) {
-        alert("Please connect your wallet first.");
-        return;
+async function fetchBalance() {
+    if (!publicKey) return;
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+    const solVal = balance / solanaWeb3.LAMPORTS_PER_SOL;
+    document.getElementById("sol-balance").innerText = solVal.toFixed(4) + " SOL";
+    if (solPrice === 0) await getSolPrice();
+    document.getElementById("usd-balance").innerText = "$" + (solVal * solPrice).toFixed(2) + " USD";
+    
+    if (document.getElementById('swap-content').style.display === 'block') {
+        fetchSwapBalances();
     }
-    if (!currentQuoteResponse) {
-        alert("Please wait for a valid quote before swapping.");
-        return;
-    }
+}
 
-    const btn = document.getElementById("execute-swap-btn");
-    const originalText = btn.innerHTML;
-
-    // Helper: sleep
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-    // Helper: broadcast with retry
-    async function broadcastWithRetry(connection, rawTx, maxAttempts = 3) {
-        let lastErr;
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-            try {
-                const txid = await connection.sendRawTransaction(rawTx, {
-                    skipPreflight: false,
-                    maxRetries: 0  // We handle retries ourselves
-                });
-                return txid;
-            } catch (e) {
-                lastErr = e;
-                // If preflight caught a real error (slippage, balance), don't retry
-                if (e.message && (
-                    e.message.includes("custom program error") ||
-                    e.message.includes("insufficient funds") ||
-                    e.message.includes("0x1771") ||  // Jupiter slippage error code
-                    e.message.includes("0x1775")
-                )) throw e;
-                
-                if (attempt < maxAttempts - 1) {
-                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> RETRY ${attempt + 2}/${maxAttempts}...`;
-                    await sleep(500 * (attempt + 1)); // 500ms, 1000ms backoff
-                }
-            }
-        }
-        throw lastErr;
-    }
-
-    // Helper: poll until confirmed or expired
-    async function pollConfirmation(connection, txid, blockhashInfo, timeoutMs = 90000) {
-        const start = Date.now();
-        while (Date.now() - start < timeoutMs) {
-            const status = await connection.getSignatureStatus(txid, { searchTransactionHistory: true });
-            if (status && status.value) {
-                if (status.value.err) {
-                    const errStr = JSON.stringify(status.value.err);
-                    if (errStr.includes("0x1771") || errStr.includes("0x1775") || errStr.includes("SlippageToleranceExceeded")) {
-                        throw new Error("SLIPPAGE: Price moved too fast. Try a larger slippage or smaller amount.");
-                    }
-                    throw new Error("ON_CHAIN_FAIL: " + errStr);
-                }
-                const conf = status.value.confirmationStatus;
-                if (conf === "confirmed" || conf === "finalized") {
-                    return txid;
-                }
-            }
-
-            // Check if blockhash has expired
-            const currentHeight = await connection.getBlockHeight("confirmed");
-            if (currentHeight > blockhashInfo.lastValidBlockHeight) {
-                throw new Error("EXPIRED: Transaction blockhash expired. Network is congested.");
-            }
-
-            await sleep(1500); // Poll every 1.5s
-        }
-        throw new Error("TIMEOUT: Confirmation took longer than 90 seconds.");
-    }
-
-    try {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CALCULATING FEES...';
-        
-        // Dynamically fetch the current network priority fee
-        const priorityFee = await getRecentPriorityFee();
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING...';
-
-        const payload = {
-            quoteResponse: currentQuoteResponse,
-            userPublicKey: publicKey,
-            wrapAndUnwrapSol: true,
-            dynamicComputeUnitLimit: true,
-            prioritizationFeeLamports: priorityFee // Injected Dynamic Fee
-        };
-
-        const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (!swapResponse.ok) {
-            const errData = await swapResponse.json().catch(() => ({}));
-            throw new Error(errData.error || `Swap API error: ${swapResponse.status}`);
-        }
-
-        const swapData = await swapResponse.json();
-        if (!swapData.swapTransaction) throw new Error("No transaction returned from routing engine.");
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
-
-        const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
-        const transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
-        const signedTransaction = await provider.signTransaction(transaction);
-        const rawTransaction = signedTransaction.serialize();
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
-
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const latestBlockhash = await connection.getLatestBlockhash("confirmed");
-
-        let txid;
+async function fetchSkaterBalances() {
+    if (solPrice === 0) await getSolPrice();
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const els = document.querySelectorAll('.skater-wallet-bal');
+    for (let el of els) {
         try {
-            txid = await broadcastWithRetry(connection, rawTransaction, 3);
-        } catch (broadcastErr) {
-            if (broadcastErr.message && broadcastErr.message.toLowerCase().includes("blockhash")) {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> STALE BLOCKHASH...';
-                throw new Error("Blockhash expired before broadcast. Please try the swap again — this is a network timing issue, not a wallet issue.");
-            }
-            throw broadcastErr;
-        }
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONFIRMING...';
-
-        await pollConfirmation(connection, txid, latestBlockhash, 90000);
-
-        // ---- SUCCESS ----
-        btn.innerHTML = 'SWAP COMPLETE!';
-        document.getElementById('jingle').play().catch(() => {});
-        createConfetti();
-        document.getElementById('swap-input-amount').value = "";
-        document.getElementById('swap-output-amount').value = "";
-        currentQuoteResponse = null;
-
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            fetchBalance();
-            fetchSwapBalances();
-        }, 3000);
-
-    } catch (error) {
-        const msg = error.message || "Unknown error";
-
-        if (!msg.includes("User rejected") && !msg.toLowerCase().includes("user cancelled")) {
-            let userMsg = msg;
-            if (msg.startsWith("SLIPPAGE:")) userMsg = msg.replace("SLIPPAGE:", "").trim();
-            else if (msg.startsWith("ON_CHAIN_FAIL:")) userMsg = "Transaction failed on-chain. Your SOL was NOT spent.";
-            else if (msg.startsWith("EXPIRED:") || msg.startsWith("TIMEOUT:")) userMsg = msg.split(":").slice(1).join(":").trim();
-            
-            alert(`Swap failed:\n\n${userMsg}`);
-        }
-
-        btn.innerHTML = 'SWAP FAILED — RETRY?';
-        setTimeout(() => { btn.innerHTML = originalText; }, 4000);
+            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
+            const sol = bal / 1e9; const rank = getRankDisplay(sol, true);
+            el.innerHTML = `<div style="color:${rank.color}; font-size:0.75rem; margin-bottom:4px; font-weight:900;">${rank.icon} ${rank.title}</div>Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
+        } catch(e) {}
     }
 }
 
-// ==========================================
-// RENDER PROFILE (INJECT GOVERNANCE TITLES)
-// ==========================================
+async function fetchTreasuryBalance() {
+    if (solPrice === 0) await getSolPrice();
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
+    const sol = balance / 1e9;
+    document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
+    document.getElementById("treasury-usd-balance").innerText = "$" + (sol * solPrice).toFixed(2);
+}
+
+async function refreshLeaderboardData() {
+    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    
+    const sponsorList = document.getElementById("treasury-sponsors-list");
+    const skaterList = document.getElementById("skater-sponsors-list");
+    
+    sponsorList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Calculating Top Sponsors...</li>";
+    skaterList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain Activity...</li>";
+
+    let aggregatedSponsors = {};
+    SPONSOR_PROFILES.forEach(sp => { aggregatedSponsors[sp.wallet] = sp.baseline || 0; });
+    let recentHits = [];
+
+    try {
+        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 15 });
+        for (let i = 0; i < sigs.length; i += 3) {
+            const chunk = sigs.slice(i, i + 3);
+            const txs = await Promise.all(chunk.map(s => connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
+            
+            for (let tx of txs) {
+                if (tx && tx.meta && !tx.meta.err && tx.transaction && tx.transaction.message) {
+                    const msg = tx.transaction.message;
+                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
+                    const tIdx = keys.indexOf(TREASURY_WALLET);
+                    
+                    if(tIdx !== -1) {
+                        const amount = (tx.meta.postBalances[tIdx] - tx.meta.preBalances[tIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
+                        if(amount > 0.001) {
+                            const sponsorAddr = keys[0];
+                            if(sponsorAddr !== TREASURY_WALLET) {
+                                aggregatedSponsors[sponsorAddr] = (aggregatedSponsors[sponsorAddr] || 0) + amount;
+                            }
+                        }
+                    }
+                }
+            }
+            await pingDelay(300); 
+        }
+    } catch(e) {}
+
+    try {
+        for (let skaterWallet of SKATER_REGISTRY) {
+            const sSigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterWallet), { limit: 5 });
+            const chunk = sSigs.slice(0, 5);
+            const txs = await Promise.all(chunk.map(ss => connection.getTransaction(ss.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
+            
+            for (let sTx of txs) {
+                if (sTx && sTx.meta && !sTx.meta.err && sTx.transaction && sTx.transaction.message) {
+                    const msg = sTx.transaction.message;
+                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
+                    const skaterIdx = keys.indexOf(skaterWallet);
+                    
+                    if (skaterIdx !== -1) {
+                        const am = (sTx.meta.postBalances[skaterIdx] - sTx.meta.preBalances[skaterIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
+                        const sp = keys[0]; 
+                        
+                        if(am > 0.001) {
+                            if(sp !== skaterWallet && sp !== TREASURY_WALLET) {
+                                aggregatedSponsors[sp] = (aggregatedSponsors[sp] || 0) + am;
+                                recentHits.push({ sponsor: sp, skater: skaterWallet, amount: am, time: sTx.blockTime });
+                            }
+                        }
+                    }
+                }
+            }
+            await pingDelay(300); 
+        }
+    } catch(e) { console.error(e); }
+
+    let rawSponsors = Object.keys(aggregatedSponsors).map(addr => ({ addr, val: aggregatedSponsors[addr] }));
+    rawSponsors.sort((a, b) => b.val - a.val);
+    allTreasurySponsors = rawSponsors.slice(0, 10);
+    
+    for(let j=0; j<allTreasurySponsors.length; j++) {
+        allTreasurySponsors[j].name = await getSkaterNameSafe(allTreasurySponsors[j].addr);
+    }
+    renderTreasuryFeed();
+
+    recentHits.sort((a, b) => b.time - a.time);
+    allSkaterHits = recentHits.slice(0, 10);
+    
+    for(let j=0; j<allSkaterHits.length; j++) {
+        allSkaterHits[j].sponsorName = await getSkaterNameSafe(allSkaterHits[j].sponsor);
+        allSkaterHits[j].skaterName = await getSkaterNameSafe(allSkaterHits[j].skater);
+    }
+    renderSkaterFeed();
+}
+
 async function renderProfile(wallet, forceView = null) {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const picEl = document.getElementById('p-img'); const rEl = document.getElementById('p-rank'); const bEl = document.getElementById('p-blessings');
@@ -1681,573 +1637,33 @@ async function renderProfile(wallet, forceView = null) {
     document.getElementById('profile-donate-btn').style.display = isOwner ? 'none' : 'block';
 }
 
-function renderVideoGrid() {
-    const grid = document.getElementById("main-video-grid");
-    grid.innerHTML = "";
-    
-    const now = Date.now();
-    for (let w in BAN_LIST) {
-        if (BAN_LIST[w] < now) delete BAN_LIST[w];
-    }
-    localStorage.setItem('sk8_bans', JSON.stringify(BAN_LIST));
-
-    let indexCount = 0;
-
-    SKATER_PROFILES.forEach((skater) => {
-        if (BAN_LIST[skater.wallet] && BAN_LIST[skater.wallet] > now) return;
-
-        indexCount++;
-        let vidId = skater.yt || "kJQP7kiw5Fk"; 
-        
-        let cardHTML = `
-        <div class="video-card" id="vid-${indexCount}">
-            <div class="video-wrapper">
-              <div class="video-mask"><i class="fas fa-lock"></i><p>Sponsor to Unlock</p></div>
-              <iframe data-src="https://www.youtube.com/embed/${vidId}" allowfullscreen></iframe>
-            </div>
-            <div class="card-info">
-              <div class="card-title" style="text-transform: uppercase;">${skater.name}</div>
-              <div class="skater-wallet-bal" data-address="${skater.wallet}">Blessings: ...</div>
-              <button class="donate-btn" data-target="vid-${indexCount}" data-address="${skater.wallet}">SPONSOR</button>
-              <button class="view-profile-btn" onclick="navigateTo('profile', '${skater.wallet}')">VIEW PROFILE</button>
-            </div>
-        </div>`;
-        grid.innerHTML += cardHTML;
-    });
-    
-    fetchSkaterBalances();
-    checkPersistence();
-    updateDonateButtons();
-}
-
-async function fetchWalletStats(wallet) {
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let ins = 0; let outs = 0;
+async function verifySponsorshipTier(sponsorPubKey, skaterPubKey, requiredSOL) {
+    if (ADMIN_WALLETS.includes(sponsorPubKey)) { return true; }
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    let totalDonated = 0;
     try {
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 25 });
-        for (let s of sigs) {
-            const tx = await connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
-            if (tx && tx.meta) {
-                const accountKeys = tx.transaction.message.staticAccountKeys ? tx.transaction.message.staticAccountKeys.map(k=>k.toString()) : [];
-                const wIdx = accountKeys.indexOf(wallet);
-                if(wIdx !== -1) {
-                    const pre = tx.meta.preBalances[wIdx]; const post = tx.meta.postBalances[wIdx];
-                    const diff = (post - pre) / 1e9;
-                    if (diff < -0.001) outs += Math.abs(diff); else if (diff > 0.001) ins += diff;        
-                }
-            }
-        }
-    } catch(e) {}
-    
-    let sponsorProf = SPONSOR_PROFILES.find(sp => sp.wallet === wallet);
-    if(sponsorProf && sponsorProf.baseline) { outs = Math.max(outs, sponsorProf.baseline); }
-    return { ins, outs };
-}
-
-async function handleWalletAction() {
-    if (publicKey) { 
-        try { if (provider && provider.disconnect) await provider.disconnect(); } catch(e) {} 
-        publicKey = null; updateWalletUI(); checkPersistence(); checkAdminStatus(); renderDaoFeed();
-    } 
-    else { 
-        provider = getProvider(); 
-        if (!provider) { 
-            if(isMobile()) { const dAppUrl = encodeURIComponent(window.location.href); window.location.href = `https://phantom.app/ul/browse/${dAppUrl}?ref=${encodeURIComponent(window.location.origin)}`; } 
-            else { alert("Install Phantom Wallet!"); window.open("https://phantom.app/", "_blank"); }
-            return;
-        } 
-        try { 
-            const resp = await provider.connect(); 
-            publicKey = resp.publicKey.toString(); 
-
-            if (BAN_LIST[publicKey] && BAN_LIST[publicKey] > Date.now()) {
-                let dStr = new Date(BAN_LIST[publicKey]).toLocaleString();
-                if (BAN_LIST[publicKey] > 4000000000000) dStr = "PERMANENTLY";
-                alert(`ACCESS DENIED: Your account has been suspended until ${dStr}.`);
-                await provider.disconnect();
-                publicKey = null;
-                return;
-            }
-            
-            if(!SKATER_REGISTRY.includes(publicKey) && !SPONSOR_REGISTRY.includes(publicKey)) {
-                document.getElementById('onboarding-modal').style.display = 'flex';
-            } else {
-                updateWalletUI(); 
-                fetchBalance(); 
-                checkPersistence(); 
-                checkAdminStatus();
-                syncDaoFromChain();
-            }
-        } catch (e) {}
-    }
-}
-
-function updateWalletUI() {
-    const btn = document.getElementById("connect-wallet-btn");
-    const balContainer = document.getElementById("wallet-balance-container");
-    const skaterPanel = document.getElementById("skater-auth-panel");
-    const protocolLed = document.getElementById("protocol-led");
-    if (publicKey) { 
-        document.body.classList.add("wallet-connected"); btn.innerText = "CONNECTED"; balContainer.style.display = "flex"; 
-        if(protocolLed) protocolLed.style.display = "inline-block";
-        
-        skaterPanel.style.display = "flex"; 
-        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span id="auth-skater-rank" style="color: #fff;"><i class="fas fa-spinner fa-spin"></i></span></span> <button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); color: #000; border: none; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;">⚙️</button>`;
-        
-        fetchHeaderDualRank(publicKey);
-        
-        if (document.getElementById('swap-content').style.display === 'block') {
-            fetchSwapBalances();
-        }
-    } else { document.body.classList.remove("wallet-connected"); btn.innerText = "CONNECT"; balContainer.style.display = "none"; skaterPanel.style.display = "none"; if(protocolLed) protocolLed.style.display = "none"; }
-    updateDonateButtons();
-}
-
-async function fetchSwapBalances() {
-    if (!publicKey) return;
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-    const solBalParsed = (balance / 1e9).toFixed(4);
-    document.getElementById("swap-sol-bal").innerText = solBalParsed;
-
-    let usdcBalParsed = "0.00";
-    try {
-        const usdcAccount = await connection.getParsedTokenAccountsByOwner(
-            new solanaWeb3.PublicKey(publicKey),
-            { mint: new solanaWeb3.PublicKey(TOKENS.USDC.mint) }
-        );
-        if (usdcAccount.value.length > 0) {
-            usdcBalParsed = usdcAccount.value[0].account.data.parsed.info.tokenAmount.uiAmount.toFixed(2);
-        }
-    } catch(e) {}
-    
-    document.getElementById("swap-usdc-bal").innerText = usdcBalParsed;
-
-    // Update active labels
-    document.getElementById('swap-input-bal-label').innerText = isSolToUsdc ? solBalParsed : usdcBalParsed;
-    document.getElementById('swap-output-bal-label').innerText = isSolToUsdc ? usdcBalParsed : solBalParsed;
-}
-
-async function fetchHeaderDualRank(wallet) {
-    const stats = await fetchWalletStats(wallet);
-    const skaterPanel = document.getElementById("skater-auth-panel");
-    if (!skaterPanel || publicKey !== wallet) return;
-    
-    let isGen = SKATER_REGISTRY.includes(wallet); 
-    let isSpon = SPONSOR_REGISTRY.includes(wallet);
-    
-    let sRank = (isGen && !isSpon) ? getRankDisplay(stats.ins, true) : null;
-    let spRank = (stats.outs > 0 || !isGen || isSpon) ? getRankDisplay(stats.outs, false) : null;
-    
-    if (isGen && !isSpon && stats.outs > 0) {
-        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">DUAL RANK: <span style="color:${sRank.color}">${sRank.icon}</span> | <span style="color:${spRank.color}">${spRank.icon}</span></span><button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🛹⚙️</button><button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🤝⚙️</button>`;
-    } else if (isGen && !isSpon) {
-        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${sRank.color}">${sRank.icon} ${sRank.title}</span></span><button onclick="navigateToProfileView('skater')" style="background: var(--accent-cyan); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🛹⚙️</button>`;
-    } else {
-        let spDisp = spRank || getRankDisplay(0, false);
-        skaterPanel.innerHTML = `<span style="font-size: 0.6rem; color: var(--accent-gold); font-weight: bold;">RANK: <span style="color:${spDisp.color}">${spDisp.icon} ${spDisp.title}</span></span><button onclick="navigateToProfileView('sponsor')" style="background: var(--accent-gold); border: none; padding: 3px 8px; border-radius: 20px; cursor: pointer;">🤝⚙️</button>`;
-    }
-}
-
-async function fetchBalance() {
-    if (!publicKey) return;
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-    const solVal = balance / solanaWeb3.LAMPORTS_PER_SOL;
-    document.getElementById("sol-balance").innerText = solVal.toFixed(4) + " SOL";
-    if (solPrice === 0) await getSolPrice();
-    document.getElementById("usd-balance").innerText = "$" + (solVal * solPrice).toFixed(2) + " USD";
-    
-    if (document.getElementById('swap-content').style.display === 'block') {
-        fetchSwapBalances();
-    }
-}
-
-async function fetchSkaterBalances() {
-    if (solPrice === 0) await getSolPrice();
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const els = document.querySelectorAll('.skater-wallet-bal');
-    for (let el of els) {
-        try {
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
-            const sol = bal / 1e9; const rank = getRankDisplay(sol, true);
-            el.innerHTML = `<div style="color:${rank.color}; font-size:0.75rem; margin-bottom:4px; font-weight:900;">${rank.icon} ${rank.title}</div>Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
-        } catch(e) {}
-    }
-}
-
-async function fetchTreasuryBalance() {
-    if (solPrice === 0) await getSolPrice();
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const balance = await connection.getBalance(new solanaWeb3.PublicKey(TREASURY_WALLET));
-    const sol = balance / 1e9;
-    document.getElementById("treasury-sol-balance").innerText = sol.toFixed(4) + " SOL";
-    document.getElementById("treasury-usd-balance").innerText = "$" + (sol * solPrice).toFixed(2);
-}
-
-function checkPersistence() {
-    let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
-
-    document.querySelectorAll('.video-card').forEach(card => {
-        let iframe = card.querySelector('iframe');
-        
-        if (!publicKey) { 
-            card.classList.remove('unlocked'); 
-            if (iframe) iframe.src = ""; 
-            return; 
-        }
-        
-        let unlocked = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
-        
-        if (isAdmin || unlocked.includes(card.id)) { 
-            if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
-            card.classList.add('unlocked'); 
-        } else { 
-            card.classList.remove('unlocked'); 
-            if (iframe) iframe.src = ""; 
-        }
-    });
-}
-
-function navigateToProfileView(viewType) {
-    if(!publicKey) return; document.getElementById('mobile-nav').classList.remove('open');
-    ["home", "video", "leaderboard", "donate", "feed", "dao", "swap"].forEach(id => {
-        let el = document.getElementById(id + "-content");
-        if(el) el.style.display = 'none';
-    });
-    document.getElementById("profile-content").style.display = 'block';
-    renderProfile(publicKey, viewType); window.scrollTo(0,0);
-}
-
-function navigateTo(page, wallet = null) {
-  document.getElementById('mobile-nav').classList.remove('open');
-  ["home", "video", "leaderboard", "donate", "profile", "feed", "dao", "swap"].forEach(id => {
-      let el = document.getElementById(id + "-content");
-      if(el) el.style.display = 'none';
-  });
-  document.getElementById(page + "-content").style.display = 'block';
-  if(page === 'profile' && wallet) renderProfile(wallet, null);
-  if(page === 'video') { renderVideoGrid(); }
-  if(page === 'donate') fetchTreasuryBalance();
-  if(page === 'leaderboard') refreshLeaderboardData();
-  if(page === 'dao') syncDaoFromChain();
-  if(page === 'swap') { fetchSwapBalances(); }
-  window.scrollTo(0,0);
-}
-
-function checkAdminStatus() {
-    const adminPanel = document.getElementById('admin-panel');
-    if (publicKey && ADMIN_WALLETS.includes(publicKey)) {
-        adminPanel.style.display = 'block';
-    } else {
-        adminPanel.style.display = 'none';
-    }
-}
-
-function toggleRoleButtons() {
-    const isChecked = document.getElementById('tos-checkbox').checked;
-    const sBtn = document.getElementById('btn-role-skater');
-    const pBtn = document.getElementById('btn-role-sponsor');
-    
-    if(isChecked) {
-        sBtn.classList.add('active'); pBtn.classList.add('active');
-    } else {
-        sBtn.classList.remove('active'); pBtn.classList.remove('active');
-    }
-}
-
-async function finalizeOnboarding(role) {
-    if(!publicKey) return;
-    
-    try {
-        const message = `I accept the Skate2Earn Master Agreement and officially register my wallet as a ${role.toUpperCase()} on the Protocol.\n\nWallet: ${publicKey}`;
-        const encodedMessage = new TextEncoder().encode(message);
-        await provider.signMessage(encodedMessage, "utf8");
-    } catch (e) {
-        alert("Registration cancelled. You must sign the agreement to enter.");
-        return;
-    }
-
-    if(role === 'skater') {
-        const defaultProfile = { wallet: publicKey, name: "NEW SKATER", styles: ["Street"], stance: "Unknown", deck: "Standard", trucks: "Standard", spot: "Local Spot", yt: "kJQP7kiw5Fk", pic: "https://i.pravatar.cc/400?u=" + publicKey, bio: "Just joined the Skate2Earn revolution." };
-        SKATER_REGISTRY.push(publicKey);
-        SKATER_PROFILES.push(defaultProfile);
-        localStorage.setItem('sk8_registry', JSON.stringify(SKATER_REGISTRY));
-        localStorage.setItem('sk8_profiles', JSON.stringify(SKATER_PROFILES));
-        alert("Welcome to the Revolution! You are now a registered Skater.");
-    } else {
-        const defaultSponsor = { wallet: publicKey, name: "NEW SPONSOR", pic: "https://i.pravatar.cc/400?u=" + publicKey, bio: "Ready to fund the movement." };
-        SPONSOR_REGISTRY.push(publicKey);
-        SPONSOR_PROFILES.push(defaultSponsor);
-        localStorage.setItem('sk8_sponsors', JSON.stringify(SPONSOR_REGISTRY));
-        localStorage.setItem('sk8_sponsor_profiles', JSON.stringify(SPONSOR_PROFILES));
-        alert("Welcome to the Boardroom! You are now a registered Sponsor.");
-    }
-
-    document.getElementById('onboarding-modal').style.display = 'none';
-    updateWalletUI();
-    renderVideoGrid();
-    navigateTo('profile', publicKey);
-}
-
-function adminSelectAddRole(role) {
-    adminAddSelectedRole = role;
-    const sBtn = document.getElementById('add-skater-toggle');
-    const pBtn = document.getElementById('add-sponsor-toggle');
-    
-    if (role === 'skater') {
-        sBtn.style.opacity = '1'; sBtn.style.background = 'var(--accent-cyan)'; sBtn.style.color = '#000';
-        pBtn.style.opacity = '0.4'; pBtn.style.background = 'transparent'; pBtn.style.color = 'var(--accent-gold)';
-    } else {
-        pBtn.style.opacity = '1'; pBtn.style.background = 'var(--accent-gold)'; pBtn.style.color = '#000';
-        sBtn.style.opacity = '0.4'; sBtn.style.background = 'transparent'; sBtn.style.color = 'var(--accent-cyan)';
-    }
-}
-
-function adminSubmitAdd() {
-    const input = document.getElementById('add-wallet-input').value.trim();
-    if(input.length < 30) { alert("Invalid Solana Address"); return; }
-    
-    if (SKATER_REGISTRY.includes(input) || SPONSOR_REGISTRY.includes(input)) { 
-        alert("Wallet already exists in a registry."); 
-        return; 
-    }
-    
-    if (BAN_LIST[input]) {
-        delete BAN_LIST[input];
-        localStorage.setItem('sk8_bans', JSON.stringify(BAN_LIST));
-    }
-    
-    if (adminAddSelectedRole === 'skater') {
-        const defaultProfile = { wallet: input, name: "NEW SKATER (ADDED)", styles: ["Street"], yt: "kJQP7kiw5Fk", pic: "https://i.pravatar.cc/400?u=" + input, bio: "Manually added by Admin." };
-        SKATER_REGISTRY.push(input);
-        SKATER_PROFILES.push(defaultProfile);
-        localStorage.setItem('sk8_registry', JSON.stringify(SKATER_REGISTRY));
-        localStorage.setItem('sk8_profiles', JSON.stringify(SKATER_PROFILES));
-    } else {
-        const defaultSponsor = { wallet: input, name: "NEW SPONSOR (ADDED)", pic: "https://i.pravatar.cc/400?u=" + input, bio: "Manually added by Admin." };
-        SPONSOR_REGISTRY.push(input);
-        SPONSOR_PROFILES.push(defaultSponsor);
-        localStorage.setItem('sk8_sponsors', JSON.stringify(SPONSOR_REGISTRY));
-        localStorage.setItem('sk8_sponsor_profiles', JSON.stringify(SPONSOR_PROFILES));
-    }
-    
-    document.getElementById('add-wallet-input').value = "";
-    document.getElementById('admin-add-modal').style.display = 'none';
-    alert(`Wallet force-added as ${adminAddSelectedRole.toUpperCase()}.`);
-    renderVideoGrid();
-}
-
-function adminSubmitBan(duration) {
-    const input = document.getElementById('ban-wallet-input').value.trim();
-    if(input.length < 30) { alert("Invalid Solana Address"); return; }
-    
-    if(!SKATER_REGISTRY.includes(input) && !SPONSOR_REGISTRY.includes(input)) { 
-        alert("Wallet not found in any registry."); 
-        return; 
-    }
-
-    if (duration === 'perm') {
-        SKATER_REGISTRY = SKATER_REGISTRY.filter(w => w !== input);
-        SKATER_PROFILES = SKATER_PROFILES.filter(p => p.wallet !== input);
-        SPONSOR_REGISTRY = SPONSOR_REGISTRY.filter(w => w !== input);
-        SPONSOR_PROFILES = SPONSOR_PROFILES.filter(p => p.wallet !== input);
-        
-        localStorage.setItem('sk8_registry', JSON.stringify(SKATER_REGISTRY));
-        localStorage.setItem('sk8_profiles', JSON.stringify(SKATER_PROFILES));
-        localStorage.setItem('sk8_sponsors', JSON.stringify(SPONSOR_REGISTRY));
-        localStorage.setItem('sk8_sponsor_profiles', JSON.stringify(SPONSOR_PROFILES));
-        
-        BAN_LIST[input] = 4102444800000; 
-        alert("User permanently kicked from protocol.");
-        
-    } else {
-        const msToAdd = duration * 3600 * 1000;
-        BAN_LIST[input] = Date.now() + msToAdd;
-        alert(`User temporarily suspended for ${duration} hours.`);
-    }
-    
-    localStorage.setItem('sk8_bans', JSON.stringify(BAN_LIST));
-    document.getElementById('ban-wallet-input').value = "";
-    document.getElementById('admin-ban-modal').style.display = 'none';
-    renderVideoGrid();
-}
-
-// ==========================================
-// LEADERBOARD LOGIC
-// ==========================================
-async function resolveWalletName(wallet) {
-    if (wallet === TREASURY_WALLET) return "Lovehandlz";
-    let sp = SPONSOR_PROFILES.find(s => s.wallet === wallet); if (sp) return sp.name;
-    let sk = SKATER_PROFILES.find(s => s.wallet === wallet); if (sk) return sk.name;
-    
-    try {
-        const sigs = await new solanaWeb3.Connection(RPC_URL, "confirmed").getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 5 });
-        for (let s of sigs) { if(s.memo && s.memo.includes('"sk8":"v1"')) { const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, '')); if(d.name) return d.name; } }
-    } catch(e) {} 
-    
-    return "Anon Sponsor";
-}
-
-const pingDelay = ms => new Promise(res => setTimeout(res, ms));
-let nameCache = {};
-async function getSkaterNameSafe(wallet) {
-    if(nameCache[wallet]) return nameCache[wallet];
-    let name = await resolveWalletName(wallet);
-    nameCache[wallet] = name;
-    return name;
-}
-
-async function refreshLeaderboardData() {
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    
-    const sponsorList = document.getElementById("treasury-sponsors-list");
-    const skaterList = document.getElementById("skater-sponsors-list");
-    
-    sponsorList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Calculating Top Sponsors...</li>";
-    skaterList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain Activity...</li>";
-
-    let aggregatedSponsors = {};
-    SPONSOR_PROFILES.forEach(sp => { aggregatedSponsors[sp.wallet] = sp.baseline || 0; });
-    let recentHits = [];
-
-    try {
-        const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 15 });
-        for (let i = 0; i < sigs.length; i += 3) {
-            const chunk = sigs.slice(i, i + 3);
-            const txs = await Promise.all(chunk.map(s => connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
-            
-            for (let tx of txs) {
-                if (tx && tx.meta && !tx.meta.err && tx.transaction && tx.transaction.message) {
-                    const msg = tx.transaction.message;
-                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
-                    const tIdx = keys.indexOf(TREASURY_WALLET);
-                    
-                    if(tIdx !== -1) {
-                        const amount = (tx.meta.postBalances[tIdx] - tx.meta.preBalances[tIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
-                        if(amount > 0.001) {
-                            const sponsorAddr = keys[0];
-                            if(sponsorAddr !== TREASURY_WALLET) {
-                                aggregatedSponsors[sponsorAddr] = (aggregatedSponsors[sponsorAddr] || 0) + amount;
-                            }
-                        }
+        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterPubKey), { limit: 50 });
+        for(let s of sigs) {
+            const tx = await conn.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
+            if(tx) {
+                const keys = tx.transaction.message.staticAccountKeys.map(k=>k.toString());
+                if(keys[0] === sponsorPubKey) { 
+                    const skaterIdx = keys.indexOf(skaterPubKey);
+                    if(skaterIdx !== -1) {
+                        const pre = tx.meta.preBalances[skaterIdx];
+                        const post = tx.meta.postBalances[skaterIdx];
+                        const diff = (post - pre) / solanaWeb3.LAMPORTS_PER_SOL;
+                        if (diff > 0) totalDonated += diff;
                     }
                 }
             }
-            await pingDelay(300); 
         }
     } catch(e) {}
-
-    try {
-        for (let skaterWallet of SKATER_REGISTRY) {
-            const sSigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterWallet), { limit: 5 });
-            const chunk = sSigs.slice(0, 5);
-            const txs = await Promise.all(chunk.map(ss => connection.getTransaction(ss.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
-            
-            for (let sTx of txs) {
-                if (sTx && sTx.meta && !sTx.meta.err && sTx.transaction && sTx.transaction.message) {
-                    const msg = sTx.transaction.message;
-                    const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
-                    const skaterIdx = keys.indexOf(skaterWallet);
-                    
-                    if (skaterIdx !== -1) {
-                        const am = (sTx.meta.postBalances[skaterIdx] - sTx.meta.preBalances[skaterIdx]) / solanaWeb3.LAMPORTS_PER_SOL;
-                        const sp = keys[0]; 
-                        
-                        if(am > 0.001) {
-                            if(sp !== skaterWallet && sp !== TREASURY_WALLET) {
-                                aggregatedSponsors[sp] = (aggregatedSponsors[sp] || 0) + am;
-                                recentHits.push({ sponsor: sp, skater: skaterWallet, amount: am, time: sTx.blockTime });
-                            }
-                        }
-                    }
-                }
-            }
-            await pingDelay(300); 
-        }
-    } catch(e) { console.error(e); }
-
-    let rawSponsors = Object.keys(aggregatedSponsors).map(addr => ({ addr, val: aggregatedSponsors[addr] }));
-    rawSponsors.sort((a, b) => b.val - a.val);
-    allTreasurySponsors = rawSponsors.slice(0, 10);
-    
-    for(let j=0; j<allTreasurySponsors.length; j++) {
-        allTreasurySponsors[j].name = await getSkaterNameSafe(allTreasurySponsors[j].addr);
-    }
-    renderTreasuryFeed();
-
-    recentHits.sort((a, b) => b.time - a.time);
-    allSkaterHits = recentHits.slice(0, 10);
-    
-    for(let j=0; j<allSkaterHits.length; j++) {
-        allSkaterHits[j].sponsorName = await getSkaterNameSafe(allSkaterHits[j].sponsor);
-        allSkaterHits[j].skaterName = await getSkaterNameSafe(allSkaterHits[j].skater);
-    }
-    renderSkaterFeed();
+    return totalDonated >= (requiredSOL - 0.001);
 }
 
-function renderTreasuryFeed() {
-    const list = document.getElementById("treasury-sponsors-list");
-    list.innerHTML = "";
-    
-    allTreasurySponsors.forEach((s, index) => {
-        const rank = getRankDisplay(s.val, false);
-        const pos = index + 1;
-        
-        const isTopDog = index === 0 ? "border: 1px solid var(--accent-gold); background: rgba(255, 215, 0, 0.05); padding: 12px; border-radius: 8px; box-shadow: 0 0 15px rgba(255,215,0,0.1);" : 
-                         index === 1 ? "border: 1px solid var(--silver-font); background: rgba(192, 192, 192, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;" :
-                         index === 2 ? "border: 1px solid var(--bronze-font); background: rgba(205, 127, 50, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;" : "";
-                         
-        const flexIcon = index === 0 ? '<i class="fa-solid fa-crown" style="color:#FFD700; filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); font-size: 1.2rem; margin-right:8px; animation: pulse 2s infinite;"></i>' : 
-                         index === 1 ? '<i class="fa-solid fa-medal" style="color:var(--silver-font); font-size: 1.1rem; margin-right:8px;"></i>' :
-                         index === 2 ? '<i class="fa-solid fa-medal" style="color:var(--bronze-font); font-size: 1.0rem; margin-right:8px;"></i>' : '';
-
-        list.innerHTML += `
-            <li class="leader-item" style="${isTopDog}">
-                <div style="display: flex; flex-direction: column;">
-                    <span class="addr-tag clickable" style="color: ${rank.color}; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='var(--accent-cyan)'; this.style.textDecoration='underline';" onmouseout="this.style.color='${rank.color}'; this.style.textDecoration='none';" onclick="navigateTo('profile', '${s.addr}')">
-                        #${pos} ${flexIcon}${rank.icon} <span style="text-transform: uppercase;">${s.name}</span> <span style="font-size:0.6rem; opacity:0.7; margin-left:5px;">[${rank.title}]</span>
-                    </span> 
-                    <a href="https://solscan.io/account/${s.addr}" target="_blank" style="font-family: monospace; font-size: 0.65rem; color: var(--text-secondary); text-decoration: none; margin-top: 4px;" onmouseover="this.style.color='var(--accent-cyan)'" onmouseout="this.style.color='var(--text-secondary)'" onclick="event.stopPropagation();"><i class="fas fa-external-link-alt" style="font-size: 0.55rem; margin-right: 3px;"></i>${s.addr.slice(0,6)}...${s.addr.slice(-4)}</a>
-                </div>
-                <span class="amt-tag" style="color: ${rank.color};">${s.val.toFixed(2)} SOL</span>
-            </li>`;
-    });
-    
-    if(allTreasurySponsors.length === 0) list.innerHTML = "<li>No global sponsors found.</li>";
-}
-
-function renderSkaterFeed() {
-    const list = document.getElementById("skater-sponsors-list");
-    list.innerHTML = "";
-    
-    allSkaterHits.forEach((e) => {
-        const timeAgo = Math.floor(Date.now() / 1000) - e.time;
-        let timeStr = timeAgo < 60 ? "Just now" : timeAgo < 3600 ? Math.floor(timeAgo / 60) + "m ago" : Math.floor(timeAgo / 3600) + "h ago";
-
-        list.innerHTML += `
-        <li class="leader-item">
-            <div style="display: flex; flex-direction: column;">
-                <span style="font-size: 0.75rem;">
-                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-gold); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.sponsor}')">${e.sponsorName}</span> 
-                    <span style="color:var(--text-secondary); font-family:'Inter'; font-size:0.65rem;">blessed</span> 
-                    <span class="addr-tag clickable" style="display:inline; color:var(--accent-cyan); font-weight:bold; text-transform:uppercase;" onclick="navigateTo('profile', '${e.skater}')">${e.skaterName}</span>
-                </span>
-                <span style="color: var(--text-secondary); font-size: 0.6rem; margin-top: 4px; font-family:'Inter';"><i class="far fa-clock" style="margin-right:3px;"></i>${timeStr}</span>
-            </div>
-            <span class="amt-tag" style="color: var(--accent-green); align-self: flex-start; font-size: 0.75rem;">+${e.amount.toFixed(2)} SOL</span>
-        </li>`;
-    });
-    
-    if(allSkaterHits.length === 0) list.innerHTML = "<li>No recent blessings found.</li>";
-}
-
-// ==========================================
-// FEED ARCHITECTURE
-// ==========================================
 async function attemptFeedAccess() {
     if(!publicKey) { alert("Connect Wallet First"); return; }
-    
     activeFeedWallet = document.getElementById('p-wallet').innerText;
     let skaterName = document.getElementById('p-name').innerText;
     
@@ -2272,8 +1688,7 @@ async function attemptFeedAccess() {
     let hasAccess = isOwner;
 
     if (!isOwner) {
-        const requiredSOL = 0.05; 
-        hasAccess = await verifySponsorshipTier(publicKey, activeFeedWallet, requiredSOL);
+        hasAccess = await verifySponsorshipTier(publicKey, activeFeedWallet, 0.05);
     }
 
     if (hasAccess) {
@@ -2283,34 +1698,6 @@ async function attemptFeedAccess() {
         document.getElementById('feed-paywall-overlay').style.display = 'flex';
         fetchSkaterFeed(activeFeedWallet, true); 
     }
-}
-
-async function verifySponsorshipTier(sponsorPubKey, skaterPubKey, requiredSOL) {
-    if (ADMIN_WALLETS.includes(sponsorPubKey)) { return true; }
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let totalDonated = 0;
-    
-    try {
-        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterPubKey), { limit: 50 });
-        for(let s of sigs) {
-            const tx = await conn.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
-            if(tx) {
-                const keys = tx.transaction.message.staticAccountKeys.map(k=>k.toString());
-                if(keys[0] === sponsorPubKey) { 
-                    const skaterIdx = keys.indexOf(skaterPubKey);
-                    if(skaterIdx !== -1) {
-                        const pre = tx.meta.preBalances[skaterIdx];
-                        const post = tx.meta.postBalances[skaterIdx];
-                        const diff = (post - pre) / solanaWeb3.LAMPORTS_PER_SOL;
-                        if (diff > 0) totalDonated += diff;
-                    }
-                }
-            }
-        }
-    } catch(e) {}
-    
-    const buffer = 0.001; 
-    return totalDonated >= (requiredSOL - buffer);
 }
 
 async function fetchSkaterFeed(wallet, isBlurred) {
@@ -2328,238 +1715,47 @@ async function fetchSkaterFeed(wallet, isBlurred) {
     renderFeedGrid(isBlurred);
 }
 
-function renderFeedGrid(isBlurred) {
-    const container = document.getElementById('actual-feed-items');
-    const loadMoreBtn = document.getElementById('load-more-feed-btn');
-    if (currentSkaterPosts.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;">No feed entries found on-chain.</div>`;
-        return;
-    }
-    let toRender = currentSkaterPosts.slice(0, feedRenderLimit);
-    let html = "";
-    let isOwner = (publicKey === activeFeedWallet);
-
-    toRender.forEach(p => {
-        let dateStr = new Date(p.time * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-        let mediaHtml = ""; let platformIcon = "";
-        
-        if(p.yt) {
-            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-youtube" style="color:#ff2d55;"></i></div>`;
-            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.youtube.com/embed/${p.yt}" allowfullscreen></iframe></div>`;
-        } else if (p.ig) {
-            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-instagram" style="color:#ff2d55;"></i></div>`;
-            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.instagram.com/p/${p.ig}/embed" scrolling="no" allowtransparency="true"></iframe></div>`;
-        } else {
-            mediaHtml = `<div class="feed-grid-media" style="background: linear-gradient(45deg, #0a132f, #0f1a47); display:flex; align-items:center; justify-content:center;"><i class="fas fa-skating" style="font-size:3rem; color:rgba(0,240,255,0.1);"></i></div>`;
-        }
-        let blessBtn = isOwner ? "" : `<button class="feed-bless-btn" onclick="openSponsorshipModalFromFeed()">BLESS CLIP</button>`;
-        html += `<div class="feed-grid-item" style="${isBlurred ? 'filter: blur(8px); opacity: 0.5;' : ''}">
-                    ${mediaHtml}
-                    <div class="feed-grid-content">
-                        <div class="feed-grid-text">${p.text || ""}</div>
-                        <div class="feed-grid-date" style="margin-bottom: ${isOwner ? '0' : '10px'};">${dateStr}</div>
-                        ${blessBtn}
-                    </div>
-                 </div>`;
-    });
-    container.innerHTML = html;
-    if(!isBlurred && currentSkaterPosts.length > feedRenderLimit) { loadMoreBtn.style.display = "block"; } else { loadMoreBtn.style.display = "none"; }
-}
-
-function loadMoreFeed() { feedRenderLimit += 12; renderFeedGrid(false); }
-
-function openSponsorshipModalFromFeed() { currentSkaterTarget = activeFeedWallet; activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex'; }
-
-async function publishToFeed() {
-    if(!publicKey) return; const btn = document.getElementById("publish-feed-btn"); btn.innerText = "AWAITING SIGNATURE...";
-    try {
-        const text = document.getElementById("new-post-text").value;
-        const rawLink = document.getElementById("new-post-link").value;
-        let yt = ""; let ig = "";
-        
-        if (rawLink) { 
-            const ytMatch = rawLink.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); 
-            if (ytMatch && ytMatch[2].length === 11) yt = ytMatch[2]; 
-            const igMatch = rawLink.match(/(?:instagram\.com\/)(?:p|reel)\/([a-zA-Z0-9_-]+)/i);
-            if (igMatch) ig = igMatch[1];
-        }
-        if(!text && !yt && !ig) { alert("Cannot post empty data."); btn.innerText = "SIGN & POST TO CHAIN"; return; }
-
-        const pData = JSON.stringify({ sk8post: "v1", text, yt, ig });
-        const encoded = new TextEncoder().encode(pData); 
-        if (encoded.length > 566) { alert(`Post too long for Memo! Shorten your text.`); btn.innerText = "SIGN & POST TO CHAIN"; return; }
-        
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        
-        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        await provider.signAndSendTransaction(tx);
-        
-        btn.innerText = "POSTED!"; document.getElementById("new-post-text").value = ""; document.getElementById("new-post-link").value = "";
-        setTimeout(() => { btn.innerText = "SIGN & POST TO CHAIN"; attemptFeedAccess(); }, 2000);
-    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SIGN & POST TO CHAIN", 3000); }
-}
-
 // ==========================================
-// TRANSACTIONS
+// TRANSACTIONS & SIGNATURES
 // ==========================================
-function openEditModal() {
-    document.getElementById('edit-name').value = document.getElementById('p-name').innerText;
-    document.getElementById('edit-pic').value = document.getElementById('p-img').src;
-    document.getElementById('edit-bio').value = document.getElementById('p-bio').innerText;
-    
-    const isSponOnly = SPONSOR_REGISTRY.includes(publicKey);
-    document.getElementById('edit-skater-gear-section').style.display = isSponOnly ? 'none' : 'block';
-    
-    if (!isSponOnly) {
-        const d = document.getElementById('p-gear').dataset;
-        document.getElementById('edit-stance').value = d.stance || ""; 
-        document.getElementById('edit-deck').value = d.deck || "";
-        document.getElementById('edit-trucks').value = d.trucks || ""; 
-        document.getElementById('edit-spot').value = d.spot || "";
-        document.getElementById('edit-yt').value = d.yt ? "https://youtu.be/" + d.yt : "";
-    }
-    document.getElementById('edit-modal').style.display = 'flex';
-}
+async function handleWalletAction() {
+    if (publicKey) { 
+        try { if (provider && provider.disconnect) await provider.disconnect(); } catch(e) {} 
+        publicKey = null; updateWalletUI(); checkPersistence(); checkAdminStatus(); renderDaoFeed();
+    } 
+    else { 
+        provider = getProvider(); 
+        if (!provider) { 
+            if(isMobile()) { window.location.href = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}?ref=${encodeURIComponent(window.location.origin)}`; } 
+            else { alert("Install Phantom Wallet!"); window.open("https://phantom.app/", "_blank"); }
+            return;
+        } 
+        try { 
+            const resp = await provider.connect(); 
+            publicKey = resp.publicKey.toString(); 
 
-function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
-
-async function saveProfileWeb3() {
-    if(!publicKey) return; const btn = document.getElementById("save-web3-btn"); btn.innerText = "AWAITING SIGNATURE...";
-    try {
-        const name = document.getElementById("edit-name").value; 
-        const pic = document.getElementById("edit-pic").value;
-        const bio = document.getElementById("edit-bio").value; 
-        
-        let stance = "", deck = "", trucks = "", spot = "", yt = "";
-        
-        if (!SPONSOR_REGISTRY.includes(publicKey)) {
-            stance = document.getElementById("edit-stance").value;
-            deck = document.getElementById("edit-deck").value; 
-            trucks = document.getElementById("edit-trucks").value;
-            spot = document.getElementById("edit-spot").value; 
-            const rawYt = document.getElementById("edit-yt").value;
-            if (rawYt) { const m = rawYt.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); yt = (m && m[2].length === 11) ? m[2] : ""; }
-        }
-
-        const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
-        const encoded = new TextEncoder().encode(pData); 
-        if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return; }
-        
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        
-        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        await provider.signAndSendTransaction(tx);
-        
-        btn.innerText = "SAVED!"; setTimeout(() => { closeEditModal(); renderProfile(publicKey); renderVideoGrid(); btn.innerText = "SAVE"; }, 2000);
-    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SAVE", 3000); }
-}
-
-async function sendOnChainReaction(type) {
-    if (!publicKey) { alert("Connect Wallet to hype a skater."); return; }
-    
-    const targetWallet = document.getElementById('p-wallet').innerText;
-    if (publicKey === targetWallet) { alert("Protocol Rules: You cannot hype your own profile."); return; }
-
-    const countSpan = document.getElementById(`count-${type}`);
-    const originalCount = parseInt(countSpan.innerText);
-    countSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-    try {
-        const payload = JSON.stringify({ sk8like: "v1", type: type });
-        const encoded = new TextEncoder().encode(payload);
-        
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
-        
-        const tx = new solanaWeb3.Transaction().add(
-            new solanaWeb3.TransactionInstruction({ 
-                keys: [{ pubkey: from, isSigner: true, isWritable: true }], 
-                programId: MEMO_PROGRAM_ID, 
-                data: encoded 
-            })
-        );
-        
-        const { blockhash } = await conn.getLatestBlockhash();
-        tx.recentBlockhash = blockhash; 
-        tx.feePayer = from;
-        
-        await provider.signAndSendTransaction(tx);
-        countSpan.innerText = originalCount + 1; 
-        
-    } catch (err) {
-        countSpan.innerText = originalCount; 
-        if (!err.message?.includes("User rejected")) alert("Transaction failed. Make sure you have enough SOL for gas.");
-    }
-}
-
-async function fetchReactions(wallet) {
-    document.getElementById('count-fire').innerText = "0";
-    document.getElementById('count-skate').innerText = "0";
-    document.getElementById('count-100').innerText = "0";
-    document.getElementById('count-crown').innerText = "0";
-
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let counts = { fire: 0, skate: 0, "100": 0, crown: 0 };
-    
-    try {
-        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 60 });
-        for (let s of sigs) {
-            if(s.memo && s.memo.includes('"sk8like":"v1"')) {
-                try {
-                    const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                    if (counts[d.type] !== undefined) counts[d.type]++;
-                } catch(e) {}
+            if (BAN_LIST[publicKey] && BAN_LIST[publicKey] > Date.now()) {
+                let dStr = new Date(BAN_LIST[publicKey]).toLocaleString();
+                if (BAN_LIST[publicKey] > 4000000000000) dStr = "PERMANENTLY";
+                alert(`ACCESS DENIED: Your account has been suspended until ${dStr}.`);
+                await provider.disconnect(); publicKey = null; return;
             }
-        }
-        
-        document.getElementById('count-fire').innerText = counts.fire;
-        document.getElementById('count-skate').innerText = counts.skate;
-        document.getElementById('count-100').innerText = counts["100"];
-        document.getElementById('count-crown').innerText = counts.crown;
-
-    } catch (e) {
-        console.error("Error fetching reactions:", e);
+            
+            if(!SKATER_REGISTRY.includes(publicKey) && !SPONSOR_REGISTRY.includes(publicKey)) {
+                document.getElementById('onboarding-modal').style.display = 'flex';
+            } else {
+                updateWalletUI(); fetchBalance(); checkPersistence(); checkAdminStatus(); syncDaoFromChain();
+            }
+        } catch (e) {}
     }
 }
-
-document.addEventListener('click', (e) => {
-  if (e.target && e.target.classList.contains('donate-btn') && e.target.id !== 'profile-donate-btn') {
-      if(!publicKey) { alert("Connect Wallet First"); return; }
-      if(e.target.dataset.address === publicKey) { alert("Cannot sponsor yourself."); return; }
-      currentSkaterTarget = e.target.dataset.address; activeVideoId = e.target.dataset.target || null;
-      document.getElementById("sponsor-modal").style.display = "flex";
-  }
-});
-
-function openSponsorshipModalFromProfile() {
-    currentSkaterTarget = document.getElementById('p-wallet').innerText;
-    if (currentSkaterTarget === publicKey) { alert("Cannot sponsor yourself."); return; }
-    activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex';
-}
-
-function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
-function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
-function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
-function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
-function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
-function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
-function sendCustomTreasury() { const amt = parseFloat(document.getElementById('custom-treasury-amt').value); if(amt > 0) sendDonation(amt); }
-function sendCustomSponsor() { const amt = parseFloat(document.getElementById('custom-sponsor-amt').value); if(amt > 0) selectAmount(amt); }
 
 async function sendSOL(amount, dest) {
   try {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-    
     const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(dest), lamports: Math.floor(amount * 1e9) }));
     const { blockhash } = await conn.getLatestBlockhash();
-    tx.recentBlockhash = blockhash; 
-    tx.feePayer = from;
+    tx.recentBlockhash = blockhash; tx.feePayer = from;
     await provider.signAndSendTransaction(tx);
     
     document.getElementById('jingle').play().catch(e => {}); closeModal(); closeTreasuryModal();
@@ -2568,10 +1764,7 @@ async function sendSOL(amount, dest) {
         if (!u.includes(activeVideoId)) { u.push(activeVideoId); localStorage.setItem('sk8_unlocks_' + publicKey, JSON.stringify(u)); }
     }
     setTimeout(() => { 
-        document.getElementById("success-modal").style.display = "flex"; 
-        createConfetti(); 
-        fetchBalance(); 
-        checkPersistence(); 
+        document.getElementById("success-modal").style.display = "flex"; createConfetti(); fetchBalance(); checkPersistence(); 
         if(document.getElementById('profile-content').style.display === 'block') renderProfile(document.getElementById('p-wallet').innerText); 
         if(document.getElementById('feed-content').style.display === 'block') attemptFeedAccess();
         fetchHeaderDualRank(publicKey); 
@@ -2579,15 +1772,164 @@ async function sendSOL(amount, dest) {
   } catch (err) {}
 }
 
-function createConfetti() {
-  for (let i = 0; i < 50; i++) {
-    const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 95 + '%'; 
-    c.style.backgroundColor = ['#ff2d55','#ff9500','#00f0ff','#ffd700'][Math.floor(Math.random() * 4)];
-    c.style.animationDuration = (Math.random() * 3 + 2) + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
-  }
+async function saveProfileWeb3() {
+    if(!publicKey) return; const btn = document.getElementById("save-web3-btn"); btn.innerText = "AWAITING SIGNATURE...";
+    try {
+        const name = document.getElementById("edit-name").value; const pic = document.getElementById("edit-pic").value; const bio = document.getElementById("edit-bio").value; 
+        let stance = "", deck = "", trucks = "", spot = "", yt = "";
+        if (!SPONSOR_REGISTRY.includes(publicKey)) {
+            stance = document.getElementById("edit-stance").value; deck = document.getElementById("edit-deck").value; 
+            trucks = document.getElementById("edit-trucks").value; spot = document.getElementById("edit-spot").value; 
+            const rawYt = document.getElementById("edit-yt").value;
+            if (rawYt) { const m = rawYt.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); yt = (m && m[2].length === 11) ? m[2] : ""; }
+        }
+        const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
+        const encoded = new TextEncoder().encode(pData); 
+        if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return; }
+        
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
+        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        const { blockhash } = await conn.getLatestBlockhash(); tx.recentBlockhash = blockhash; tx.feePayer = from;
+        await provider.signAndSendTransaction(tx);
+        
+        btn.innerText = "SAVED!"; setTimeout(() => { closeEditModal(); renderProfile(publicKey); renderVideoGrid(); btn.innerText = "SAVE"; }, 2000);
+    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SAVE", 3000); }
 }
 
-function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
+async function publishToFeed() {
+    if(!publicKey) return; const btn = document.getElementById("publish-feed-btn"); btn.innerText = "AWAITING SIGNATURE...";
+    try {
+        const text = document.getElementById("new-post-text").value; const rawLink = document.getElementById("new-post-link").value;
+        let yt = ""; let ig = "";
+        if (rawLink) { 
+            const ytMatch = rawLink.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); 
+            if (ytMatch && ytMatch[2].length === 11) yt = ytMatch[2]; 
+            const igMatch = rawLink.match(/(?:instagram\.com\/)(?:p|reel)\/([a-zA-Z0-9_-]+)/i);
+            if (igMatch) ig = igMatch[1];
+        }
+        if(!text && !yt && !ig) { alert("Cannot post empty data."); btn.innerText = "SIGN & POST TO CHAIN"; return; }
+        const pData = JSON.stringify({ sk8post: "v1", text, yt, ig });
+        const encoded = new TextEncoder().encode(pData); 
+        if (encoded.length > 566) { alert(`Post too long for Memo! Shorten your text.`); btn.innerText = "SIGN & POST TO CHAIN"; return; }
+        
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
+        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        const { blockhash } = await conn.getLatestBlockhash(); tx.recentBlockhash = blockhash; tx.feePayer = from;
+        await provider.signAndSendTransaction(tx);
+        
+        btn.innerText = "POSTED!"; document.getElementById("new-post-text").value = ""; document.getElementById("new-post-link").value = "";
+        setTimeout(() => { btn.innerText = "SIGN & POST TO CHAIN"; attemptFeedAccess(); }, 2000);
+    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SIGN & POST TO CHAIN", 3000); }
+}
+
+// ==========================================
+// V9.2.2 GODMODE SWAP: JUPITER V6 + PHANTOM EXECUTION
+// ==========================================
+async function fetchJupiterQuote() {
+    const amountInput = document.getElementById('swap-input-amount').value;
+    const outputInput = document.getElementById('swap-output-amount');
+
+    if (!amountInput || parseFloat(amountInput) <= 0) {
+        outputInput.value = "0.00"; currentQuoteResponse = null; return;
+    }
+
+    outputInput.value = "Routing...";
+    const inputToken = isSolToUsdc ? TOKENS.SOL : TOKENS.USDC;
+    const outputToken = isSolToUsdc ? TOKENS.USDC : TOKENS.SOL;
+    const lamports = Math.floor(parseFloat(amountInput) * (10 ** inputToken.decimals)).toString();
+
+    if (quoteAbortController) quoteAbortController.abort();
+    quoteAbortController = new AbortController();
+
+    try {
+        const url = `${JUPITER_QUOTE_API}?inputMint=${inputToken.mint}&outputMint=${outputToken.mint}&amount=${lamports}&slippageBps=100`;
+        const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }, signal: quoteAbortController.signal });
+        
+        if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error || `HTTP ${res.status}`); }
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        currentQuoteResponse = data;
+        outputInput.value = (data.outAmount / (10 ** outputToken.decimals)).toFixed(isSolToUsdc ? 2 : 4);
+        
+        const impact = parseFloat(data.priceImpactPct || 0);
+        if (impact > 1) { outputInput.style.color = "var(--accent-orange)"; outputInput.title = `Warning: ${impact.toFixed(2)}% price impact`; } 
+        else { outputInput.style.color = "var(--accent-green)"; outputInput.title = ""; }
+
+    } catch (error) {
+        if (error.name === "AbortError") return;
+        currentQuoteResponse = null;
+        if (error.message && error.message.includes("ROUTE_NOT_FOUND")) outputInput.value = "No route found";
+        else outputInput.value = "Quote failed";
+        outputInput.style.color = "var(--accent-red)";
+    }
+}
+
+async function executeJupiterSwap() {
+    if (!publicKey) return alert("Please connect your wallet first.");
+    if (!currentQuoteResponse) return alert("Please wait for a valid quote before swapping.");
+
+    const btn = document.getElementById("execute-swap-btn");
+    const originalText = btn.innerHTML;
+
+    try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING ROUTE...';
+        const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                quoteResponse: currentQuoteResponse,
+                userPublicKey: publicKey,
+                wrapAndUnwrapSol: true,
+                dynamicComputeUnitLimit: true,
+                prioritizationFeeLamports: "auto"
+            })
+        });
+
+        if (!swapResponse.ok) throw new Error("Jupiter failed to generate the swap transaction.");
+        const swapData = await swapResponse.json();
+        if (!swapData.swapTransaction) throw new Error("No transaction returned.");
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> APPROVE IN WALLET...';
+        const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
+        const transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
+
+        const { signature } = await provider.signAndSendTransaction(transaction, {
+            maxRetries: 5,
+            skipPreflight: true 
+        });
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONFIRMING ON-CHAIN...';
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
+        const latestBlockhash = await connection.getLatestBlockhash("confirmed");
+        
+        const confirmation = await connection.confirmTransaction({
+            signature: signature,
+            blockhash: latestBlockhash.blockhash,
+            lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, "confirmed");
+
+        if (confirmation.value.err) throw new Error("Transaction failed on-chain. Slippage likely exceeded.");
+
+        btn.innerHTML = 'SWAP COMPLETE!';
+        document.getElementById('jingle').play().catch(() => {});
+        createConfetti();
+        document.getElementById('swap-input-amount').value = "";
+        document.getElementById('swap-output-amount').value = "";
+        currentQuoteResponse = null;
+
+        setTimeout(() => {
+            btn.innerHTML = originalText; fetchBalance(); fetchSwapBalances();
+        }, 3000);
+
+    } catch (error) {
+        if (error.message && !error.message.includes("User rejected") && !error.message.includes("User cancelled")) {
+            alert(`Swap Failed: ${error.message}`);
+        }
+        btn.innerHTML = 'SWAP FAILED';
+        setTimeout(() => { btn.innerHTML = originalText; }, 3000);
+    }
+}
 
 // ==========================================
 // STARTUP
