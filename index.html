@@ -526,8 +526,8 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
         <p class="hero-subtext" style="font-size:0.9rem; max-width:700px; margin: 15px auto;">Track the real-time flow of direct peer-to-peer sponsorships across the entire protocol.</p>
     </div>
     
-    <div class="leaderboard-container">
-        <div class="leaderboard-box" style="grid-column: 1 / -1;">
+    <div class="leaderboard-container" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+        <div class="leaderboard-box">
             <h2>LAST 20 SKATER BLESSINGS <span class="live-indicator">● LIVE SCAN</span></h2>
             <ul class="leader-list" id="skater-sponsors-list"></ul>
         </div>
@@ -570,7 +570,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 
     <div class="leaderboard-container" style="max-width: 1200px; margin: 0 auto;">
         <div class="leaderboard-box">
-            <h2>TOP 20 TREASURY SPONSORS <span class="live-indicator">● LIVE SCAN</span></h2>
+            <h2>TOP 20 PROTOCOL SPONSORS <span class="live-indicator">● LIVE SCAN</span></h2>
             <ul class="leader-list" id="treasury-sponsors-list"></ul>
         </div>
         <div class="leaderboard-box">
@@ -825,7 +825,8 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 </div>
 
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
-<script>
+
+  <script>
 // ==========================================
 // MASTER CONFIGURATION & GLOBALS
 // ==========================================
@@ -835,9 +836,7 @@ const HELIUS_RPC = RPC_URL;
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
 
-// ==========================================
-// JUPITER V6 SWAP GLOBALS & CONFIG
-// ==========================================
+// JUPITER SWAP GLOBALS
 let currentQuoteResponse = null;
 let quoteTimeout = null;
 let isSolToUsdc = true; 
@@ -852,9 +851,7 @@ const TOKENS = {
 let currentInputMint = TOKENS.SOL.mint;
 let currentOutputMint = TOKENS.USDC.mint;
 
-// ==========================================
 // LEADERBOARD & FEED GLOBALS
-// ==========================================
 let allTreasurySponsors = [];
 let allSkaterHits = [];
 let allTreasuryDonations = []; 
@@ -895,7 +892,7 @@ let SKATER_PROFILES = JSON.parse(localStorage.getItem('sk8_profiles')) || [
 
 async function getSolPrice() { try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); const d = await r.json(); solPrice = d.solana.usd; } catch (e) {} }
 
-// WALLET PROVIDER LOGIC
+// WALLET HELPER
 function getProvider() { 
     if ("phantom" in window) { 
         const p = window.phantom?.solana; 
@@ -1185,7 +1182,8 @@ document.addEventListener('click', (e) => {
   }
 });
 </script>
-// ==========================================
+
+  // ==========================================
 // WEB3 DATA FETCHING & CHAIN SYNCING
 // ==========================================
 
@@ -1332,7 +1330,6 @@ async function refreshLeaderboardData() {
     let recentTreasuryHits = [];
 
     try {
-        // Reduced limit to 60 to quickly grab Top 20 without lagging the page
         const sigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 60 });
         for (let i = 0; i < sigs.length; i += 3) {
             const chunk = sigs.slice(i, i + 3);
@@ -1389,19 +1386,17 @@ async function refreshLeaderboardData() {
         }
     } catch(e) { console.error(e); }
 
-    // RENDER 1: TOP 20 SPONSORS
     let rawSponsors = Object.keys(aggregatedSponsors).map(addr => ({ addr, val: aggregatedSponsors[addr] }));
     rawSponsors.sort((a, b) => b.val - a.val);
-    allTreasurySponsors = rawSponsors.slice(0, 20); // Top 20 Fix
+    allTreasurySponsors = rawSponsors.slice(0, 20); 
     
     for(let j=0; j<allTreasurySponsors.length; j++) {
         allTreasurySponsors[j].name = await getSkaterNameSafe(allTreasurySponsors[j].addr);
     }
     if(sponsorList) renderTreasuryFeed();
 
-    // RENDER 2: 20 RECENT SKATER BLESSINGS
     recentHits.sort((a, b) => b.time - a.time);
-    allSkaterHits = recentHits.slice(0, 20); // Top 20 Fix
+    allSkaterHits = recentHits.slice(0, 20); 
     
     for(let j=0; j<allSkaterHits.length; j++) {
         allSkaterHits[j].sponsorName = await getSkaterNameSafe(allSkaterHits[j].sponsor);
@@ -1409,9 +1404,8 @@ async function refreshLeaderboardData() {
     }
     if(skaterList) renderSkaterFeed();
 
-    // RENDER 3: 20 RECENT TREASURY DONATIONS
     recentTreasuryHits.sort((a, b) => b.time - a.time);
-    allTreasuryDonations = recentTreasuryHits.slice(0, 20); // Top 20 Fix
+    allTreasuryDonations = recentTreasuryHits.slice(0, 20); 
     
     for(let j=0; j<allTreasuryDonations.length; j++) {
         allTreasuryDonations[j].sponsorName = await getSkaterNameSafe(allTreasuryDonations[j].sponsor);
@@ -1655,7 +1649,6 @@ async function fetchSkaterFeed(wallet, isBlurred) {
 // ON-CHAIN WRITE TRANSACTIONS
 // ==========================================
 
-// FIXED WALLET CONNECTION LOGIC
 async function handleWalletAction() {
     if (publicKey) { 
         try { if (provider && provider.disconnect) await provider.disconnect(); } catch(e) {} 
@@ -1693,9 +1686,8 @@ async function sendSOL(amount, dest) {
   try {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
     const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(dest), lamports: Math.floor(amount * 1e9) }));
-    const { blockhash } = await conn.getLatestBlockhash();
-    tx.recentBlockhash = blockhash; tx.feePayer = from;
-    await provider.signAndSendTransaction(tx);
+    tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+    await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
     
     document.getElementById('jingle').play().catch(e => {}); closeModal(); closeTreasuryModal();
     if (activeVideoId && publicKey) {
@@ -1728,8 +1720,8 @@ async function saveProfileWeb3() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        const { blockhash } = await conn.getLatestBlockhash(); tx.recentBlockhash = blockhash; tx.feePayer = from;
-        await provider.signAndSendTransaction(tx);
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
         
         btn.innerText = "SAVED!"; setTimeout(() => { closeEditModal(); renderProfile(publicKey); renderVideoGrid(); btn.innerText = "SAVE"; }, 2000);
     } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SAVE", 3000); }
@@ -1753,8 +1745,8 @@ async function publishToFeed() {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        const { blockhash } = await conn.getLatestBlockhash(); tx.recentBlockhash = blockhash; tx.feePayer = from;
-        await provider.signAndSendTransaction(tx);
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
         
         btn.innerText = "POSTED!"; document.getElementById("new-post-text").value = ""; document.getElementById("new-post-link").value = "";
         setTimeout(() => { btn.innerText = "SIGN & POST TO CHAIN"; attemptFeedAccess(); }, 2000);
@@ -1776,9 +1768,8 @@ async function sendOnChainReaction(type) {
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
         const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        
-        const { blockhash } = await conn.getLatestBlockhash(); tx.recentBlockhash = blockhash; tx.feePayer = from;
-        await provider.signAndSendTransaction(tx);
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
         countSpan.innerText = originalCount + 1; 
         
     } catch (err) {
@@ -1788,7 +1779,7 @@ async function sendOnChainReaction(type) {
 }
 
 // ==========================================
-// V9.2.2 GODMODE SWAP: JUPITER V6 + PHANTOM EXECUTION
+// V9.2.2 GODMODE SWAP: JUPITER V6
 // ==========================================
 
 async function fetchJupiterQuote() {
@@ -1811,7 +1802,6 @@ async function fetchJupiterQuote() {
     const rawLamports = parseFloat(amountInput) * (10 ** inputToken.decimals);
     const lamports = Math.floor(rawLamports).toString();
 
-    // Catch dust silently
     if (lamports === "0") {
         outputInput.value = "Coming soon";
         outputInput.style.color = "var(--accent-green)";
@@ -1951,7 +1941,6 @@ window.addEventListener('load', async () => {
     await getSolPrice(); 
     provider = getProvider();
     
-    // Automatically try to reconnect if trusted
     if (provider) { 
         try { 
             const resp = await provider.connect({ onlyIfTrusted: true }); 
