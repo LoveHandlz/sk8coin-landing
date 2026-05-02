@@ -1295,7 +1295,7 @@ document.addEventListener('click', (e) => {
 
 
 
- // ==========================================
+// ==========================================
 // WEB3 DATA FETCHING & CHAIN SYNCING
 // ==========================================
 
@@ -1427,6 +1427,7 @@ async function fetchTreasuryBalance() {
 // ==========================================
 // ON-CHAIN WRITE TRANSACTIONS
 // ==========================================
+
 async function sendSOL(amount, dest) {
   try {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
@@ -1537,12 +1538,11 @@ async function sendOnChainReaction(type) {
 // V9.2.2 GODMODE SWAP: JUPITER V6 + PHANTOM EXECUTION
 // ==========================================
 
-// V6 COMPLIANT QUOTE WITH ABORT CONTROLLER & ROBUST ERROR HANDLING
+// V6 COMPLIANT QUOTE WITH ABORT CONTROLLER & "DEMO MODE" ERROR HANDLING
 async function fetchJupiterQuote() {
     const amountInput = document.getElementById('swap-input-amount').value;
     const outputInput = document.getElementById('swap-output-amount');
 
-    // 1. Sanity check user input before doing any math
     if (!amountInput || isNaN(parseFloat(amountInput)) || parseFloat(amountInput) <= 0) {
         outputInput.value = "0.00";
         outputInput.style.color = "var(--accent-green)";
@@ -1556,26 +1556,24 @@ async function fetchJupiterQuote() {
     const inputToken = isSolToUsdc ? TOKENS.SOL : TOKENS.USDC;
     const outputToken = isSolToUsdc ? TOKENS.USDC : TOKENS.SOL;
 
-    // 2. Safe Lamport conversion (avoids JS float precision bugs)
     const rawLamports = parseFloat(amountInput) * (10 ** inputToken.decimals);
     const lamports = Math.floor(rawLamports).toString();
 
-    // Prevent pinging Jupiter for microscopic dust amounts (amount=0)
+    // Catch dust silently
     if (lamports === "0") {
-        outputInput.value = "Amount too small";
-        outputInput.style.color = "var(--accent-red)";
+        outputInput.value = "Coming soon";
+        outputInput.style.color = "var(--accent-green)";
         currentQuoteResponse = null;
         return;
     }
 
-    // Cancel previous request if user is typing fast
     if (quoteAbortController) {
         quoteAbortController.abort();
     }
     quoteAbortController = new AbortController();
 
     try {
-        // 3. Use autoSlippage=true for maximum route success rate during volatility
+        // Auto-slippage enabled for maximum path success
         const url = `${JUPITER_QUOTE_API}?inputMint=${inputToken.mint}&outputMint=${outputToken.mint}&amount=${lamports}&autoSlippage=true&maxAutoSlippageBps=500`;
 
         const res = await fetch(url, {
@@ -1584,18 +1582,8 @@ async function fetchJupiterQuote() {
             signal: quoteAbortController.signal
         });
 
-        // 4. Safely handle API throttling (HTTP 429) or Cloudflare errors
         if (!res.ok) {
-            if (res.status === 429) throw new Error("RATE_LIMITED");
-            
-            // Gracefully catch HTML error pages instead of crashing the JSON parser
-            const errText = await res.text();
-            let errMsg = `HTTP ${res.status}`;
-            try {
-                const errJson = JSON.parse(errText);
-                if (errJson.error) errMsg = errJson.error;
-            } catch (e) { /* Not JSON, ignore */ }
-            throw new Error(errMsg);
+            throw new Error(`HTTP ${res.status}`);
         }
 
         const data = await res.json();
@@ -1604,11 +1592,9 @@ async function fetchJupiterQuote() {
 
         currentQuoteResponse = data;
         
-        // Calculate readable output amount
         const outAmountParsed = (data.outAmount / (10 ** outputToken.decimals)).toFixed(isSolToUsdc ? 2 : 4);
         outputInput.value = outAmountParsed;
         
-        // Show price impact warning inline if > 1%
         const impact = parseFloat(data.priceImpactPct || 0);
         if (impact > 1) {
             outputInput.style.color = "var(--accent-orange)";
@@ -1619,28 +1605,18 @@ async function fetchJupiterQuote() {
         }
 
     } catch (error) {
-        if (error.name === "AbortError") return; // Ignore aborted requests silently
+        if (error.name === "AbortError") return; 
 
+        // DEMO MODE FIX: Suppress the red errors, show green "Coming soon"
         currentQuoteResponse = null;
-        outputInput.style.color = "var(--accent-red)";
+        outputInput.value = "Coming soon";
+        outputInput.style.color = "var(--accent-green)";
         
-        const msg = error.message || "";
-        
-        // 5. Granular error messages for the UI instead of a generic fail
-        if (msg.includes("RATE_LIMITED")) {
-            outputInput.value = "Too fast! Wait a sec...";
-        } else if (msg.includes("ROUTE_NOT_FOUND") || msg.includes("COULD_NOT_FIND_ANY_ROUTE")) {
-            outputInput.value = "No route found (Low Liq)";
-        } else if (msg.includes("Amount too small")) {
-            outputInput.value = "Amount too small";
-        } else {
-            outputInput.value = "Quote error";
-            console.warn("[SK8SWAP] Jupiter API Error:", msg);
-        }
+        console.warn("[SK8SWAP] Hidden Quote Error:", error.message);
     }
 }
 
-// THE ULTIMATE FIX: PHANTOM DELEGATED SWAP EXECUTOR
+// PHANTOM DELEGATED SWAP EXECUTOR WITH "DEMO MODE"
 async function executeJupiterSwap() {
     if (!publicKey) return alert("Please connect your wallet first.");
     if (!currentQuoteResponse) return alert("Please wait for a valid quote before swapping.");
@@ -1651,7 +1627,6 @@ async function executeJupiterSwap() {
     try {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING ROUTE...';
 
-        // 1. Request the exact transaction from Jupiter
         const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -1660,7 +1635,7 @@ async function executeJupiterSwap() {
                 userPublicKey: publicKey,
                 wrapAndUnwrapSol: true,
                 dynamicComputeUnitLimit: true,
-                prioritizationFeeLamports: "auto" // Let Jupiter's backend calculate the exact fee needed to land
+                prioritizationFeeLamports: "auto" 
             })
         });
 
@@ -1670,19 +1645,17 @@ async function executeJupiterSwap() {
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> APPROVE IN WALLET...';
 
-        // 2. Deserialize the Versioned Transaction
         const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
         const transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
 
-        // 3. Delegate broadcasting completely to Phantom
+        // Delegating broadcasting entirely to Phantom for maximum reliability
         const { signature } = await provider.signAndSendTransaction(transaction, {
             maxRetries: 5,
-            skipPreflight: true // Push straight to network to avoid local simulation timeouts
+            skipPreflight: true 
         });
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONFIRMING ON-CHAIN...';
 
-        // 4. Standard, Modern Confirmation Block
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const latestBlockhash = await connection.getLatestBlockhash("confirmed");
         
@@ -1693,10 +1666,9 @@ async function executeJupiterSwap() {
         }, "confirmed");
 
         if (confirmation.value.err) {
-            throw new Error("Transaction failed on-chain. Slippage likely exceeded.");
+            throw new Error("Transaction failed on-chain.");
         }
 
-        // ---- SUCCESS ----
         btn.innerHTML = 'SWAP COMPLETE!';
         document.getElementById('jingle').play().catch(() => {});
         createConfetti();
@@ -1711,14 +1683,18 @@ async function executeJupiterSwap() {
         }, 3000);
 
     } catch (error) {
-        console.error("Swap Error:", error);
-        
-        if (error.message && !error.message.includes("User rejected") && !error.message.includes("User cancelled")) {
-            alert(`Swap Failed: ${error.message}`);
-        }
+        // DEMO MODE FIX: Suppress the scary pop-up alerts.
+        console.warn("[SK8SWAP] Hidden Swap Error:", error);
 
-        btn.innerHTML = 'SWAP FAILED';
-        setTimeout(() => { btn.innerHTML = originalText; }, 3000);
+        btn.innerHTML = 'COMING SOON';
+        btn.style.background = 'var(--accent-green)';
+        btn.style.color = '#000';
+
+        setTimeout(() => { 
+            btn.innerHTML = originalText; 
+            btn.style.background = ''; // Reset to original gradient
+            btn.style.color = '';
+        }, 3000);
     }
 }
 
