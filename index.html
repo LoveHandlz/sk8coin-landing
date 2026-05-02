@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn Master Protocol 9.1 (Godmode)</title>
+  <title>SK8COIN | Skate2Earn Master Protocol 9.2 (Godmode)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -825,7 +825,7 @@ footer { background: #020513; border-top: 1px solid var(--card-border); padding:
 // MASTER CONFIGURATION & GLOBALS
 // ==========================================
 const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
-const HELIUS_RPC = RPC_URL; // Alias for explicitly Helius-bound calls
+const HELIUS_RPC = RPC_URL;
 
 let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId = null; let currentSkaterTarget = "";
 let adminAddSelectedRole = "skater";
@@ -1235,7 +1235,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9.1 GODMODE SWAP: RAW ERROR CAPTURE
+// V9.2 GODMODE SWAP: RAW ERROR CAPTURE & NATIVE DECODE
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1281,56 +1281,42 @@ async function fetchJupiterQuote() {
     
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
-    // CRITICAL FIX: Ensure the amount sent to Jupiter is a string representation of an exact integer
-    const amountInLamports = Math.floor(parseFloat(amountInput) * inputDecimals).toString();
+    
+    // BIGINT LAMPORT ENFORCEMENT
+    const lamports = BigInt(Math.floor(parseFloat(amountInput) * inputDecimals)).toString();
 
     try {
-        if (amountInLamports === "0") throw new Error("Amount too small");
+        if (lamports === "0") throw new Error("Amount too small");
 
-        const targetUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
-        let response;
+        // LITE-API GATEWAY BYPASS
+        const endpoints = [
+            `https://lite-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`,
+            `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`
+        ];
 
-        try {
-            // STRATEGY 1: Direct Web3 Hit
-            response = await fetch(targetUrl, { headers: { 'Accept': 'application/json' } });
-            if (!response.ok) throw new Error("Direct fetch failed");
-        } catch (err) {
-            // STRATEGY 2: Proxy
-            console.warn("Direct route failed. Engaging proxy tunnel...");
-            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-            response = await fetch(proxyUrl);
+        let quoteResponse = null;
+        for (const url of endpoints) {
+            try {
+                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!res.ok) continue; 
+                const data = await res.json();
+                if (!data.error) {
+                    quoteResponse = data;
+                    console.log("[Godmode] Route secured via:", url.split('?')[0]);
+                    break;
+                }
+            } catch (e) { console.warn("Endpoint failed, cascading..."); }
         }
 
-        const text = await response.text();
-        let quoteResponse;
-        
-        try {
-            quoteResponse = JSON.parse(text);
-        } catch (e) {
-            outputInput.value = "Err: Cloudflare 403";
-            return;
-        }
-
-        // CRITICAL FIX: Extract exact error string instead of generic "Route error"
-        if (quoteResponse && quoteResponse.error) {
-            let exactError = quoteResponse.error;
-            if (exactError.includes("Route not found") || exactError.includes("ROUTE_NOT_FOUND")) {
-                outputInput.value = "Amount too small";
-            } else {
-                outputInput.value = exactError.substring(0, 15);
-            }
-            currentQuoteResponse = null;
-            return;
-        }
-
-        if (quoteResponse && quoteResponse.outAmount) {
-            currentQuoteResponse = quoteResponse;
-            const outAmountParsed = (quoteResponse.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
-            outputInput.value = outAmountParsed;
-        } else {
+        if (!quoteResponse) {
             outputInput.value = "Route unavailable";
             currentQuoteResponse = null;
+            return;
         }
+
+        currentQuoteResponse = quoteResponse;
+        const outAmountParsed = (quoteResponse.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
+        outputInput.value = outAmountParsed;
     } catch (error) {
         console.error("Quote Fetch Error:", error);
         outputInput.value = "Err: Network";
@@ -1362,20 +1348,17 @@ async function executeJupiterSwap() {
             prioritizationFeeLamports: "auto"
         };
 
-        const targetUrl = 'https://quote-api.jup.ag/v6/swap';
         let swapResponse;
-
+        
         try {
-            swapResponse = await fetch(targetUrl, {
+            swapResponse = await fetch('https://lite-api.jup.ag/v6/swap', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (!swapResponse.ok) throw new Error("Direct POST blocked");
-        } catch (err) {
-            console.warn("Direct POST blocked. Engaging proxy tunnel...");
-            const proxySwapUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-            swapResponse = await fetch(proxySwapUrl, {
+            if (!swapResponse.ok) throw new Error("Lite API blocked");
+        } catch(err) {
+            swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -1390,7 +1373,8 @@ async function executeJupiterSwap() {
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
 
-        const swapTransactionBuf = buffer.Buffer.from(swapData.swapTransaction, 'base64');
+        // NATIVE BROWSER DESERIALIZATION (No Buffer polyfill needed)
+        const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -1423,7 +1407,7 @@ async function executeJupiterSwap() {
     } catch (error) {
         console.error("Swap Execution Error:", error);
         if (!error.message?.includes("User rejected")) {
-            alert("Swap failed. The Web3 routing network rejected the connection.");
+            alert("Swap failed. API Congestion or network rejected the connection.");
         }
         btn.innerHTML = 'SWAP FAILED';
         setTimeout(() => btn.innerHTML = 'SWAP', 3000);
