@@ -1232,7 +1232,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9.2.2 GODMODE SWAP: PROVABLE POLLING ENGINE
+// V9.2.2 GODMODE SWAP: PROVABLE POLLING ENGINE & DYNAMIC FEES
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1264,10 +1264,51 @@ function debounceQuote() {
     }, 800); 
 }
 
+// NEW HELPER — fetches real-time priority fee from Helius
+async function getRecentPriorityFee() {
+    const FLOOR = 50000;   // 0.00005 SOL floor — enough for quiet periods
+    const CAP   = 500000;  // 0.0005 SOL cap — prevents ruinous fees during spikes
+
+    try {
+        const response = await fetch(HELIUS_RPC, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: "sk8swap-fee",
+                method: "getRecentPrioritizationFees",
+                // Jupiter's programs — fee estimate is accurate to this set
+                params: [["JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"]]
+            })
+        });
+
+        if (!response.ok) throw new Error("Fee RPC failed");
+        const data = await response.json();
+
+        if (data.result && data.result.length > 0) {
+            // Sort ascending and take the 75th percentile — reliable but not max
+            const fees = data.result
+                .map(f => f.prioritizationFee)
+                .sort((a, b) => a - b);
+            const p75index = Math.floor(fees.length * 0.75);
+            const p75fee = fees[p75index] || FLOOR;
+
+            const fee = Math.min(Math.max(p75fee, FLOOR), CAP);
+            console.log(`[SK8SWAP] Priority fee: ${fee} lamports (75th pct from ${fees.length} samples)`);
+            return fee;
+        }
+    } catch (e) {
+        console.warn("[SK8SWAP] Priority fee fetch failed, using floor:", FLOOR, e.message);
+    }
+
+    return FLOOR;
+}
+
+// REPLACEMENT fetchJupiterQuote — adds abort timeout + cleaner error states
 async function fetchJupiterQuote() {
     const amountInput = document.getElementById('swap-input-amount').value;
     const outputInput = document.getElementById('swap-output-amount');
-    
+
     if (!amountInput || parseFloat(amountInput) <= 0) {
         outputInput.value = "0.00";
         currentQuoteResponse = null;
@@ -1275,42 +1316,68 @@ async function fetchJupiterQuote() {
     }
 
     outputInput.value = "Routing...";
-    
-    const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
+
+    const inputDecimals  = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
-    
     const lamports = Math.round(parseFloat(amountInput) * inputDecimals).toString();
 
-    try {
-        if (lamports === "0") throw new Error("Amount too small");
+    if (lamports === "0") {
+        outputInput.value = "Amount too small";
+        currentQuoteResponse = null;
+        return;
+    }
 
+    // Abort controller — kills stale requests after 8s
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
         const url = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${lamports}&slippageBps=100`;
-        
-        const res = await fetch(url, { 
+
+        const res = await fetch(url, {
             method: 'GET',
-            headers: { 'Accept': 'application/json' } 
+            headers: { 'Accept': 'application/json' },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || `HTTP Error: ${res.status}`);
+            throw new Error(errData.error || `HTTP ${res.status}`);
         }
-        
+
         const data = await res.json();
 
-        if (!data.error) {
-            currentQuoteResponse = data;
-            const outAmountParsed = (data.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
-            outputInput.value = outAmountParsed;
-            console.log("[Godmode] Route secured:", url.split('?')[0]);
+        if (data.error) throw new Error(data.error);
+
+        currentQuoteResponse = data;
+        const outAmountParsed = (data.outAmount / outputDecimals).toFixed(isSolToUsdc ? 2 : 4);
+        outputInput.value = outAmountParsed;
+
+        // Show price impact warning inline if > 1%
+        const impact = parseFloat(data.priceImpactPct || 0);
+        if (impact > 1) {
+            outputInput.style.color = "var(--accent-orange)";
+            outputInput.title = `Warning: ${impact.toFixed(2)}% price impact`;
         } else {
-            throw new Error(data.error);
+            outputInput.style.color = "var(--accent-green)";
+            outputInput.title = "";
         }
 
     } catch (error) {
-        console.error("Quote Fetch Error:", error.message);
-        outputInput.value = "Err: Network/Congestion";
+        clearTimeout(timeoutId);
         currentQuoteResponse = null;
+
+        if (error.name === "AbortError") {
+            outputInput.value = "Timeout — retry";
+        } else if (error.message && error.message.includes("ROUTE_NOT_FOUND")) {
+            outputInput.value = "No route found";
+        } else {
+            outputInput.value = "Quote failed";
+        }
+        outputInput.style.color = "var(--accent-red)";
+        console.warn("[SK8SWAP] Quote error:", error.message);
     }
 }
 
@@ -1319,7 +1386,6 @@ async function executeJupiterSwap() {
         alert("Please connect your wallet first.");
         return;
     }
-
     if (!currentQuoteResponse) {
         alert("Please wait for a valid quote before swapping.");
         return;
@@ -1327,15 +1393,83 @@ async function executeJupiterSwap() {
 
     const btn = document.getElementById("execute-swap-btn");
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING TRANSACTION...';
+
+    // Helper: sleep
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    // Helper: broadcast with retry
+    async function broadcastWithRetry(connection, rawTx, maxAttempts = 3) {
+        let lastErr;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+                const txid = await connection.sendRawTransaction(rawTx, {
+                    skipPreflight: false,
+                    maxRetries: 0  // We handle retries ourselves
+                });
+                return txid;
+            } catch (e) {
+                lastErr = e;
+                // If preflight caught a real error (slippage, balance), don't retry
+                if (e.message && (
+                    e.message.includes("custom program error") ||
+                    e.message.includes("insufficient funds") ||
+                    e.message.includes("0x1771") ||  // Jupiter slippage error code
+                    e.message.includes("0x1775")
+                )) throw e;
+                
+                if (attempt < maxAttempts - 1) {
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> RETRY ${attempt + 2}/${maxAttempts}...`;
+                    await sleep(500 * (attempt + 1)); // 500ms, 1000ms backoff
+                }
+            }
+        }
+        throw lastErr;
+    }
+
+    // Helper: poll until confirmed or expired
+    async function pollConfirmation(connection, txid, blockhashInfo, timeoutMs = 90000) {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+            const status = await connection.getSignatureStatus(txid, { searchTransactionHistory: true });
+            if (status && status.value) {
+                if (status.value.err) {
+                    const errStr = JSON.stringify(status.value.err);
+                    if (errStr.includes("0x1771") || errStr.includes("0x1775") || errStr.includes("SlippageToleranceExceeded")) {
+                        throw new Error("SLIPPAGE: Price moved too fast. Try a larger slippage or smaller amount.");
+                    }
+                    throw new Error("ON_CHAIN_FAIL: " + errStr);
+                }
+                const conf = status.value.confirmationStatus;
+                if (conf === "confirmed" || conf === "finalized") {
+                    return txid;
+                }
+            }
+
+            // Check if blockhash has expired
+            const currentHeight = await connection.getBlockHeight("confirmed");
+            if (currentHeight > blockhashInfo.lastValidBlockHeight) {
+                throw new Error("EXPIRED: Transaction blockhash expired. Network is congested.");
+            }
+
+            await sleep(1500); // Poll every 1.5s
+        }
+        throw new Error("TIMEOUT: Confirmation took longer than 90 seconds.");
+    }
 
     try {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CALCULATING FEES...';
+        
+        // Dynamically fetch the current network priority fee
+        const priorityFee = await getRecentPriorityFee();
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PREPARING...';
+
         const payload = {
             quoteResponse: currentQuoteResponse,
             userPublicKey: publicKey,
             wrapAndUnwrapSol: true,
             dynamicComputeUnitLimit: true,
-            prioritizationFeeLamports: 100000 
+            prioritizationFeeLamports: priorityFee // Injected Dynamic Fee
         };
 
         const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
@@ -1346,92 +1480,67 @@ async function executeJupiterSwap() {
 
         if (!swapResponse.ok) {
             const errData = await swapResponse.json().catch(() => ({}));
-            throw new Error(errData.error || `Swap API HTTP Error: ${swapResponse.status}`);
+            throw new Error(errData.error || `Swap API error: ${swapResponse.status}`);
         }
 
         const swapData = await swapResponse.json();
-        
-        if (!swapData.swapTransaction) {
-            throw new Error("No transaction returned from routing engine.");
-        }
+        if (!swapData.swapTransaction) throw new Error("No transaction returned from routing engine.");
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AWAITING SIGNATURE...';
 
         const swapTransactionBuf = Uint8Array.from(atob(swapData.swapTransaction), c => c.charCodeAt(0));
-        var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
-        
-        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
+        const transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         const signedTransaction = await provider.signTransaction(transaction);
-        
+        const rawTransaction = signedTransaction.serialize();
+
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BROADCASTING...';
 
-        const rawTransaction = signedTransaction.serialize();
-        
-        // Let's get the absolute latest blockhash logic to compare against
+        const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const latestBlockhash = await connection.getLatestBlockhash("confirmed");
 
-        // Broadcast with preflight ON, so if it fails math/slippage, it throws an error immediately instead of hanging
-        const txid = await connection.sendRawTransaction(rawTransaction, {
-            skipPreflight: false,
-            maxRetries: 5 
-        });
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONFIRMING ON-CHAIN...';
-
-        // CUSTOM POLLING ENGINE (Replaces unreliable confirmTransaction)
-        let confirmed = false;
-        let blockHeight = await connection.getBlockHeight();
-        
-        while (blockHeight < latestBlockhash.lastValidBlockHeight) {
-            const signatureStatus = await connection.getSignatureStatus(txid, { searchTransactionHistory: true });
-            
-            if (signatureStatus && signatureStatus.value) {
-                if (signatureStatus.value.err) {
-                    throw new Error("Transaction failed on-chain: " + JSON.stringify(signatureStatus.value.err));
-                }
-                if (signatureStatus.value.confirmationStatus === 'confirmed' || signatureStatus.value.confirmationStatus === 'finalized') {
-                    confirmed = true;
-                    break;
-                }
+        let txid;
+        try {
+            txid = await broadcastWithRetry(connection, rawTransaction, 3);
+        } catch (broadcastErr) {
+            if (broadcastErr.message && broadcastErr.message.toLowerCase().includes("blockhash")) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> STALE BLOCKHASH...';
+                throw new Error("Blockhash expired before broadcast. Please try the swap again — this is a network timing issue, not a wallet issue.");
             }
-            
-            // Wait 2 seconds before pinging again (prevents rate limits)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            blockHeight = await connection.getBlockHeight();
+            throw broadcastErr;
         }
 
-        if (!confirmed) {
-            throw new Error("Transaction expired. The network is severely congested.");
-        }
-        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONFIRMING...';
+
+        await pollConfirmation(connection, txid, latestBlockhash, 90000);
+
+        // ---- SUCCESS ----
         btn.innerHTML = 'SWAP COMPLETE!';
-        
-        document.getElementById('jingle').play().catch(e => {});
+        document.getElementById('jingle').play().catch(() => {});
         createConfetti();
         document.getElementById('swap-input-amount').value = "";
         document.getElementById('swap-output-amount').value = "";
         currentQuoteResponse = null;
-        
+
         setTimeout(() => {
-            btn.innerHTML = 'SWAP';
-            fetchBalance(); 
+            btn.innerHTML = originalText;
+            fetchBalance();
             fetchSwapBalances();
         }, 3000);
 
     } catch (error) {
-        console.error("Swap Execution Error:", error.message || error);
-        
-        let displayError = error.message || "Unknown Error";
-        if (displayError.includes("failed on-chain")) {
-             displayError = "Slippage tolerance exceeded. The price changed too fast.";
+        const msg = error.message || "Unknown error";
+
+        if (!msg.includes("User rejected") && !msg.toLowerCase().includes("user cancelled")) {
+            let userMsg = msg;
+            if (msg.startsWith("SLIPPAGE:")) userMsg = msg.replace("SLIPPAGE:", "").trim();
+            else if (msg.startsWith("ON_CHAIN_FAIL:")) userMsg = "Transaction failed on-chain. Your SOL was NOT spent.";
+            else if (msg.startsWith("EXPIRED:") || msg.startsWith("TIMEOUT:")) userMsg = msg.split(":").slice(1).join(":").trim();
+            
+            alert(`Swap failed:\n\n${userMsg}`);
         }
 
-        if (!displayError.includes("User rejected")) {
-            alert(`Swap failed:\n${displayError}`);
-        }
-        
-        btn.innerHTML = 'SWAP FAILED';
-        setTimeout(() => btn.innerHTML = 'SWAP', 3000);
+        btn.innerHTML = 'SWAP FAILED — RETRY?';
+        setTimeout(() => { btn.innerHTML = originalText; }, 4000);
     }
 }
 
