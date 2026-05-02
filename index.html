@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SK8COIN | Skate2Earn Master Protocol V9 (Godmode)</title>
+  <title>SK8COIN | Skate2Earn Master Protocol 9.1 (Godmode)</title>
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data:; audio-src 'self' https:;">
 
@@ -1235,7 +1235,7 @@ function handleDaoRemove(motionId) {
 }
 
 // ==========================================
-// V9 GODMODE JUPITER SWAP INTEGRATION 
+// V9.1 GODMODE SWAP: RAW ERROR CAPTURE
 // ==========================================
 
 function toggleSwapDirection() {
@@ -1281,29 +1281,44 @@ async function fetchJupiterQuote() {
     
     const inputDecimals = isSolToUsdc ? 1e9 : 1e6;
     const outputDecimals = isSolToUsdc ? 1e6 : 1e9;
-    const amountInLamports = Math.floor(parseFloat(amountInput) * inputDecimals);
+    // CRITICAL FIX: Ensure the amount sent to Jupiter is a string representation of an exact integer
+    const amountInLamports = Math.floor(parseFloat(amountInput) * inputDecimals).toString();
 
     try {
-        if (amountInLamports === 0) throw new Error("Amount too small");
+        if (amountInLamports === "0") throw new Error("Amount too small");
 
         const targetUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${currentInputMint}&outputMint=${currentOutputMint}&amount=${amountInLamports}&slippageBps=100`;
         let response;
 
         try {
             // STRATEGY 1: Direct Web3 Hit
-            response = await fetch(targetUrl);
-            if (!response.ok) throw new Error("Direct route blocked");
+            response = await fetch(targetUrl, { headers: { 'Accept': 'application/json' } });
+            if (!response.ok) throw new Error("Direct fetch failed");
         } catch (err) {
-            // STRATEGY 2: The Final Godmode Proxy
-            console.warn("Direct route blocked by browser. Engaging corsproxy tunnel...");
+            // STRATEGY 2: Proxy
+            console.warn("Direct route failed. Engaging proxy tunnel...");
             const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
             response = await fetch(proxyUrl);
         }
 
-        const quoteResponse = await response.json();
+        const text = await response.text();
+        let quoteResponse;
+        
+        try {
+            quoteResponse = JSON.parse(text);
+        } catch (e) {
+            outputInput.value = "Err: Cloudflare 403";
+            return;
+        }
 
+        // CRITICAL FIX: Extract exact error string instead of generic "Route error"
         if (quoteResponse && quoteResponse.error) {
-            outputInput.value = "Route error";
+            let exactError = quoteResponse.error;
+            if (exactError.includes("Route not found") || exactError.includes("ROUTE_NOT_FOUND")) {
+                outputInput.value = "Amount too small";
+            } else {
+                outputInput.value = exactError.substring(0, 15);
+            }
             currentQuoteResponse = null;
             return;
         }
@@ -1318,7 +1333,7 @@ async function fetchJupiterQuote() {
         }
     } catch (error) {
         console.error("Quote Fetch Error:", error);
-        outputInput.value = "Err: Network Blocked";
+        outputInput.value = "Err: Network";
         currentQuoteResponse = null;
     }
 }
@@ -1351,7 +1366,6 @@ async function executeJupiterSwap() {
         let swapResponse;
 
         try {
-            // STRATEGY 1: Direct Web3 POST
             swapResponse = await fetch(targetUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1359,8 +1373,7 @@ async function executeJupiterSwap() {
             });
             if (!swapResponse.ok) throw new Error("Direct POST blocked");
         } catch (err) {
-            // STRATEGY 2: Proxy Web3 POST
-            console.warn("Direct POST blocked by browser. Engaging corsproxy tunnel...");
+            console.warn("Direct POST blocked. Engaging proxy tunnel...");
             const proxySwapUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
             swapResponse = await fetch(proxySwapUrl, {
                 method: 'POST',
@@ -1380,7 +1393,6 @@ async function executeJupiterSwap() {
         const swapTransactionBuf = buffer.Buffer.from(swapData.swapTransaction, 'base64');
         var transaction = solanaWeb3.VersionedTransaction.deserialize(swapTransactionBuf);
         
-        // Broadcast via your Helius RPC
         const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const signedTransaction = await provider.signTransaction(transaction);
         
