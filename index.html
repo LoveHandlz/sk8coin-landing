@@ -758,8 +758,9 @@ const DAO_TTL_SECONDS = 7 * 24 * 60 * 60;
 const DAO_VOTE_FEE = 0.001; 
 const FEED_LIMIT = 12; 
 let feedRenderLimit = FEED_LIMIT;
+const LEADERBOARD_LIMIT = 20; // Expanded to Top 20
 
-// ========== NEW TRANSMISSION ENGINE ==========
+// ========== TRANSMISSION ENGINE ==========
 const HELIUS_KEY = "29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
 const RPC_URL = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
 const REST_API_BASE = `https://api-mainnet.helius-rpc.com/v0/addresses`;
@@ -852,14 +853,13 @@ function renderSponsorBadges(solAmount, isOwner) {
 }
 
 // =========================================================================
-// HELIUS TRUE WEB3 OVERHAUL - No LocalStorage, No getTransaction Exhaustion
+// HELIUS PURE WEB3 OVERHAUL
 // =========================================================================
 
-// MACRO THROTTLED PARALLEL SWEEP (1000 sigs, 90-day true memory)
 async function syncGlobalVideos(wallets) {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
     let uniqueWallets = [...new Set(wallets)];
-    globalVideoState = {}; // Pure Web3 Wipe & Load
+    globalVideoState = {}; 
     
     for(let i = 0; i < uniqueWallets.length; i+= 10) { 
         let chunk = uniqueWallets.slice(i, i+10);
@@ -885,7 +885,6 @@ async function syncGlobalVideos(wallets) {
                                 globalVideoState[d.post].totalSOL += cost;
                             }
                         }
-                        // TRUE TALLY: Reading precise donation histories directly from memo stream
                         else if (s.memo.includes('"sk8spon":"v1"')) {
                             const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
                             if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
@@ -895,7 +894,7 @@ async function syncGlobalVideos(wallets) {
                 }
             } catch(e) {}
         }));
-        await pingDelay(50); // Micro-throttle 
+        await pingDelay(50);
     }
 }
 
@@ -929,7 +928,6 @@ async function syncAdminState() {
     } catch(e) {}
 }
 
-// HELIUS REST API - Eliminates 300+ getTransaction requests for wallet balances
 async function fetchWalletStats(wallet) {
     let ins = 0; let outs = 0; let txCount = 0;
     try {
@@ -1083,9 +1081,9 @@ async function refreshLeaderboardData() {
     SPONSOR_PROFILES.forEach(sp => { aggSkaterSponsors[sp.wallet] = sp.baseline || 0; });
     let recentTreasuryHits = []; let recentSkaterHits = [];
 
-    // Sweep Treasury
+    // Sweep Treasury (1000 limit = True Rankings)
     try {
-        const r = await fetch(`${REST_API_BASE}/${TREASURY_WALLET}/transactions/?api-key=${HELIUS_KEY}&limit=100`);
+        const r = await fetch(`${REST_API_BASE}/${TREASURY_WALLET}/transactions/?api-key=${HELIUS_KEY}&limit=1000`);
         const txs = await r.json();
         if(Array.isArray(txs)) {
             txs.forEach(tx => {
@@ -1104,12 +1102,12 @@ async function refreshLeaderboardData() {
         }
     } catch(e) {}
 
-    // Sweep Skaters (REST Fetch - 1 call per skater)
+    // Sweep Skaters 
     try {
         const activeRegistry = SKATER_REGISTRY.filter(w => !bannedWallets.includes(w));
         await Promise.all(activeRegistry.map(async (skaterWallet) => {
             try {
-                const r = await fetch(`${REST_API_BASE}/${skaterWallet}/transactions/?api-key=${HELIUS_KEY}&limit=50`);
+                const r = await fetch(`${REST_API_BASE}/${skaterWallet}/transactions/?api-key=${HELIUS_KEY}&limit=1000`);
                 const txs = await r.json();
                 if(Array.isArray(txs)) {
                     txs.forEach(tx => {
@@ -1138,10 +1136,10 @@ async function refreshLeaderboardData() {
         rawSkaterSponsors = rawSkaterSponsors.filter(s => !ADMIN_WALLETS.includes(s.addr));
     }
 
-    let topTreasurySponsors = rawTreasury.sort((a, b) => b.val - a.val).slice(0, FEED_LIMIT);
-    let topSkaterSponsors = rawSkaterSponsors.sort((a, b) => b.val - a.val).slice(0, FEED_LIMIT);
-    let topRecentTreasury = recentTreasuryHits.sort((a, b) => b.time - a.time).slice(0, FEED_LIMIT);
-    let topRecentSkaters = recentSkaterHits.sort((a, b) => b.time - a.time).slice(0, FEED_LIMIT);
+    let topTreasurySponsors = rawTreasury.sort((a, b) => b.val - a.val).slice(0, LEADERBOARD_LIMIT);
+    let topSkaterSponsors = rawSkaterSponsors.sort((a, b) => b.val - a.val).slice(0, LEADERBOARD_LIMIT);
+    let topRecentTreasury = recentTreasuryHits.sort((a, b) => b.time - a.time).slice(0, LEADERBOARD_LIMIT);
+    let topRecentSkaters = recentSkaterHits.sort((a, b) => b.time - a.time).slice(0, LEADERBOARD_LIMIT);
     
     for(let j=0; j<topTreasurySponsors.length; j++) topTreasurySponsors[j].name = await getSkaterNameSafe(topTreasurySponsors[j].addr);
     for(let j=0; j<topSkaterSponsors.length; j++) topSkaterSponsors[j].name = await getSkaterNameSafe(topSkaterSponsors[j].addr);
@@ -1509,6 +1507,7 @@ async function checkPersistence() {
             continue; 
         }
         
+        // PURE TRUTH: Unlocks based on true on-chain ledger confirmation
         if (isAdmin || isFree || userSponsors.includes(targetWallet) || publicKey === targetWallet) { 
             if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
             card.classList.add('unlocked'); 
@@ -1981,7 +1980,7 @@ window.addEventListener('load', async () => {
         donatePage.insertAdjacentHTML('beforeend', `
         <div class="leaderboard-container" style="margin-top: 3rem;">
             <div class="leaderboard-box">
-                <h2>TREASURY LEGENDS (TOP 12) <span class="live-indicator">● LIVE SCAN</span></h2>
+                <h2>TREASURY LEGENDS (TOP 20) <span class="live-indicator">● LIVE SCAN</span></h2>
                 <ul class="leader-list" id="donate-sponsors-list"><li class="leader-item">Scanning on-chain history...</li></ul>
             </div>
             <div class="leaderboard-box">
