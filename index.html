@@ -36,27 +36,56 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
-body{ background:var(--bg-deep); color:var(--text-primary); font-family:'Orbitron',sans-serif; line-height: 1.6; }
 
-header{ background:rgba(10,19,47,0.95); backdrop-filter:blur(12px); position:fixed; top:0;left:0;right:0; z-index:100; border-bottom:1px solid var(--card-border); }
-.header-inner{ max-width:1440px; margin:auto; display:flex; justify-content:space-between; align-items:center; padding: 1rem 20px; position: relative; }
+html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+body{
+  background:var(--bg-deep); color:var(--text-primary);
+  font-family:'Orbitron',sans-serif; line-height: 1.6;
+}
+
+header{
+  background:rgba(10,19,47,0.95); backdrop-filter:blur(12px);
+  position:fixed; top:0;left:0;right:0; z-index:100;
+  border-bottom:1px solid var(--card-border);
+}
+
+.header-inner{
+  max-width:1440px; margin:auto; display:flex;
+  justify-content:space-between; align-items:center;
+  padding: 1rem 20px; position: relative;
+}
+
 .logo{height:45px; z-index: 101;}
 
 nav#mobile-nav { display: flex; flex: 1; justify-content: center; }
 nav#mobile-nav ul { display:flex; gap:1.8rem; list-style:none; }
 nav#mobile-nav a { color:var(--text-secondary); text-decoration:none; font-weight:bold; transition:0.3s; font-size:0.9rem; letter-spacing: 1px; }
 nav#mobile-nav a:hover{color:var(--accent-gold);}
+
 .header-controls { display: flex; align-items: center; justify-content: flex-end; gap: 15px; z-index: 101; }
+
 .hamburger { display: none; font-size: 1.8rem; color: var(--accent-gold); cursor: pointer; transition: 0.3s; }
 .hamburger:hover { color: var(--accent-cyan); }
 
-.wallet-btn { background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange)); border: none; padding: .7rem 1.4rem; border-radius: 50px; cursor: pointer; font-family: 'Orbitron'; font-weight: bold; color: #000; transition: 0.3s; white-space: nowrap; }
+.wallet-btn {
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+  border: none; padding: .7rem 1.4rem; border-radius: 50px;
+  cursor: pointer; font-family: 'Orbitron'; font-weight: bold;
+  color: #000; transition: 0.3s; white-space: nowrap;
+}
 
 main { padding-top: 120px; max-width: 1440px; margin: auto; padding-left: 20px; padding-right: 20px; padding-bottom: 60px; }
+
 .hero { text-align: center; margin-bottom: 2.5rem; }
-.hero h1 { font-size: 4.5rem; background: linear-gradient(to bottom, #fff, var(--accent-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Orbitron', sans-serif; font-weight: 900; line-height: 1.1; }
+.hero h1 { 
+  font-size: 4.5rem; background: linear-gradient(to bottom, #fff, var(--accent-gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-family: 'Orbitron', sans-serif; font-weight: 900; line-height: 1.1;
+}
+
 .hero-subtext { font-size: 1.3rem; margin: 1rem auto 2rem; color: var(--text-secondary); max-width: 720px; }
+
 .stats-row { display: flex; justify-content: center; gap: 3rem; margin-top: 1.5rem; }
 .stat { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; }
 .stat-value { display: block; font-size: 2rem; color: var(--accent-gold); font-weight: 900; }
@@ -69,9 +98,9 @@ main { padding-top: 120px; max-width: 1440px; margin: auto; padding-left: 20px; 
 .menu-desc { font-size: 0.8rem; color: var(--text-secondary); }
 
 .video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-.video-card { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; transition: 0.3s; position: relative; width: 100%; display: flex; flex-direction: column; }
-.video-card:hover { border-color: var(--accent-gold); box-shadow: 0 5px 15px rgba(255,215,0,0.05); }
-.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; flex-shrink: 0;}
+.video-card { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; transition: 0.3s; position: relative; width: 100%; }
+.video-card:hover { border-color: var(--accent-gold); transform: scale(1.02); }
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000;}
 .video-wrapper iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:none; z-index: 1;}
 
 .video-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(10,19,47,0.98), rgba(15,26,71,0.95)); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: 0.4s ease; }
@@ -79,27 +108,17 @@ main { padding-top: 120px; max-width: 1440px; margin: auto; padding-left: 20px; 
 .video-mask p { font-size: 0.6rem; letter-spacing: 2px; color: #fff; text-transform: uppercase; font-weight: bold;}
 .unlocked .video-mask { opacity: 0; pointer-events: none; visibility: hidden; }
 
-.card-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
-.card-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
+.card-info { padding: 1.2rem; }
+.card-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem; height: 35px; overflow: hidden; }
 
+.skater-wallet-bal { font-size: 0.7rem; color: var(--accent-cyan); margin-bottom: 1rem; font-weight: bold; word-break: break-all; }
 .usd-val { color: var(--accent-green); font-weight: 600; margin-left: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; }
 
-.donate-btn { background: var(--accent-gold); color: #000; border: none; padding: 10px; border-radius: 6px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.75rem; cursor: pointer; width: 100%; margin-top: auto;}
+.donate-btn { background: var(--accent-gold); color: #000; border: none; padding: 10px; border-radius: 6px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.75rem; cursor: pointer; width: 100%; }
 .view-profile-btn { background: transparent; color: var(--text-secondary); border: 1px solid var(--card-border); margin-top: 8px; padding: 8px; font-size: 0.7rem; cursor: pointer; width: 100%; text-transform: uppercase; font-family: 'Orbitron'; transition: 0.3s; border-radius: 6px; }
 .view-profile-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
-.reaction-btn { background:none; border:none; cursor:pointer; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 2px; filter:grayscale(1) opacity(0.5); transition:0.2s; }
-.reaction-btn:hover { filter:none; transform:scale(1.1); }
-.reaction-btn.has-votes { filter: none; opacity: 1; color: var(--accent-gold); }
-
-.switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid var(--card-border); }
-.slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 2px; background-color: var(--text-secondary); transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: var(--accent-red); border-color: var(--accent-red); }
-input:checked + .slider:before { transform: translateX(14px); background-color: #fff; }
-.toggle-container { display: flex; align-items: center; justify-content: space-between; background: rgba(0,240,255,0.05); padding: 12px 15px; border-radius: 8px; border: 1px dashed var(--accent-cyan); margin-bottom: 15px; }
-
+/* PROFILE PAGE STYLES */
 #profile-content { background: linear-gradient(145deg, var(--bg-panel), #050a1f); border: 1px solid var(--accent-gold); border-radius: 20px; padding: 2.5rem; max-width: 1100px; margin: auto; box-shadow: 0 0 50px rgba(0, 240, 255, 0.05); }
 .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
 .profile-pic { width: 100%; max-width: 250px; border-radius: 20px; border: 3px solid var(--accent-cyan); margin-bottom: 25px; object-fit: cover; transition: all 0.3s ease; }
@@ -107,6 +126,7 @@ input:checked + .slider:before { transform: translateX(14px); background-color: 
 .gear-tag { display: inline-block; padding: 6px 12px; background: rgba(255, 215, 0, 0.05); color: var(--text-secondary); border-radius: 6px; font-size: 0.65rem; margin: 6px; border: 1px solid rgba(255, 215, 0, 0.3); text-transform: uppercase; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
 .gear-tag i { color: var(--accent-gold); margin-right: 5px; }
 
+/* LEADERBOARD STYLES */
 .leaderboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
 .leaderboard-box { background: var(--bg-panel); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 1.5rem; }
 .leaderboard-box h2 { font-size: 0.8rem; color: var(--accent-gold); margin-bottom: 1.2rem; text-transform: uppercase; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
@@ -137,6 +157,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100vh; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
 .modal-content { background:var(--bg-panel); padding:2rem; border-radius:15px; border:1px solid var(--accent-gold); width:92%; max-width:400px; text-align: center; position: relative; margin: 0 auto; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+
 .tier-btn { width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: bold; border-radius: 6px; font-size: 0.8rem;}
 .tier-btn:hover { background: var(--accent-gold); color: #000; }
 .tier-flow { border-color: var(--bronze-font) !important; color: var(--bronze-font) !important; }
@@ -145,9 +166,11 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .tier-am:hover { background: var(--silver-font) !important; color: #000 !important; }
 .tier-pro { border-color: var(--gold-font) !important; color: var(--gold-font) !important; }
 .tier-pro:hover { background: var(--gold-font) !important; color: #000 !important; }
+
 .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 2000; }
 @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
+/* FEED ARCHITECTURE */
 .feed-container { max-width: 1000px; margin: 0 auto; position: relative; }
 .post-create-box { background: rgba(0,240,255,0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--accent-cyan); margin-bottom: 2rem; display: none; }
 .feed-paywall { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,19,47,0.98); backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; text-align: center; border-radius: 12px; border: 2px dashed var(--silver-font); padding: 2rem; }
@@ -164,8 +187,9 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 .feed-bless-btn { background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 8px; border-radius: 6px; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: auto; transition: 0.3s; text-transform: uppercase; }
 .feed-bless-btn:hover { background: var(--accent-gold); color: #000; }
 
-.loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid var(--accent-cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.reaction-btn { background:none; border:none; cursor:pointer; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 2px; filter:grayscale(1) opacity(0.5); transition:0.2s; }
+.reaction-btn:hover { filter:none; transform:scale(1.1); }
+.reaction-btn.has-votes { filter: none; opacity: 1; }
 
 @media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 900px) { 
@@ -176,6 +200,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     .profile-sidebar { border-right: none !important; padding-right: 0 !important; }
     .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
+
 @media (max-width: 768px) { 
     .hamburger { display: block; } 
     nav#mobile-nav { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(10,19,47,0.98); border-bottom: 1px solid var(--accent-cyan); border-top: 1px solid rgba(255,255,255,0.05); flex-direction: column; padding: 1.5rem 0; opacity: 0; pointer-events: none; transform: translateY(-10px); transition: all 0.3s ease-in-out; z-index: 99; }
@@ -199,6 +224,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     .amt-tag { align-self: flex-start; margin-left: 1.8rem; }
     footer { padding: 2rem 1.2rem 1.2rem; margin-top: 2rem; }
 }
+
 @media (max-width: 480px) {
     .hero h1 { font-size: 1.7rem !important; }
     #leaderboard-content .hero h1 { font-size: 1.5rem !important; } 
@@ -310,18 +336,15 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
         </p>
         <p class="hero-subtext" style="font-size: 0.85rem;">Scout raw talent. Drop on-chain blessings directly into skaters' wallets to unlock footage and boost rank.</p>
     </div>
-    <div class="video-grid" id="front-page-video-grid">
+    <div class="video-grid">
       <div class="video-card" id="vid-1">
         <div class="video-wrapper">
           <div class="video-mask"><i class="fas fa-lock"></i><p>Sponsor to Unlock</p></div>
           <iframe data-src="https://www.youtube.com/embed/TkiDuln_Q28?si=S0fApWdKJpgmRm3H" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">greg valencia</span>
-              <span class="skater-rank-icon" data-address="FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-1"></div>
+          <div class="card-title">greg valencia</div>
+          <div class="skater-wallet-bal" data-address="FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-1" data-address="FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'FqEnog4mFG3tGqnqG2dVwPHwPitxTRenr1zfvBxQZMsW')">VIEW PROFILE</button>
         </div>
@@ -332,11 +355,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/3JZ_D3ELwOQ" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tre Flip Over the Gap</span>
-              <span class="skater-rank-icon" data-address="GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-2"></div>
+          <div class="card-title">Tre Flip Over the Gap</div>
+          <div class="skater-wallet-bal" data-address="GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-2" data-address="GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'GzTbU3tnUCm6Y55Jxo1cPoBNkEzvRPeM3HDYcZqyCqPZ')">VIEW PROFILE</button>
         </div>
@@ -347,11 +367,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/9bZkp7q19f0" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Manuals in the Rain</span>
-              <span class="skater-rank-icon" data-address="4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-3"></div>
+          <div class="card-title">Manuals in the Rain</div>
+          <div class="skater-wallet-bal" data-address="4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-3" data-address="4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', '4GtFZZj2KCoLnNhKH9SoNH7jsapzToiEYKpNyhnT6RWi')">VIEW PROFILE</button>
         </div>
@@ -362,11 +379,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/kXYiU_JCYtU" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Big Ollie at the Park</span>
-              <span class="skater-rank-icon" data-address="6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-4"></div>
+          <div class="card-title">Big Ollie at the Park</div>
+          <div class="skater-wallet-bal" data-address="6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-4" data-address="6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', '6LjficeW9qWXd6Wa9ygn8yidteU7aRExgLbxFdMgByiW')">VIEW PROFILE</button>
         </div>
@@ -377,11 +391,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/Wg_jwgmwt-U" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Epic Skate Clips 2025</span>
-              <span class="skater-rank-icon" data-address="BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-5"></div>
+          <div class="card-title">Epic Skate Clips 2025</div>
+          <div class="skater-wallet-bal" data-address="BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-5" data-address="BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'BxEQSVXxYojLMijwnactZcHZKUMdVWryWXxZVqmgyRgi')">VIEW PROFILE</button>
         </div>
@@ -392,11 +403,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/MFSx4jWmDfY" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Best Skate Videos Year</span>
-              <span class="skater-rank-icon" data-address="9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-6"></div>
+          <div class="card-title">Best Skate Videos Year</div>
+          <div class="skater-wallet-bal" data-address="9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-6" data-address="9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', '9smXB7M5NYXQRm4h6hrw3gdfNYs7tQgTgATGBvuLBozH')">VIEW PROFILE</button>
         </div>
@@ -407,11 +415,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/qqPjQpTe9W4" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jonny Giger Street Part</span>
-              <span class="skater-rank-icon" data-address="5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-7"></div>
+          <div class="card-title">Jonny Giger Street Part</div>
+          <div class="skater-wallet-bal" data-address="5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-7" data-address="5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', '5dCFGUTNAxCVJGbGUFSUEukTGKBd4ffUm9Q425efXZzm')">VIEW PROFILE</button>
         </div>
@@ -422,11 +427,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/Zq3kl6z_aEM" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Independent Skateboard Co.</span>
-              <span class="skater-rank-icon" data-address="9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-8"></div>
+          <div class="card-title">Independent Skateboard Co.</div>
+          <div class="skater-wallet-bal" data-address="9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-8" data-address="9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', '9W8TxzG3ThA8i5bH6XCgXSF6wjf6D629dcfkUkNKj8Dj')">VIEW PROFILE</button>
         </div>
@@ -437,11 +439,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/8_B_6vX1pXU" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Switch Heelflip Challenge</span>
-              <span class="skater-rank-icon" data-address="HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-9"></div>
+          <div class="card-title">Switch Heelflip Challenge</div>
+          <div class="skater-wallet-bal" data-address="HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-9" data-address="HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'HrXXR5VUKrH5ozCXsL6v5YCTTiVuKWp7KHuTYTiqHdCq')">VIEW PROFILE</button>
         </div>
@@ -452,11 +451,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/T9yZzS7L-98" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Barcelona Skate Trip</span>
-              <span class="skater-rank-icon" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-10"></div>
+          <div class="card-title">Barcelona Skate Trip</div>
+          <div class="skater-wallet-bal" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-10" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b')">VIEW PROFILE</button>
         </div>
@@ -467,11 +463,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/6i1YyB7g-Ew" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Manual Pad Session</span>
-              <span class="skater-rank-icon" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-11"></div>
+          <div class="card-title">Manual Pad Session</div>
+          <div class="skater-wallet-bal" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-11" data-address="DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'DwvZscExkDYdiHEus2moUWUGxfchwZ2RnrXZEgBfih2b')">VIEW PROFILE</button>
         </div>
@@ -482,11 +475,8 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
           <iframe data-src="https://www.youtube.com/embed/P6Ff-e9V270" allowfullscreen></iframe>
         </div>
         <div class="card-info">
-          <div class="card-title">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Night School Grind</span>
-              <span class="skater-rank-icon" data-address="E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7"></span>
-          </div>
-          <div class="reaction-container" id="rx-vid-12"></div>
+          <div class="card-title">Night School Grind</div>
+          <div class="skater-wallet-bal" data-address="E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7">Blessings: ...</div>
           <button class="donate-btn" data-target="vid-12" data-address="E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7">SPONSOR</button>
           <button class="view-profile-btn" onclick="navigateTo('profile', 'E7tz7UK3obmpySK8ubyww8XWrVfZz4gLRwwyuHmTPWT7')">VIEW PROFILE</button>
         </div>
@@ -530,13 +520,10 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
             </div>
             
             <div id="p-sponsor-video-section" style="display:none; margin-bottom: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 15px;">
-                    <h3 style="color:var(--accent-gold); margin:0; font-size: 1.1rem;">🎥 SPONSOR ME TAPE</h3>
-                </div>
-                <div class="video-wrapper" style="border: 2px solid var(--accent-cyan); border-radius: 16px; overflow: hidden; box-shadow: 0 5px 25px rgba(0,240,255,0.15); margin-bottom: 10px;">
+                <h3 style="color:var(--accent-gold); margin-bottom:20px; font-size: 1.1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">🎥 SPONSOR ME TAPE</h3>
+                <div class="video-wrapper" style="border: 2px solid var(--accent-cyan); border-radius: 16px; overflow: hidden; box-shadow: 0 5px 25px rgba(0,240,255,0.15);">
                     <iframe id="p-sponsor-video" src="" allowfullscreen></iframe>
                 </div>
-                <div id="sponsor-tape-reactions"></div>
             </div>
 
             <div id="skater-mini-badges-section" style="display:none; background: var(--bg-panel); border: 1px dashed var(--card-border); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px;">
@@ -567,7 +554,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
   <div id="feed-content" style="display:none;">
     <div class="hero" style="position: relative;">
         <h1 id="feed-header-title" style="font-size: 2.5rem;">PRIVATE FEED</h1>
-        <p style="color: var(--silver-font); font-weight:bold; font-size: 0.8rem;">ON-CHAIN ACCESS</p>
+        <p style="color: var(--silver-font); font-weight:bold; font-size: 0.8rem;">SILVER TIER ON-CHAIN ACCESS</p>
         <button onclick="navigateTo('profile', activeFeedWallet)" class="view-profile-btn" style="max-width: 250px; margin: 20px auto 0; font-weight: bold; font-size: 0.8rem; border-color: var(--accent-red); color: var(--accent-red);"><i class="fas fa-door-open"></i> EXIT TO PROFILE</button>
     </div>
     
@@ -585,7 +572,7 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
             <div id="feed-paywall-overlay" class="feed-paywall" style="display: none;">
                 <i class="fas fa-lock paywall-icon"></i>
                 <h2 style="color: var(--silver-font); font-family: 'Bangers'; font-size: 2.2rem; letter-spacing: 1px;">AMATEUR TIER REQUIRED</h2>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 400px; margin: 10px auto 20px;">This skater has locked their content. You must drop a cumulative on-chain blessing of 0.05 SOL (Silver Tier) or higher to permanently unlock their private feed.</p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 400px; margin: 10px auto 20px;">You must drop a cumulative on-chain blessing of 0.05 SOL (Silver Tier) or higher to this skater to permanently unlock their private feed.</p>
                 <button onclick="openSponsorshipModalFromFeed()" class="tier-btn tier-am" style="max-width: 250px;">UPGRADE TO AM (0.05 SOL)</button>
             </div>
 
@@ -710,17 +697,6 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
     <input type="text" id="edit-pic" style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-cyan); border-radius: 5px; font-size: 0.8rem;">
     
     <div id="edit-skater-gear-section">
-        <div class="toggle-container">
-            <div>
-                <h4 style="color:var(--accent-cyan); margin:0; font-size: 0.8rem;">UNLOCK CONTENT (FREE MODE)</h4>
-                <p style="font-size: 0.6rem; color: var(--text-secondary); margin-top: 3px; max-width: 250px;">Toggle ON to set your entire profile (Sponsor Tape & Private Feed) to free. Maximize exposure, but disable required micro-donations.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="edit-free-toggle">
-              <span class="slider"></span>
-            </label>
-        </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
             <div>
                 <label style="font-size: 0.65rem; color: var(--text-secondary);">STANCE</label>
@@ -758,12 +734,10 @@ let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId =
 let allTreasurySponsors = [], allSkaterHits = [], activeFeedWallet = "", currentSkaterPosts = [];
 let activeProposals = [], closedProposals = [], bannedWallets = [];
 let globalAdminIncognito = false; 
-let globalVideoState = {}; // Unified cache to prevent RPC spam
-let profileCache = {}; // Cache for skater profiles
 
 const DAO_TTL_SECONDS = 7 * 24 * 60 * 60; 
 const DAO_VOTE_FEE = 0.001; 
-const FEED_LIMIT = 12; // Mandated Standard Capacity
+const FEED_LIMIT = 12; 
 let feedRenderLimit = FEED_LIMIT;
 
 const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
@@ -794,207 +768,7 @@ async function getSolPrice() { try { const r = await fetch('https://api.coingeck
 function getProvider() { if ("phantom" in window) { const p = window.phantom?.solana; if (p?.isPhantom) return p; } return null; }
 function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 function toggleMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
-
-// Strictly prevents self-donation wash-trading across grids
-function updateDonateButtons() { 
-    document.querySelectorAll('#video-content .donate-btn').forEach(btn => { 
-        if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; 
-        else btn.style.display = ''; 
-    }); 
-}
-
-// UNIVERSAL REACTION BAR & LOCK TOGGLE HTML GENERATOR
-function getReactionHtml(postId, targetWallet, isLocked) {
-    let state = globalVideoState[postId] || { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
-    let rx = state.reactions;
-    let usdVal = (state.totalSOL * solPrice).toFixed(2);
-    let isOwner = (publicKey === targetWallet);
-    let isAdmin = ADMIN_WALLETS.includes(publicKey);
-    
-    let effectivelyLocked = state.locked !== undefined ? state.locked : isLocked; 
-    
-    let toggleHtml = "";
-    if (isOwner || isAdmin) {
-        toggleHtml = `
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-            <span style="font-size:0.65rem; color:var(--text-secondary); text-transform:uppercase;">${effectivelyLocked ? '<i class="fas fa-lock" style="color:var(--accent-red);"></i> LOCKED' : '<i class="fas fa-unlock" style="color:var(--accent-green);"></i> FREE'}</span>
-            <label class="switch" style="transform: scale(0.8); margin: 0;">
-                <input type="checkbox" onchange="toggleVideoLock('${postId}', '${targetWallet}', ${effectivelyLocked})" ${effectivelyLocked ? '' : 'checked'}>
-                <span class="slider"></span>
-            </label>
-        </div>`;
-    }
-
-    return `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 10px; margin-bottom: 5px; font-size: 0.75rem;">
-        <span style="color:var(--text-secondary); font-size: 0.60rem; text-transform: uppercase;">Clip Treasury:</span>
-        <span style="color:var(--accent-green); font-family:monospace; font-weight:bold;">${state.totalSOL.toFixed(4)} SOL <span style="color:#888; font-size:0.65rem;">($${usdVal})</span></span>
-    </div>
-    <div style="display:flex; justify-content:space-between; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px;">
-        <button onclick="castReaction('${postId}', '${targetWallet}', '🔥', 0.001)" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
-        <button onclick="castReaction('${postId}', '${targetWallet}', '🤮', 0.002)" class="reaction-btn ${rx['🤮']>0 ? 'has-votes' : ''}" title="Gross Style (0.002 SOL)"><span style="font-size: 1rem;">🤮</span><span>${rx['🤮']||0}</span></button>
-        <button onclick="castReaction('${postId}', '${targetWallet}', '⭐', 0.006)" class="reaction-btn ${rx['⭐']>0 ? 'has-votes' : ''}" title="Great (0.006 SOL)"><span style="font-size: 1rem;">⭐</span><span>${rx['⭐']||0}</span></button>
-        <button onclick="castReaction('${postId}', '${targetWallet}', '🧈', 0.018)" class="reaction-btn ${rx['🧈']>0 ? 'has-votes' : ''}" title="Butter (0.018 SOL)"><span style="font-size: 1rem;">🧈</span><span>${rx['🧈']||0}</span></button>
-        <button onclick="castReaction('${postId}', '${targetWallet}', '🥩', 0.054)" class="reaction-btn ${rx['🥩']>0 ? 'has-votes' : ''}" title="Hall of Meat (0.054 SOL)"><span style="font-size: 1rem;">🥩</span><span>${rx['🥩']||0}</span></button>
-        <button onclick="castReaction('${postId}', '${targetWallet}', '💪', 0.100)" class="reaction-btn ${rx['💪']>0 ? 'has-votes' : ''}" title="Flex (0.1 SOL)"><span style="font-size: 1rem;">💪</span><span>${rx['💪']||0}</span></button>
-    </div>
-    ${toggleHtml}
-    `;
-}
-
-// RESTORED CORE: Renders on-chain user profiles safely and implements anti-wash-trading UI lockouts.
-async function renderProfile(wallet, viewType) {
-    currentSkaterTarget = wallet;
-    let isOwner = (publicKey === wallet);
-    let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
-
-    const stats = await fetchWalletStats(wallet);
-    const prof = await getSkaterProfileSafe(wallet);
-    let profileData = prof.profileData || {};
-    let isFree = prof.isFree;
-
-    let name = await getSkaterNameSafe(wallet);
-    document.getElementById('p-name').innerText = name;
-    document.getElementById('p-wallet').innerText = wallet;
-    document.getElementById('p-img').src = profileData.pic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`;
-    document.getElementById('p-bio').innerText = profileData.bio || "No bio set.";
-
-    let gearHtml = "";
-    if (profileData.stance) gearHtml += `<span class="gear-tag"><i class="fas fa-shoe-prints"></i> ${profileData.stance}</span>`;
-    if (profileData.deck) gearHtml += `<span class="gear-tag"><i class="fas fa-layer-group"></i> ${profileData.deck}</span>`;
-    if (profileData.trucks) gearHtml += `<span class="gear-tag"><i class="fas fa-truck-monster"></i> ${profileData.trucks}</span>`;
-    if (profileData.spot) gearHtml += `<span class="gear-tag"><i class="fas fa-map-marker-alt"></i> ${profileData.spot}</span>`;
-    document.getElementById('p-gear').innerHTML = gearHtml;
-
-    let isGenSkater = SKATER_REGISTRY.includes(wallet) || gearHtml !== "";
-    let rankInfo;
-    
-    if (viewType === 'sponsor' || (!isGenSkater && stats.outs > 0)) {
-        rankInfo = getRankDisplay(stats.outs, false, wallet);
-        document.getElementById('p-rank').innerHTML = `<span style="color:${rankInfo.color}">${rankInfo.icon} ${rankInfo.title}</span>`;
-        document.getElementById('blessings-label').innerText = "TOTAL DONATED";
-        document.getElementById('p-blessings').innerText = stats.outs.toFixed(2) + " SOL";
-        
-        document.getElementById('p-sponsor-video-section').style.display = 'none';
-        document.getElementById('skater-mini-badges-section').style.display = 'none';
-        document.getElementById('private-feed-btn').style.display = 'none';
-        
-        // Render 12-Slot Badge Grid for Sponsors
-        document.getElementById('p-sponsor-badges-section').style.display = 'block';
-        renderSponsorBadges(stats.outs);
-        
-    } else {
-        rankInfo = getRankDisplay(stats.ins, true, wallet);
-        document.getElementById('p-rank').innerHTML = `<span style="color:${rankInfo.color}">${rankInfo.icon} ${rankInfo.title}</span>`;
-        document.getElementById('blessings-label').innerText = "ON-CHAIN BLESSINGS";
-        document.getElementById('p-blessings').innerText = stats.ins.toFixed(2) + " SOL";
-        
-        if(profileData.yt) {
-            document.getElementById('p-sponsor-video-section').style.display = 'block';
-            document.getElementById('p-sponsor-video').src = `https://www.youtube.com/embed/${profileData.yt}`;
-            document.getElementById('sponsor-tape-reactions').innerHTML = getReactionHtml(`prof_yt_${wallet}`, wallet, !isFree);
-        } else {
-            document.getElementById('p-sponsor-video-section').style.display = 'none';
-        }
-
-        document.getElementById('skater-mini-badges-section').style.display = 'block';
-        document.getElementById('private-feed-btn').style.display = 'block';
-        
-        // Render 12-Slot Badge Grid for Skaters
-        document.getElementById('p-sponsor-badges-section').style.display = 'block';
-        renderSponsorBadges(stats.ins);
-    }
-
-    // MANDATED RULE: Prohibit self-donation (wash-trading)
-    if (isOwner) {
-        document.getElementById('profile-donate-btn').style.display = 'none';
-        document.getElementById('edit-profile-btn').style.display = 'block';
-    } else {
-        document.getElementById('profile-donate-btn').style.display = 'block';
-        document.getElementById('edit-profile-btn').style.display = 'none';
-    }
-
-    let existingAdmin = document.getElementById('admin-controls');
-    if(existingAdmin) existingAdmin.remove();
-
-    if (isAdmin && !isOwner) {
-        let adminHtml = `<div style="margin-top:20px; border-top:1px solid #ff2d55; padding-top:10px;"><h4 style="color:#ff2d55; font-size:0.7rem;">GODMODE CONTROLS</h4>`;
-        let isBanned = bannedWallets.includes(wallet);
-        adminHtml += `<button onclick="adminAction('${wallet}', '${isBanned ? 'unban' : 'ban'}')" style="background:#ff2d55; color:#000; border:none; padding:5px 10px; border-radius:4px; font-size:0.6rem; cursor:pointer; font-weight:bold; margin-top:5px;">${isBanned ? 'UNBAN' : 'BAN'} SKATER</button>`;
-        if (ADMIN_WALLETS.includes(wallet)) {
-           adminHtml += `<div style="margin-top: 10px;"><label class="switch"><input type="checkbox" ${globalAdminIncognito ? 'checked' : ''} onchange="setIncognitoWeb3(this.checked)"><span class="slider"></span></label><span style="font-size:0.65rem; margin-left:5px;">INCOGNITO ON LEADERBOARDS</span></div>`;
-        }
-        adminHtml += `</div>`;
-        document.getElementById('p-wallet').parentElement.insertAdjacentHTML('beforeend', `<div id="admin-controls">${adminHtml}</div>`);
-    }
-}
-
-// NEW: 12-Slot Logic to dynamically render visual milestones based on SOL volume
-function renderSponsorBadges(solAmount) {
-    const BADGE_MILESTONES = [
-        { req: 0.01, name: "FLOW TIER", icon: "🛹" },
-        { req: 0.05, name: "AM TIER", icon: "🥉" },
-        { req: 0.10, name: "PRO STATUS", icon: "🥈" },
-        { req: 0.25, name: "LOCAL LEGEND", icon: "🥇" },
-        { req: 0.50, name: "STREET KING", icon: "👑" },
-        { req: 1.00, name: "DECK MASTER", icon: "🛠️" },
-        { req: 2.50, name: "WAX PORTAL", icon: "📦" },
-        { req: 5.00, name: "VIDEO STAR", icon: "📼" },
-        { req: 10.0, name: "MAG COVER", icon: "📖" },
-        { req: 25.0, name: "THRASHER", icon: "🔥" },
-        { req: 50.0, name: "HALL OF FAME", icon: "🏆" },
-        { req: 100.0, name: "PROTOCOL GOD", icon: "⚡" }
-    ];
-
-    let html = "";
-    BADGE_MILESTONES.forEach(b => {
-        let unlocked = solAmount >= b.req;
-        html += `
-        <div style="background: var(--bg-panel); border: 1px solid ${unlocked ? 'var(--accent-gold)' : 'rgba(0,240,255,0.1)'}; border-radius: 12px; padding: 12px; text-align: center; opacity: ${unlocked ? '1' : '0.4'}; filter: ${unlocked ? 'none' : 'grayscale(1)'}; transition: 0.3s;">
-            <div style="font-size: 1.8rem; margin-bottom: 5px; filter: ${unlocked ? 'drop-shadow(0 0 8px rgba(255,215,0,0.4))' : 'none'};">${unlocked ? b.icon : '🔒'}</div>
-            <div style="font-size: 0.6rem; color: ${unlocked ? 'var(--accent-gold)' : 'var(--text-secondary)'}; font-weight: bold; text-transform: uppercase;">${b.name}</div>
-            <div style="font-size: 0.55rem; color: var(--text-secondary); margin-top: 4px; font-family: monospace;">${b.req} SOL</div>
-        </div>`;
-    });
-    document.getElementById("sponsor-badge-grid").innerHTML = html;
-}
-
-// BATCH FETCH VIDEO STATES (REACTIONS & LOCKS) - Sequenced to prevent RPC 429 Errors
-async function syncGlobalVideos(wallets) {
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let uniqueWallets = [...new Set(wallets)];
-    
-    for(let i = 0; i < uniqueWallets.length; i+= 5) {
-        let chunk = uniqueWallets.slice(i, i+5);
-        await Promise.all(chunk.map(async (wallet) => {
-            try {
-                const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 50 });
-                for (let s of sigs) {
-                    if(s.memo) {
-                        if (s.memo.includes('"sk8vid":"v1"')) {
-                            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                            if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: d.locked, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
-                            if(globalVideoState[d.post].locked === undefined) globalVideoState[d.post].locked = d.locked;
-                        }
-                        else if (s.memo.includes('"sk8react":"v1"')) {
-                            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                            if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
-                            
-                            if(globalVideoState[d.post].reactions[d.react] !== undefined) {
-                                globalVideoState[d.post].reactions[d.react]++;
-                                let cost = 0;
-                                if(d.react === '🔥') cost = 0.001; if(d.react === '🤮') cost = 0.002; if(d.react === '⭐') cost = 0.006;
-                                if(d.react === '🧈') cost = 0.018; if(d.react === '🥩') cost = 0.054; if(d.react === '💪') cost = 0.100;
-                                globalVideoState[d.post].totalSOL += cost;
-                            }
-                        }
-                    }
-                }
-            } catch(e) {}
-        }));
-        await pingDelay(250); // Small pause respects RPC limits
-    }
-}
+function updateDonateButtons() { document.querySelectorAll('#video-content .donate-btn').forEach(btn => { if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; else btn.style.display = ''; }); }
 
 async function syncAdminState() {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -1048,25 +822,6 @@ async function fetchWalletStats(wallet) {
         if(txCount === 0) txCount = Math.floor(outs * 10);
     }
     return { ins, outs, txCount };
-}
-
-// SAFELY CACHED PROFILE FETCHER
-async function getSkaterProfileSafe(wallet) {
-    if(profileCache[wallet]) return profileCache[wallet];
-    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    let isFree = false; let profileData = null;
-    try {
-        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 20 });
-        for (let s of sigs) { 
-            if(s.memo && s.memo.includes('"sk8":"v1"')) { 
-                profileData = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                if (profileData.isFree === true) isFree = true; 
-                break;
-            } 
-        }
-    } catch(e) {}
-    profileCache[wallet] = { isFree, profileData };
-    return profileCache[wallet];
 }
 
 async function handleWalletAction() {
@@ -1131,14 +886,13 @@ async function fetchBalance() {
 async function fetchSkaterBalances() {
     if (solPrice === 0) await getSolPrice();
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const els = document.querySelectorAll('.skater-rank-icon');
+    const els = document.querySelectorAll('.skater-wallet-bal');
     for (let el of els) {
-        let targetAddr = el.dataset.address;
-        if(bannedWallets.includes(targetAddr)) { el.closest('.video-card').style.display = 'none'; continue; }
+        if(bannedWallets.includes(el.dataset.address)) { el.parentElement.parentElement.style.display = 'none'; continue; }
         try {
-            const bal = await connection.getBalance(new solanaWeb3.PublicKey(targetAddr));
-            const sol = bal / 1e9; const rank = getRankDisplay(sol, true, targetAddr);
-            el.innerHTML = `<span style="color:${rank.color}; margin-left:8px;" title="${sol.toFixed(2)} SOL Donated">${rank.icon}</span>`;
+            const bal = await connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address));
+            const sol = bal / 1e9; const rank = getRankDisplay(sol, true, el.dataset.address);
+            el.innerHTML = `<div style="color:${rank.color}; font-size:0.75rem; margin-bottom:4px; font-weight:900;">${rank.icon} ${rank.title}</div>Blessings: ${sol.toFixed(4)} SOL <span class="usd-val">$${(sol*solPrice).toFixed(2)}</span>`;
         } catch(e) {}
     }
 }
@@ -1183,7 +937,6 @@ async function getSkaterNameSafe(wallet) {
     let name = await resolveWalletName(wallet); nameCache[wallet] = name; return name;
 }
 
-// BOARDROOM & TREASURY DONATION REFRESHER
 async function refreshLeaderboardData() {
     const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
     const loaderHtml = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain Activity...</li>";
@@ -1350,183 +1103,6 @@ function formatTimeRemaining(expiresAt) {
     if(diff <= 0) return "Expired";
     let d = Math.floor(diff / 86400); let h = Math.floor((diff % 86400) / 3600); let m = Math.floor((diff % 3600) / 60);
     if(d > 0) return `${d}d ${h}h`; return `${h}h ${m}m`;
-}
-
-// RESTORED DONATION & MODAL ACTIONS
-function openSponsorshipModalFromProfile() {
-    if(!publicKey) { alert("Connect Wallet!"); return; }
-    document.getElementById("modal-skater-title").innerText = `Sponsor ${document.getElementById('p-name').innerText}`;
-    document.getElementById('sponsor-modal').style.display = 'flex';
-}
-function openSponsorshipModalFromFeed() {
-    if(!publicKey) { alert("Connect Wallet!"); return; }
-    currentSkaterTarget = activeFeedWallet;
-    document.getElementById("modal-skater-title").innerText = `Upgrade Tier for Access`;
-    document.getElementById('sponsor-modal').style.display = 'flex';
-}
-function openTreasuryModal() {
-    if(!publicKey) { alert("Connect Wallet!"); return; }
-    document.getElementById('treasury-modal').style.display = 'flex';
-}
-function closeModal() { document.getElementById('sponsor-modal').style.display = 'none'; }
-function closeTreasuryModal() { document.getElementById('treasury-modal').style.display = 'none'; }
-function closeSuccessModal() { document.getElementById('success-modal').style.display = 'none'; }
-
-async function sendDonation(amt) {
-    if(!publicKey) return;
-    await sendTransaction(TREASURY_WALLET, amt);
-    closeTreasuryModal();
-}
-async function sendCustomTreasury() {
-    let amt = parseFloat(document.getElementById('custom-treasury-amt').value);
-    if(!amt || amt <= 0) return;
-    await sendTransaction(TREASURY_WALLET, amt);
-    closeTreasuryModal();
-}
-async function selectAmount(amt) {
-    if(!publicKey || !currentSkaterTarget) return;
-    await sendTransaction(currentSkaterTarget, amt);
-    closeModal();
-}
-async function sendCustomSponsor() {
-    let amt = parseFloat(document.getElementById('custom-sponsor-amt').value);
-    if(!amt || amt <= 0) return;
-    await sendTransaction(currentSkaterTarget, amt);
-    closeModal();
-}
-
-async function sendTransaction(toAddr, amountSOL) {
-    try {
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(toAddr);
-        const tx = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({
-                fromPubkey: from,
-                toPubkey: to,
-                lamports: Math.floor(amountSOL * 1e9)
-            })
-        );
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-        tx.feePayer = from;
-        
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        
-        // Push strictly local cache for front-end unlocks to bypass RPC delay 
-        let unlocked = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
-        if(!unlocked.includes(toAddr)) {
-            unlocked.push(toAddr);
-            localStorage.setItem('sk8_unlocks_' + publicKey, JSON.stringify(unlocked));
-        }
-        if(activeVideoId && !unlocked.includes(activeVideoId)) {
-            unlocked.push(activeVideoId);
-            localStorage.setItem('sk8_unlocks_' + publicKey, JSON.stringify(unlocked));
-        }
-        
-        document.getElementById('jingle').play();
-        document.getElementById('success-modal').style.display = 'flex';
-        checkPersistence();
-        
-        if(document.getElementById('feed-content').style.display === 'block') {
-            attemptFeedAccess();
-        }
-    } catch(e) {
-        console.error(e);
-        alert("Transaction Failed.");
-    }
-}
-
-// EDIT PROFILE & WEB3 SAVING LOGIC
-function openEditModal() {
-    const prof = profileCache[publicKey]?.profileData || {};
-    document.getElementById('edit-name').value = prof.name || "";
-    document.getElementById('edit-pic').value = prof.pic || "";
-    document.getElementById('edit-stance').value = prof.stance || "";
-    document.getElementById('edit-deck').value = prof.deck || "";
-    document.getElementById('edit-trucks').value = prof.trucks || "";
-    document.getElementById('edit-spot').value = prof.spot || "";
-    document.getElementById('edit-yt').value = prof.yt || "";
-    document.getElementById('edit-bio').value = prof.bio || "";
-    document.getElementById('edit-free-toggle').checked = profileCache[publicKey]?.isFree || false;
-    
-    document.getElementById('edit-modal').style.display = 'flex';
-}
-function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
-
-async function saveProfileWeb3() {
-    if(!publicKey) return;
-    const btn = document.getElementById('save-web3-btn');
-    btn.innerText = "SIGNING...";
-    try {
-        let data = {
-            sk8: "v1",
-            name: document.getElementById('edit-name').value,
-            pic: document.getElementById('edit-pic').value,
-            stance: document.getElementById('edit-stance').value,
-            deck: document.getElementById('edit-deck').value,
-            trucks: document.getElementById('edit-trucks').value,
-            spot: document.getElementById('edit-spot').value,
-            yt: document.getElementById('edit-yt').value,
-            bio: document.getElementById('edit-bio').value,
-            isFree: document.getElementById('edit-free-toggle').checked
-        };
-        const encoded = new TextEncoder().encode(JSON.stringify(data));
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const from = new solanaWeb3.PublicKey(publicKey);
-        const tx = new solanaWeb3.Transaction().add(
-            new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded })
-        );
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-        tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        btn.innerText = "SAVED!";
-        setTimeout(() => {
-            closeEditModal();
-            profileCache[publicKey] = null; // Clear cache to reload
-            renderProfile(publicKey);
-        }, 1500);
-    } catch(e) {
-        btn.innerText = "FAILED";
-        setTimeout(() => btn.innerText = "SIGN & SAVE TO CHAIN", 2000);
-    }
-}
-
-// ATTEMPT FEED ACCESS 
-async function attemptFeedAccess() {
-    if(!publicKey) { alert("Connect Wallet!"); return; }
-    activeFeedWallet = currentSkaterTarget;
-    navigateTo('feed');
-    
-    let isOwner = (publicKey === activeFeedWallet);
-    let isAdmin = ADMIN_WALLETS.includes(publicKey);
-    
-    const prof = await getSkaterProfileSafe(activeFeedWallet);
-    let isFree = prof.isFree;
-    
-    let unlocked = false;
-    if(isOwner || isAdmin || isFree) { unlocked = true; }
-    else {
-        // Enforces AM Tier (0.05) strictly via local/chain cache combo
-        let userUnlocks = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
-        if(userUnlocks.includes(activeFeedWallet)) unlocked = true;
-    }
-    
-    if(isOwner) document.getElementById('post-create-box').style.display = 'block';
-    else document.getElementById('post-create-box').style.display = 'none';
-    
-    if(unlocked) document.getElementById('feed-paywall-overlay').style.display = 'none';
-    else document.getElementById('feed-paywall-overlay').style.display = 'flex';
-}
-
-function loadMoreFeed() {
-    feedRenderLimit += FEED_LIMIT;
-    // Real implementation would pull deeper into the history array
-    alert("Scrubbing deeper into on-chain history...");
-}
-
-async function publishToFeed() {
-    alert("Publishing to feed via Memo Program initialized...");
-    // Future integration goes here.
 }
 
 async function refreshDAODashboard() {
@@ -1722,99 +1298,15 @@ async function adminAction(targetWallet, action) {
     } catch(e) { alert("Admin action failed."); }
 }
 
-async function toggleVideoLock(postId, targetWallet, currentlyLocked) {
-    if(!publicKey) return;
-    let newState = !currentlyLocked;
-    let actionText = newState ? "LOCK" : "UNLOCK (Make Free)";
-    if(!confirm(`Are you sure you want to ${actionText} this video?`)) return;
-
-    try {
-        const pData = JSON.stringify({ sk8vid: "v1", post: postId, locked: newState });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
-        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert(`Video ${newState ? 'LOCKED' : 'UNLOCKED'}!`);
-        setTimeout(() => {
-            if(document.getElementById('profile-content').style.display === 'block') { renderProfile(targetWallet); }
-            else if(document.getElementById('feed-content').style.display === 'block') { attemptFeedAccess(); }
-            else { window.location.reload(); }
-        }, 2500);
-    } catch(e) { alert("Action failed."); }
-}
-
-async function castReaction(postId, targetWallet, reactType, cost) {
-    if(!publicKey) { alert("Connect wallet to cast reaction!"); return; }
-    if(publicKey === targetWallet) { alert("Cannot react to your own posts."); return; } // Prevent wash-trading on reactions
-    
-    if(!confirm(`Send ${cost} SOL to cast ${reactType} reaction?`)) return;
-    try {
-        const pData = JSON.stringify({ sk8react: "v1", post: postId, react: reactType });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey); const to = new solanaWeb3.PublicKey(targetWallet);
-        const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: Math.floor(cost * 1e9) })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert("Reaction broadcasted!");
-        setTimeout(() => { checkPersistence(); }, 2000);
-    } catch(e) { alert("Reaction failed."); }
-}
-
-function copyTreasuryAddress() {
-    navigator.clipboard.writeText(TREASURY_WALLET);
-    alert("Copied Treasury Address!");
-}
-
-async function checkPersistence() {
+function checkPersistence() {
     let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
-    const cards = document.querySelectorAll('.video-card');
-    
-    let targetWallets = [];
-    for (let card of cards) {
-        let w = card.querySelector('.donate-btn')?.dataset.address;
-        if(w) targetWallets.push(w);
-    }
-    
-    await syncGlobalVideos(targetWallets);
-
-    for (let card of cards) {
+    document.querySelectorAll('.video-card').forEach(card => {
         let iframe = card.querySelector('iframe');
-        let targetWallet = card.querySelector('.donate-btn')?.dataset.address;
-        if (!targetWallet) continue;
-
-        let postId = card.id;
-        let vState = globalVideoState[postId] || { locked: true };
-        
-        let prof = await getSkaterProfileSafe(targetWallet);
-        let isFree = prof.isFree ? true : !vState.locked;
-        
-        let rxDiv = card.querySelector('.reaction-container');
-        if (rxDiv) {
-            rxDiv.innerHTML = getReactionHtml(postId, targetWallet, !isFree);
-        }
-
-        if (!publicKey) { 
-            if(isFree) {
-                if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
-                card.classList.add('unlocked'); 
-            } else {
-                card.classList.remove('unlocked'); 
-                if (iframe) iframe.src = ""; 
-            }
-            continue; 
-        }
-        
+        if (!publicKey) { card.classList.remove('unlocked'); if (iframe) iframe.src = ""; return; }
         let unlocked = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
-        if (isAdmin || isFree || unlocked.includes(card.id) || unlocked.includes(targetWallet)) { 
-            if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
-            card.classList.add('unlocked'); 
-        } else { 
-            card.classList.remove('unlocked'); 
-            if (iframe) iframe.src = ""; 
-        }
-    }
+        if (isAdmin || unlocked.includes(card.id)) { if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; card.classList.add('unlocked'); } 
+        else { card.classList.remove('unlocked'); if (iframe) iframe.src = ""; }
+    });
 }
 
 function navigateToProfileView(viewType) {
@@ -1836,22 +1328,400 @@ function navigateTo(page, wallet = null) {
   window.scrollTo(0,0);
 }
 
-// BIND DONATION CLICKS ON DYNAMIC GRID ITEMS
-document.addEventListener('click', (e) => {
-    if(e.target && e.target.classList.contains('donate-btn')) {
-        if(e.target.id === 'profile-donate-btn') return; // Handled separately
-        let target = e.target.dataset.address;
-        let vidId = e.target.dataset.target;
-        if(target) {
-            currentSkaterTarget = target;
-            activeVideoId = vidId;
-            document.getElementById("modal-skater-title").innerText = `Sponsor Clip`;
-            document.getElementById('sponsor-modal').style.display = 'flex';
-        }
+async function renderProfile(wallet, forceView = null) {
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    const picEl = document.getElementById('p-img'); const rEl = document.getElementById('p-rank'); const bEl = document.getElementById('p-blessings');
+    const header = document.getElementById('profile-header-text'); const tags = document.getElementById('p-tags'); const gear = document.getElementById('p-gear');
+    
+    rEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SYNCING...'; bEl.innerText = "SYNCING..."; tags.innerHTML = ""; gear.innerHTML = "";
+    
+    const isOwner = publicKey === wallet; const stats = await fetchWalletStats(wallet);
+    let isGen = SKATER_REGISTRY.includes(wallet); let isSpon = SPONSOR_ONLY_WALLETS.includes(wallet);
+    let view = forceView || (isGen ? 'skater' : 'sponsor'); if (!isGen && view === 'skater') view = 'sponsor';
+
+    let sk = SKATER_PROFILES.find(s => s.wallet === wallet); let sp = SPONSOR_PROFILES.find(s => s.wallet === wallet);
+    let fallbackName = await resolveWalletName(wallet);
+    if(!sk && view === 'skater') sk = { name: fallbackName, styles: ["New Skater"], pic: "https://i.pravatar.cc/400?u=" + wallet, bio: "Raw street talent." };
+    if(!sp && view === 'sponsor') sp = { name: fallbackName, pic: "https://i.pravatar.cc/400?u=" + wallet, bio: "Legendary Sponsor fueling the movement." };
+    let activeProf = view === 'skater' ? sk : sp;
+
+    try {
+        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 10 });
+        for (let s of sigs) { if(s.memo && s.memo.includes('"sk8":"v1"')) { 
+            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+            activeProf.name = d.name || activeProf.name; activeProf.pic = d.pic || activeProf.pic; activeProf.bio = d.bio || activeProf.bio;
+            if(view === 'skater') { activeProf.stance = d.stance; activeProf.deck = d.deck; activeProf.trucks = d.trucks; activeProf.spot = d.spot; activeProf.yt = d.yt; }
+            break;
+        } }
+    } catch(e) {}
+
+    document.getElementById('p-name').innerText = activeProf.name; picEl.src = activeProf.pic; 
+    document.getElementById('p-bio').innerText = activeProf.bio; document.getElementById('p-wallet').innerText = wallet;
+    
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (editBtn) { editBtn.className = 'tier-btn'; editBtn.style.background = '#fff'; editBtn.style.color = '#000'; editBtn.style.padding = '12px'; editBtn.style.border = 'none'; editBtn.style.marginTop = '10px'; editBtn.style.borderRadius = '6px'; }
+
+    let adminPanelHtml = "";
+    if (ADMIN_WALLETS.includes(publicKey) && isOwner) {
+        let btnColor = globalAdminIncognito ? "var(--accent-green)" : "var(--accent-red)"; let btnTextColor = globalAdminIncognito ? "#000" : "#fff"; let btnText = globalAdminIncognito ? "GO VISIBLE ON LEADERBOARDS" : "GO INCOGNITO (HIDE)"; let nextState = !globalAdminIncognito;
+        adminPanelHtml = `
+        <div style="margin-top: 15px; padding: 15px; background: rgba(255, 45, 85, 0.1); border: 1px solid var(--accent-red); border-radius: 12px; text-align: left;">
+            <h4 style="color: var(--accent-red); font-size: 0.8rem; margin-bottom: 10px;"><i class="fas fa-bolt"></i> GODMODE ADMIN PANEL</h4>
+            <button onclick="setIncognitoWeb3(${nextState})" class="tier-btn" style="width:100%; margin-bottom:10px; background:${btnColor}; color:${btnTextColor}; border:none; padding:10px;"><i class="fas fa-bolt"></i> ${btnText}</button>
+            <input type="text" id="admin-target-wallet" placeholder="Enter Skater Wallet..." style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-red); border-radius: 5px; font-size: 0.7rem; font-family: monospace;">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'ban')" class="tier-btn" style="background:var(--accent-red); color:#fff; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">SUSPEND</button>
+                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'unban')" class="tier-btn" style="background:var(--accent-green); color:#000; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">RESURRECT</button>
+            </div>
+        </div>`;
     }
+
+    if (view === 'skater') {
+        const rank = getRankDisplay(stats.ins, true, wallet); header.innerText = "SKATER IDENTITY & BIO";
+        rEl.innerHTML = rank.icon + " " + rank.title; rEl.style.color = rank.color; picEl.style.borderColor = rank.color;
+        tags.innerHTML = activeProf.styles.map(t => `<span class="style-tag">${t}</span>`).join('');
+        try { const bal = await conn.getBalance(new solanaWeb3.PublicKey(wallet)); bEl.innerText = (bal / 1e9).toFixed(4) + " SOL"; } catch(e) {}
+        
+        let gHtml = ""; gear.dataset.stance = activeProf.stance; gear.dataset.deck = activeProf.deck; gear.dataset.trucks = activeProf.trucks; gear.dataset.spot = activeProf.spot; gear.dataset.yt = activeProf.yt; 
+        if(activeProf.stance) gHtml += `<div class="gear-tag"><i class="fas fa-shoe-prints"></i> ${activeProf.stance}</div>`;
+        if(activeProf.deck) gHtml += `<div class="gear-tag"><i class="fas fa-layer-group"></i> ${activeProf.deck}</div>`;
+        if(activeProf.trucks) gHtml += `<div class="gear-tag"><i class="fas fa-wrench"></i> ${activeProf.trucks}</div>`;
+        if(activeProf.spot) gHtml += `<div class="gear-tag"><i class="fas fa-map-marker-alt"></i> ${activeProf.spot}</div>`;
+        gear.innerHTML = gHtml;
+        
+        document.getElementById('p-sponsor-video-section').style.display = activeProf.yt ? 'block' : 'none';
+        if (activeProf.yt) document.getElementById('p-sponsor-video').src = `https://www.youtube.com/embed/${activeProf.yt}`;
+        document.getElementById('skater-mini-badges-section').style.display = 'block'; document.getElementById('private-feed-btn').style.display = 'block'; document.getElementById('p-sponsor-badges-section').style.display = 'none';
+    } else {
+        const rank = getRankDisplay(stats.outs, false, wallet); header.innerText = "SPONSOR IDENTITY & BIO";
+        rEl.innerHTML = rank.icon + " " + rank.title; rEl.style.color = rank.color; picEl.style.borderColor = rank.color; bEl.innerText = stats.outs.toFixed(4) + " SOL";
+        tags.innerHTML = `<span class="style-tag" style="border-color:var(--accent-gold); color:var(--accent-gold);"><i class="fas fa-star" style="margin-right:5px;"></i> ON-CHAIN SPONSOR</span>`; gear.innerHTML = ""; 
+        document.getElementById('p-sponsor-video-section').style.display = 'none'; document.getElementById('skater-mini-badges-section').style.display = 'none'; document.getElementById('private-feed-btn').style.display = 'none'; document.getElementById('p-sponsor-badges-section').style.display = 'block';
+        
+        let badgesHtml = "";
+        const badgeTiers = [
+            { id: 'flow', isUnlocked: stats.outs >= 0.01, icon: '🥉', title: 'FLOW', color: 'var(--bronze-font)', desc: '0.01 SOL' }, { id: 'am', isUnlocked: stats.outs >= 0.05, icon: '🥈', title: 'SILVER', color: 'var(--silver-font)', desc: '0.05 SOL' }, { id: 'pro', isUnlocked: stats.outs >= 0.1, icon: '🥇', title: 'PRO', color: 'var(--gold-font)', desc: '0.10 SOL' }, { id: 'diamond', isUnlocked: stats.outs >= 1.0, icon: '💎', title: 'DIAMOND', color: 'var(--diamond-font)', desc: '1.0 SOL' }, { id: 'whale', isUnlocked: stats.outs >= 50.0, icon: '🐋', title: 'WHALE', color: 'var(--accent-cyan)', desc: '50 SOL' }, { id: 'sellout', isUnlocked: stats.outs >= 100.0, icon: '🕴️', title: 'CORP SELLOUT', color: 'var(--accent-red)', desc: '100 SOL' }, { id: 'homie', isUnlocked: stats.txCount >= 10, icon: '🤜', title: 'LOCAL HOMIE', color: '#4ade80', desc: '10 BLESSINGS' }, { id: 'plug', isUnlocked: stats.txCount >= 50, icon: '🔌', title: 'THE PLUG', color: '#ff9500', desc: '50 BLESSINGS' }, { id: 'sugar', isUnlocked: stats.txCount >= 100, icon: '🍬', title: 'SUGAR DADDY', color: '#ff2d55', desc: '100 BLESSINGS' }, { id: 'cult', isUnlocked: stats.txCount >= 500, icon: '👁️', title: 'CULT LEADER', color: '#a5d8ff', desc: '500 BLESSINGS' }, { id: 'meat', isUnlocked: stats.txCount >= 1000, icon: '🥩', title: 'HALL OF MEAT', color: '#ff2d55', desc: '1K BLESSINGS' }, { id: 'degen', isUnlocked: stats.outs >= 1000.0, icon: '🐸', title: 'DEGEN DEITY', color: '#4ade80', desc: '1000 SOL' }
+        ];
+
+        badgeTiers.forEach(b => {
+            let isUnlocked = b.isUnlocked || ADMIN_WALLETS.includes(wallet); 
+            if (isUnlocked) {
+                let claimBtn = isOwner ? `<button onclick="claimSponsorReward('${b.id}')" style="background: transparent; color: ${b.color}; border: 1px solid ${b.color}; border-radius: 4px; padding: 6px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; width: 100%; margin-top: 10px;" onmouseover="this.style.background='${b.color}'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='${b.color}';">CLAIM REWARD</button>` : '';
+                badgesHtml += `
+                    <div style="background: rgba(0,0,0,0.4); border: 1px solid ${b.color}; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 0 15px ${b.color}20; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 8px ${b.color});">${b.icon}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: bold;">Unlocked</div>
+                            <div style="font-size: 0.8rem; color: ${b.color}; font-weight: 900;">${b.title}</div>
+                        </div>
+                        ${claimBtn}
+                    </div>`;
+            } else {
+                badgesHtml += `
+                    <div style="background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center; opacity: 0.5; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="font-size: 1.5rem; color: #555; margin-bottom: 10px;"><i class="fas fa-lock"></i></div>
+                        <div style="font-size: 0.55rem; color: #777; text-transform: uppercase; font-weight: bold;">Requires ${b.desc}</div>
+                        <div style="font-size: 0.8rem; color: #555; font-weight: 900;">${b.title}</div>
+                    </div>`;
+            }
+        });
+        document.getElementById('sponsor-badge-grid').innerHTML = badgesHtml;
+    }
+    
+    document.getElementById('edit-profile-btn').style.display = isOwner ? 'block' : 'none';
+    document.getElementById('profile-donate-btn').style.display = isOwner ? 'none' : 'block';
+
+    const existingAdmin = document.getElementById('sk8-admin-panel-wrapper');
+    if (existingAdmin) existingAdmin.remove();
+
+    if(adminPanelHtml) {
+        const wrapper = `<div id="sk8-admin-panel-wrapper">${adminPanelHtml}</div>`;
+        document.getElementById('profile-donate-btn').insertAdjacentHTML('afterend', wrapper);
+    }
+}
+
+function claimSponsorReward(tierId) { alert(`Initiating Web3 claim for ${tierId.toUpperCase()} tier reward (NFTs / $SKATE). Contract linking pending...`); }
+
+function openEditModal() {
+    document.getElementById('edit-name').value = document.getElementById('p-name').innerText;
+    document.getElementById('edit-pic').value = document.getElementById('p-img').src;
+    document.getElementById('edit-bio').value = document.getElementById('p-bio').innerText;
+    const isSponOnly = SPONSOR_ONLY_WALLETS.includes(publicKey);
+    document.getElementById('edit-skater-gear-section').style.display = isSponOnly ? 'none' : 'block';
+    
+    if (!isSponOnly) {
+        const d = document.getElementById('p-gear').dataset;
+        document.getElementById('edit-stance').value = d.stance || ""; 
+        document.getElementById('edit-deck').value = d.deck || "";
+        document.getElementById('edit-trucks').value = d.trucks || ""; 
+        document.getElementById('edit-spot').value = d.spot || "";
+        document.getElementById('edit-yt').value = d.yt ? "https://youtu.be/" + d.yt : "";
+    }
+    document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+
+async function saveProfileWeb3() {
+    if(!publicKey) return; const btn = document.getElementById("save-web3-btn"); btn.innerText = "AWAITING SIGNATURE...";
+    try {
+        const name = document.getElementById("edit-name").value; const pic = document.getElementById("edit-pic").value; const bio = document.getElementById("edit-bio").value; 
+        let stance = "", deck = "", trucks = "", spot = "", yt = "";
+        
+        if (!SPONSOR_ONLY_WALLETS.includes(publicKey)) {
+            stance = document.getElementById("edit-stance").value; deck = document.getElementById("edit-deck").value; trucks = document.getElementById("edit-trucks").value; spot = document.getElementById("edit-spot").value; 
+            const rawYt = document.getElementById("edit-yt").value;
+            if (rawYt) { const m = rawYt.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); yt = (m && m[2].length === 11) ? m[2] : ""; }
+        }
+
+        const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
+        const encoded = new TextEncoder().encode(pData); 
+        if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return; }
+        
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
+        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
+        btn.innerText = "SAVED!"; setTimeout(() => { closeEditModal(); renderProfile(publicKey); btn.innerText = "SAVE"; }, 2000);
+    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SAVE", 3000); }
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.classList.contains('donate-btn') && e.target.id !== 'profile-donate-btn') {
+      if(!publicKey) { alert("Connect Wallet First"); return; }
+      if(e.target.dataset.address === publicKey) { alert("Cannot sponsor yourself."); return; }
+      currentSkaterTarget = e.target.dataset.address; activeVideoId = e.target.dataset.target || null;
+      document.getElementById("sponsor-modal").style.display = "flex";
+  }
 });
 
+function openSponsorshipModalFromProfile() {
+    currentSkaterTarget = document.getElementById('p-wallet').innerText;
+    if (currentSkaterTarget === publicKey) { alert("Cannot sponsor yourself."); return; }
+    activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
+function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
+function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
+function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
+function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
+function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+function sendCustomTreasury() { const amt = parseFloat(document.getElementById('custom-treasury-amt').value); if(amt > 0) sendDonation(amt); }
+function sendCustomSponsor() { const amt = parseFloat(document.getElementById('custom-sponsor-amt').value); if(amt > 0) selectAmount(amt); }
+
+async function sendSOL(amount, dest) {
+  try {
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
+    const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(dest), lamports: Math.floor(amount * 1e9) }));
+    tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+    await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
+    document.getElementById('jingle').play().catch(e => {}); closeModal(); closeTreasuryModal();
+    if (activeVideoId && publicKey) {
+        let u = JSON.parse(localStorage.getItem('sk8_unlocks_' + publicKey) || "[]");
+        if (!u.includes(activeVideoId)) { u.push(activeVideoId); localStorage.setItem('sk8_unlocks_' + publicKey, JSON.stringify(u)); }
+    }
+    setTimeout(() => { 
+        document.getElementById("success-modal").style.display = "flex"; createConfetti(); fetchBalance(); checkPersistence(); 
+        if(document.getElementById('profile-content').style.display === 'block') renderProfile(document.getElementById('p-wallet').innerText); 
+        if(document.getElementById('feed-content').style.display === 'block') attemptFeedAccess();
+        fetchHeaderDualRank(publicKey); 
+    }, 1500);
+  } catch (err) {}
+}
+
+async function castReaction(postId, emoji, costStr) {
+    if(!publicKey) { alert("Connect Wallet to react!"); return; }
+    const costSOL = parseFloat(costStr);
+    if(!confirm(`Drop a ${emoji} reaction? Requires a ${costSOL} SOL tip to the skater.`)) return;
+
+    try {
+        const pData = JSON.stringify({ sk8react: "v1", post: postId, react: emoji });
+        const encoded = new TextEncoder().encode(pData); 
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey); const to = new solanaWeb3.PublicKey(activeFeedWallet); 
+        const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: Math.floor(costSOL * 1e9) })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
+        alert(`Reaction ${emoji} locked on-chain!`); attemptFeedAccess();
+    } catch (err) { alert("Reaction failed."); }
+}
+
+function createConfetti() {
+  for (let i = 0; i < 50; i++) {
+    const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 95 + '%'; 
+    c.style.backgroundColor = ['#ff2d55','#ff9500','#00f0ff','#ffd700'][Math.floor(Math.random() * 4)];
+    c.style.animationDuration = (Math.random() * 3 + 2) + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
+  }
+}
+
+function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
+
+async function attemptFeedAccess() {
+    if(!publicKey) { alert("Connect Wallet First"); return; }
+    activeFeedWallet = document.getElementById('p-wallet').innerText;
+    let skaterName = document.getElementById('p-name').innerText;
+    
+    document.getElementById('mobile-nav').classList.remove('open');
+    ["home", "video", "leaderboard", "donate", "profile", "dao"].forEach(id => {
+        let el = document.getElementById(id + "-content"); if(el) el.style.display = 'none';
+    });
+    let feedContent = document.getElementById("feed-content"); if(feedContent) feedContent.style.display = 'block'; window.scrollTo(0,0);
+
+    let feedTitle = document.getElementById('feed-header-title'); if(feedTitle) feedTitle.innerText = `${skaterName}'S FEED`;
+    let postBox = document.getElementById('post-create-box'); if(postBox) postBox.style.display = 'none';
+    let paywall = document.getElementById('feed-paywall-overlay'); if(paywall) paywall.style.display = 'none';
+    let loadBtn = document.getElementById('load-more-feed-btn'); if(loadBtn) loadBtn.style.display = 'none';
+    let feedItems = document.getElementById('actual-feed-items'); if(feedItems) feedItems.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;"><i class="fas fa-spinner fa-spin"></i> Scanning blockchain history...</div>';
+
+    feedRenderLimit = FEED_LIMIT; currentSkaterPosts = [];
+    let isOwner = (publicKey === activeFeedWallet); let hasAccess = isOwner;
+
+    if (!isOwner) { const requiredSOL = 0.05; hasAccess = await verifySponsorshipTier(publicKey, activeFeedWallet, requiredSOL); }
+
+    if (hasAccess) { if(isOwner && postBox) postBox.style.display = 'block'; fetchSkaterFeed(activeFeedWallet, false); } 
+    else { if(paywall) paywall.style.display = 'flex'; fetchSkaterFeed(activeFeedWallet, true); }
+}
+
+async function verifySponsorshipTier(sponsorPubKey, skaterPubKey, requiredSOL) {
+    if (ADMIN_WALLETS.includes(sponsorPubKey)) { return true; }
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); let totalDonated = 0;
+    try {
+        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterPubKey), { limit: 50 });
+        for(let s of sigs) {
+            const tx = await conn.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 });
+            if(tx) {
+                const keys = tx.transaction.message.staticAccountKeys.map(k=>k.toString());
+                if(keys[0] === sponsorPubKey) { 
+                    const skaterIdx = keys.indexOf(skaterPubKey);
+                    if(skaterIdx !== -1) {
+                        const pre = tx.meta.preBalances[skaterIdx]; const post = tx.meta.postBalances[skaterIdx];
+                        const diff = (post - pre) / solanaWeb3.LAMPORTS_PER_SOL; if (diff > 0) totalDonated += diff;
+                    }
+                }
+            }
+        }
+    } catch(e) {}
+    const buffer = 0.001; return totalDonated >= (requiredSOL - buffer);
+}
+
+async function fetchSkaterFeed(wallet, isBlurred) {
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    currentSkaterPosts = []; let reactionMap = {};
+
+    try {
+        const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 80 });
+        for (let s of sigs) { 
+            if(s.memo) {
+                if(s.memo.includes('"sk8post":"v1"')) { 
+                    const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+                    currentSkaterPosts.push({ id: s.signature, text: d.text, yt: d.yt, ig: d.ig, time: s.blockTime, totalDonated: 0 });
+                }
+                else if (s.memo.includes('"sk8react":"v1"')) {
+                    const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+                    if(!reactionMap[d.post]) reactionMap[d.post] = { '🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0, totalSOL: 0 };
+                    
+                    if(reactionMap[d.post][d.react] !== undefined) {
+                        reactionMap[d.post][d.react]++;
+                        let cost = 0;
+                        if(d.react === '🔥') cost = 0.001; if(d.react === '🤮') cost = 0.002; if(d.react === '⭐') cost = 0.006;
+                        if(d.react === '🧈') cost = 0.018; if(d.react === '🥩') cost = 0.054; if(d.react === '💪') cost = 0.100;
+                        reactionMap[d.post].totalSOL += cost;
+                    }
+                }
+            }
+        }
+    } catch(e) {}
+    
+    currentSkaterPosts.forEach(p => {
+        if(reactionMap[p.id]) { p.reactions = reactionMap[p.id]; p.totalDonated = reactionMap[p.id].totalSOL; } 
+        else { p.reactions = { '🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0 }; }
+    });
+
+    renderFeedGrid(isBlurred);
+}
+
+function renderFeedGrid(isBlurred) {
+    const container = document.getElementById('actual-feed-items'); const loadMoreBtn = document.getElementById('load-more-feed-btn');
+    if (currentSkaterPosts.length === 0) { if(container) container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;">No feed entries found on-chain.</div>`; return; }
+
+    let toRender = currentSkaterPosts.slice(0, feedRenderLimit); let html = ""; let isOwner = (publicKey === activeFeedWallet);
+
+    toRender.forEach(p => {
+        let dateStr = new Date(p.time * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        let mediaHtml = ""; let platformIcon = "";
+        
+        if(p.yt) {
+            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-youtube" style="color:#ff2d55;"></i></div>`;
+            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.youtube.com/embed/${p.yt}" allowfullscreen></iframe></div>`;
+        } else if (p.ig) {
+            platformIcon = `<div class="feed-platform-icon"><i class="fab fa-instagram" style="color:#ff2d55;"></i></div>`;
+            mediaHtml = `<div class="feed-grid-media">${platformIcon}<iframe src="https://www.instagram.com/p/${p.ig}/embed" scrolling="no" allowtransparency="true"></iframe></div>`;
+        } else {
+            mediaHtml = `<div class="feed-grid-media" style="background: linear-gradient(45deg, #0a132f, #0f1a47); display:flex; align-items:center; justify-content:center;"><i class="fas fa-skating" style="font-size:3rem; color:rgba(0,240,255,0.1);"></i></div>`;
+        }
+
+        let donatedSOL = p.totalDonated || 0; let usdVal = (donatedSOL * solPrice).toFixed(2); let rx = p.reactions;
+        let blessBtn = isOwner ? "" : `<button class="feed-bless-btn" onclick="openSponsorshipModalFromFeed('${p.id}')">BLESS CLIP</button>`;
+
+        html += `<div class="feed-grid-item" style="${isBlurred ? 'filter: blur(8px); opacity: 0.5;' : ''}">
+                    ${mediaHtml}
+                    <div class="feed-grid-content">
+                        <div class="feed-grid-text">${p.text || ""}</div>
+                        <div class="feed-grid-date" style="margin-bottom: 10px;">${dateStr}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                            <span style="color:var(--text-secondary); font-size: 0.65rem; text-transform: uppercase;">Clip Treasury:</span>
+                            <span style="color:var(--accent-green); font-family:monospace; font-weight:bold;">${donatedSOL.toFixed(4)} SOL <span style="color:#888;">($${usdVal})</span></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom: ${isOwner ? '0' : '15px'}; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px;">
+                            <button onclick="castReaction('${p.id}', '🔥', '0.001')" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1.1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '🤮', '0.002')" class="reaction-btn ${rx['🤮']>0 ? 'has-votes' : ''}" title="Gross Style (0.002 SOL)"><span style="font-size: 1.1rem;">🤮</span><span>${rx['🤮']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '⭐', '0.006')" class="reaction-btn ${rx['⭐']>0 ? 'has-votes' : ''}" title="Great (0.006 SOL)"><span style="font-size: 1.1rem;">⭐</span><span>${rx['⭐']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '🧈', '0.018')" class="reaction-btn ${rx['🧈']>0 ? 'has-votes' : ''}" title="Butter (0.018 SOL)"><span style="font-size: 1.1rem;">🧈</span><span>${rx['🧈']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '🥩', '0.054')" class="reaction-btn ${rx['🥩']>0 ? 'has-votes' : ''}" title="Hall of Meat (0.054 SOL)"><span style="font-size: 1.1rem;">🥩</span><span>${rx['🥩']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '💪', '0.100')" class="reaction-btn ${rx['💪']>0 ? 'has-votes' : ''}" title="Flex (0.1 SOL)"><span style="font-size: 1.1rem;">💪</span><span>${rx['💪']||0}</span></button>
+                        </div>
+                        ${blessBtn}
+                    </div>
+                 </div>`;
+    });
+    if(container) container.innerHTML = html;
+    if(!isBlurred && currentSkaterPosts.length > feedRenderLimit) { if(loadMoreBtn) loadMoreBtn.style.display = "block"; } else { if(loadMoreBtn) loadMoreBtn.style.display = "none"; }
+}
+
+function loadMoreFeed() { feedRenderLimit += FEED_LIMIT; renderFeedGrid(false); }
+
+function openSponsorshipModalFromFeed(postId) { currentSkaterTarget = activeFeedWallet; activeVideoId = postId || null; document.getElementById('sponsor-modal').style.display = 'flex'; }
+
+async function publishToFeed() {
+    if(!publicKey) return; const btn = document.getElementById("publish-feed-btn"); btn.innerText = "AWAITING SIGNATURE...";
+    try {
+        const text = document.getElementById("new-post-text").value; const rawLink = document.getElementById("new-post-link").value;
+        let yt = ""; let ig = "";
+        
+        if (rawLink) { 
+            const ytMatch = rawLink.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); 
+            if (ytMatch && ytMatch[2].length === 11) yt = ytMatch[2]; 
+            const igMatch = rawLink.match(/(?:instagram\.com\/)(?:p|reel)\/([a-zA-Z0-9_-]+)/i);
+            if (igMatch) ig = igMatch[1];
+        }
+        
+        if(!text && !yt && !ig) { alert("Cannot post empty data."); btn.innerText = "SIGN & POST TO CHAIN"; return; }
+
+        const pData = JSON.stringify({ sk8post: "v1", text, yt, ig });
+        const encoded = new TextEncoder().encode(pData); 
+        if (encoded.length > 566) { alert(`Post too long for Memo! Shorten your text.`); btn.innerText = "SIGN & POST TO CHAIN"; return; }
+        
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
+        const tx = new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
+        btn.innerText = "POSTED!"; document.getElementById("new-post-text").value = ""; document.getElementById("new-post-link").value = "";
+        setTimeout(() => { btn.innerText = "SIGN & POST TO CHAIN"; attemptFeedAccess(); }, 2000);
+    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SIGN & POST TO CHAIN", 3000); }
+}
+
 window.addEventListener('load', async () => {
+    // Dynamic UI Injectors using safe insertAdjacentHTML so we don't break existing link event listeners
     const donatePage = document.getElementById("donate-content");
     if(donatePage && !document.getElementById("donate-sponsors-list")) {
         donatePage.insertAdjacentHTML('beforeend', `
@@ -1914,6 +1784,7 @@ window.addEventListener('load', async () => {
     else checkPersistence();
 });
 </script>
-
 </body>
 </html>
+
+        
