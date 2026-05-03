@@ -752,6 +752,7 @@ let publicKey = null; let provider = null; let solPrice = 0; let activeVideoId =
 let allTreasurySponsors = [], allSkaterHits = [], activeFeedWallet = "", currentSkaterPosts = [];
 let activeProposals = [], closedProposals = [], bannedWallets = [];
 let globalAdminIncognito = false; 
+let globalVideoState = {}; 
 
 const DAO_TTL_SECONDS = 7 * 24 * 60 * 60; 
 const DAO_VOTE_FEE = 0.001; 
@@ -760,7 +761,7 @@ let feedRenderLimit = FEED_LIMIT;
 
 // ========== NEW TRANSMISSION ENGINE ==========
 const HELIUS_KEY = "29c35e1d-2cbb-4f50-b9fd-7df5a828e6bb";
-const RPC_URL = `https://beta.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+const RPC_URL = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
 const REST_API_BASE = `https://api-mainnet.helius-rpc.com/v0/addresses`;
 const TREASURY_WALLET = "5xC5dQwRTqt6GvLurRJ4yxpBPmYM9egXQ1NokH4xFTNc";
 const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
@@ -788,12 +789,115 @@ const SKATER_PROFILES = [
 ];
 
 const pingDelay = ms => new Promise(res => setTimeout(res, ms));
-
 async function getSolPrice() { try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'); const d = await r.json(); solPrice = d.solana.usd; } catch (e) {} }
 function getProvider() { if ("phantom" in window) { const p = window.phantom?.solana; if (p?.isPhantom) return p; } return null; }
 function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 function toggleMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
 function updateDonateButtons() { document.querySelectorAll('#video-content .donate-btn').forEach(btn => { if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; else btn.style.display = ''; }); }
+
+function getReactionHtml(postId, targetWallet, isLocked) {
+    let state = globalVideoState[postId] || { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
+    let rx = state.reactions; let usdVal = (state.totalSOL * solPrice).toFixed(2);
+    let isOwner = (publicKey === targetWallet); let isAdmin = ADMIN_WALLETS.includes(publicKey);
+    let effectivelyLocked = state.locked !== undefined ? state.locked : isLocked; 
+    
+    let toggleHtml = "";
+    if (isOwner || isAdmin) {
+        toggleHtml = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+            <span style="font-size:0.65rem; color:var(--text-secondary); text-transform:uppercase;">${effectivelyLocked ? '<i class="fas fa-lock" style="color:var(--accent-red);"></i> LOCKED' : '<i class="fas fa-unlock" style="color:var(--accent-green);"></i> FREE'}</span>
+            <label class="switch" style="transform: scale(0.8); margin: 0;"><input type="checkbox" onchange="toggleVideoLock('${postId}', '${targetWallet}', ${effectivelyLocked})" ${effectivelyLocked ? '' : 'checked'}><span class="slider"></span></label>
+        </div>`;
+    }
+    return `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 10px; margin-bottom: 5px; font-size: 0.75rem;">
+        <span style="color:var(--text-secondary); font-size: 0.60rem; text-transform: uppercase;">Clip Treasury:</span>
+        <span style="color:var(--accent-green); font-family:monospace; font-weight:bold;">${state.totalSOL.toFixed(4)} SOL <span style="color:#888; font-size:0.65rem;">($${usdVal})</span></span>
+    </div>
+    <div style="display:flex; justify-content:space-between; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px;">
+        <button onclick="castReaction('${postId}', '${targetWallet}', '🔥', 0.001)" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
+        <button onclick="castReaction('${postId}', '${targetWallet}', '🤮', 0.002)" class="reaction-btn ${rx['🤮']>0 ? 'has-votes' : ''}" title="Gross Style (0.002 SOL)"><span style="font-size: 1rem;">🤮</span><span>${rx['🤮']||0}</span></button>
+        <button onclick="castReaction('${postId}', '${targetWallet}', '⭐', 0.006)" class="reaction-btn ${rx['⭐']>0 ? 'has-votes' : ''}" title="Great (0.006 SOL)"><span style="font-size: 1rem;">⭐</span><span>${rx['⭐']||0}</span></button>
+        <button onclick="castReaction('${postId}', '${targetWallet}', '🧈', 0.018)" class="reaction-btn ${rx['🧈']>0 ? 'has-votes' : ''}" title="Butter (0.018 SOL)"><span style="font-size: 1rem;">🧈</span><span>${rx['🧈']||0}</span></button>
+        <button onclick="castReaction('${postId}', '${targetWallet}', '🥩', 0.054)" class="reaction-btn ${rx['🥩']>0 ? 'has-votes' : ''}" title="Hall of Meat (0.054 SOL)"><span style="font-size: 1rem;">🥩</span><span>${rx['🥩']||0}</span></button>
+        <button onclick="castReaction('${postId}', '${targetWallet}', '💪', 0.100)" class="reaction-btn ${rx['💪']>0 ? 'has-votes' : ''}" title="Flex (0.1 SOL)"><span style="font-size: 1rem;">💪</span><span>${rx['💪']||0}</span></button>
+    </div>${toggleHtml}`;
+}
+
+// RESTORED BADGE RENDERING
+function renderSponsorBadges(solAmount, isOwner) {
+    const BADGE_MILESTONES = [
+        { req: 0.01, name: "FLOW TIER", icon: "🛹" }, { req: 0.05, name: "AM TIER", icon: "🥉" },
+        { req: 0.10, name: "PRO STATUS", icon: "🥈" }, { req: 0.25, name: "LOCAL LEGEND", icon: "🥇" },
+        { req: 0.50, name: "STREET KING", icon: "👑" }, { req: 1.00, name: "DECK MASTER", icon: "🛠️" },
+        { req: 2.50, name: "WAX PORTAL", icon: "📦" }, { req: 5.00, name: "VIDEO STAR", icon: "📼" },
+        { req: 10.0, name: "MAG COVER", icon: "📖" }, { req: 25.0, name: "THRASHER", icon: "🔥" },
+        { req: 50.0, name: "HALL OF FAME", icon: "🏆" }, { req: 100.0, name: "PROTOCOL GOD", icon: "⚡" }
+    ];
+    let html = "";
+    BADGE_MILESTONES.forEach(b => {
+        let unlocked = solAmount >= b.req;
+        let rewardBtnHtml = (unlocked && isOwner) ? `<button onclick="alert('Contract linking pending for ${b.name} rewards. Check Discord for updates on NFT and $SKATE token drops.')" style="margin-top: 8px; width: 100%; background: var(--accent-cyan); color: #000; border: none; padding: 4px; border-radius: 4px; font-size: 0.55rem; font-weight: bold; cursor: pointer; text-transform: uppercase;">CLAIM REWARD</button>` : '';
+        html += `
+        <div style="background: var(--bg-panel); border: 1px solid ${unlocked ? 'var(--accent-gold)' : 'rgba(0,240,255,0.1)'}; border-radius: 12px; padding: 12px; text-align: center; opacity: ${unlocked ? '1' : '0.4'}; filter: ${unlocked ? 'none' : 'grayscale(1)'}; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="font-size: 1.8rem; margin-bottom: 5px; filter: ${unlocked ? 'drop-shadow(0 0 8px rgba(255,215,0,0.4))' : 'none'};">${unlocked ? b.icon : '🔒'}</div>
+                <div style="font-size: 0.6rem; color: ${unlocked ? 'var(--accent-gold)' : 'var(--text-secondary)'}; font-weight: bold; text-transform: uppercase;">${b.name}</div>
+                <div style="font-size: 0.55rem; color: var(--text-secondary); margin-top: 4px; font-family: monospace;">${b.req} SOL</div>
+            </div>${rewardBtnHtml}
+        </div>`;
+    });
+    const grid = document.getElementById("sponsor-badge-grid");
+    if (grid) grid.innerHTML = html;
+}
+
+// =========================================================================
+// HELIUS TRUE WEB3 OVERHAUL - No LocalStorage, No getTransaction Exhaustion
+// =========================================================================
+
+// MACRO THROTTLED PARALLEL SWEEP (1000 sigs, 90-day true memory)
+async function syncGlobalVideos(wallets) {
+    const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
+    let uniqueWallets = [...new Set(wallets)];
+    globalVideoState = {}; // Pure Web3 Wipe & Load
+    
+    for(let i = 0; i < uniqueWallets.length; i+= 10) { 
+        let chunk = uniqueWallets.slice(i, i+10);
+        await Promise.all(chunk.map(async (wallet) => {
+            try {
+                const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(wallet), { limit: 1000 });
+                for (let s of sigs) {
+                    if(s.memo) {
+                        if (s.memo.includes('"sk8vid":"v1"')) {
+                            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+                            if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: d.locked, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
+                            if(globalVideoState[d.post].locked === undefined) globalVideoState[d.post].locked = d.locked;
+                        }
+                        else if (s.memo.includes('"sk8react":"v1"')) {
+                            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+                            if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
+                            if(globalVideoState[d.post].reactions[d.react] !== undefined) {
+                                globalVideoState[d.post].reactions[d.react]++;
+                                let cost = 0;
+                                if(d.react === '🔥') cost = 0.001; if(d.react === '🤮') cost = 0.002;
+                                if(d.react === '⭐') cost = 0.006; if(d.react === '🧈') cost = 0.018; 
+                                if(d.react === '🥩') cost = 0.054; if(d.react === '💪') cost = 0.100;
+                                globalVideoState[d.post].totalSOL += cost;
+                            }
+                        }
+                        // TRUE TALLY: Reading precise donation histories directly from memo stream
+                        else if (s.memo.includes('"sk8spon":"v1"')) {
+                            const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
+                            if (!globalVideoState[d.post]) globalVideoState[d.post] = { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
+                            globalVideoState[d.post].totalSOL += parseFloat(d.amt || 0);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }));
+        await pingDelay(50); // Micro-throttle 
+    }
+}
 
 async function syncAdminState() {
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
@@ -825,6 +929,7 @@ async function syncAdminState() {
     } catch(e) {}
 }
 
+// HELIUS REST API - Eliminates 300+ getTransaction requests for wallet balances
 async function fetchWalletStats(wallet) {
     let ins = 0; let outs = 0; let txCount = 0;
     try {
@@ -967,7 +1072,7 @@ async function getSkaterNameSafe(wallet) {
     let name = await resolveWalletName(wallet); nameCache[wallet] = name; return name;
 }
 
-// HELIUS REST API - Global Leaderboard 
+// HELIUS REST API - Global Leaderboard (Zero RPC Strain, Pure Read)
 async function refreshLeaderboardData() {
     const loaderHtml = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain Activity...</li>";
     ["treasury-sponsors-list", "donate-sponsors-list", "skater-sponsors-list", "donate-recent-list"].forEach(id => {
@@ -999,34 +1104,30 @@ async function refreshLeaderboardData() {
         }
     } catch(e) {}
 
-    // Sweep Skaters
+    // Sweep Skaters (REST Fetch - 1 call per skater)
     try {
         const activeRegistry = SKATER_REGISTRY.filter(w => !bannedWallets.includes(w));
-        for(let i=0; i<activeRegistry.length; i+=10) {
-            let chunk = activeRegistry.slice(i, i+10);
-            await Promise.all(chunk.map(async (skaterWallet) => {
-                try {
-                    const r = await fetch(`${REST_API_BASE}/${skaterWallet}/transactions/?api-key=${HELIUS_KEY}&limit=50`);
-                    const txs = await r.json();
-                    if(Array.isArray(txs)) {
-                        txs.forEach(tx => {
-                            if (tx.nativeTransfers) {
-                                tx.nativeTransfers.forEach(tf => {
-                                    if (tf.toUserAccount === skaterWallet && tf.fromUserAccount !== skaterWallet && tf.fromUserAccount !== TREASURY_WALLET) {
-                                        const amt = tf.amount / 1e9;
-                                        if (amt > 0.001) {
-                                            aggSkaterSponsors[tf.fromUserAccount] = (aggSkaterSponsors[tf.fromUserAccount] || 0) + amt;
-                                            recentSkaterHits.push({ sponsor: tf.fromUserAccount, targetAddr: skaterWallet, amount: amt, time: tx.timestamp });
-                                        }
+        await Promise.all(activeRegistry.map(async (skaterWallet) => {
+            try {
+                const r = await fetch(`${REST_API_BASE}/${skaterWallet}/transactions/?api-key=${HELIUS_KEY}&limit=50`);
+                const txs = await r.json();
+                if(Array.isArray(txs)) {
+                    txs.forEach(tx => {
+                        if (tx.nativeTransfers) {
+                            tx.nativeTransfers.forEach(tf => {
+                                if (tf.toUserAccount === skaterWallet && tf.fromUserAccount !== skaterWallet && tf.fromUserAccount !== TREASURY_WALLET) {
+                                    const amt = tf.amount / 1e9;
+                                    if (amt > 0.001) {
+                                        aggSkaterSponsors[tf.fromUserAccount] = (aggSkaterSponsors[tf.fromUserAccount] || 0) + amt;
+                                        recentSkaterHits.push({ sponsor: tf.fromUserAccount, targetAddr: skaterWallet, amount: amt, time: tx.timestamp });
                                     }
-                                });
-                            }
-                        });
-                    }
-                } catch(e) {}
-            }));
-            await pingDelay(50);
-        }
+                                }
+                            });
+                        }
+                    });
+                }
+            } catch(e) {}
+        }));
     } catch(e) {}
 
     let rawTreasury = Object.keys(aggTreasury).map(addr => ({ addr, val: aggTreasury[addr] }));
@@ -1327,66 +1428,95 @@ async function adminAction(targetWallet, action) {
     } catch(e) { alert("Admin action failed."); }
 }
 
-function renderSponsorBadges(solAmount, isOwner) {
-    const BADGE_MILESTONES = [
-        { req: 0.01, name: "FLOW TIER", icon: "🛹" }, { req: 0.05, name: "AM TIER", icon: "🥉" },
-        { req: 0.10, name: "PRO STATUS", icon: "🥈" }, { req: 0.25, name: "LOCAL LEGEND", icon: "🥇" },
-        { req: 0.50, name: "STREET KING", icon: "👑" }, { req: 1.00, name: "DECK MASTER", icon: "🛠️" },
-        { req: 2.50, name: "WAX PORTAL", icon: "📦" }, { req: 5.00, name: "VIDEO STAR", icon: "📼" },
-        { req: 10.0, name: "MAG COVER", icon: "📖" }, { req: 25.0, name: "THRASHER", icon: "🔥" },
-        { req: 50.0, name: "HALL OF FAME", icon: "🏆" }, { req: 100.0, name: "PROTOCOL GOD", icon: "⚡" }
-    ];
-    let html = "";
-    BADGE_MILESTONES.forEach(b => {
-        let unlocked = solAmount >= b.req;
-        let rewardBtnHtml = (unlocked && isOwner) ? `<button onclick="alert('Contract linking pending for ${b.name} rewards. Check Discord for updates on NFT and $SKATE token drops.')" style="margin-top: 8px; width: 100%; background: var(--accent-cyan); color: #000; border: none; padding: 4px; border-radius: 4px; font-size: 0.55rem; font-weight: bold; cursor: pointer; text-transform: uppercase;">CLAIM REWARD</button>` : '';
-        html += `
-        <div style="background: var(--bg-panel); border: 1px solid ${unlocked ? 'var(--accent-gold)' : 'rgba(0,240,255,0.1)'}; border-radius: 12px; padding: 12px; text-align: center; opacity: ${unlocked ? '1' : '0.4'}; filter: ${unlocked ? 'none' : 'grayscale(1)'}; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="font-size: 1.8rem; margin-bottom: 5px; filter: ${unlocked ? 'drop-shadow(0 0 8px rgba(255,215,0,0.4))' : 'none'};">${unlocked ? b.icon : '🔒'}</div>
-                <div style="font-size: 0.6rem; color: ${unlocked ? 'var(--accent-gold)' : 'var(--text-secondary)'}; font-weight: bold; text-transform: uppercase;">${b.name}</div>
-                <div style="font-size: 0.55rem; color: var(--text-secondary); margin-top: 4px; font-family: monospace;">${b.req} SOL</div>
-            </div>${rewardBtnHtml}
-        </div>`;
-    });
-    const grid = document.getElementById("sponsor-badge-grid");
-    if(grid) grid.innerHTML = html;
+async function toggleVideoLock(postId, targetWallet, currentlyLocked) {
+    if(!publicKey) return;
+    let newState = !currentlyLocked;
+    let actionText = newState ? "LOCK" : "UNLOCK (Make Free)";
+    if(!confirm(`Are you sure you want to ${actionText} this video?`)) return;
+
+    try {
+        const pData = JSON.stringify({ sk8vid: "v1", post: postId, locked: newState });
+        const encoded = new TextEncoder().encode(pData); 
+        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
+        const from = new solanaWeb3.PublicKey(publicKey);
+        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
+        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
+        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
+        alert(`Video ${newState ? 'LOCKED' : 'UNLOCKED'}!`);
+        setTimeout(() => {
+            if(document.getElementById('profile-content').style.display === 'block') { renderProfile(targetWallet); }
+            else if(document.getElementById('feed-content').style.display === 'block') { attemptFeedAccess(); }
+            else { window.location.reload(); }
+        }, 2500);
+    } catch(e) { alert("Action failed."); }
 }
 
-// PURE WEB3: Verify unlocks using direct memo scanning to avoid death loops
+// PURE WEB3: Verify unlocks purely by querying the Helius API directly
 async function checkPersistence() {
     let isAdmin = publicKey && ADMIN_WALLETS.includes(publicKey);
     const cards = document.querySelectorAll('.video-card');
+    let targetWallets = [];
+    for (let card of cards) {
+        let w = card.querySelector('.donate-btn')?.dataset.address;
+        if(w) targetWallets.push(w);
+    }
     
-    let unlockedClips = [];
+    await syncGlobalVideos(targetWallets);
+
+    let userSponsors = [];
     if (publicKey && !isAdmin) {
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
         try {
-            const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(publicKey), { limit: 1000 });
-            for (let s of sigs) {
-                if (s.memo && s.memo.includes('"sk8spon":"v1"')) {
-                    try {
-                        const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                        if (d.post && !unlockedClips.includes(d.post)) unlockedClips.push(d.post);
-                    } catch(e) {}
-                }
+            const url = `${REST_API_BASE}/${publicKey}/transactions/?api-key=${HELIUS_KEY}&limit=100`;
+            const r = await fetch(url);
+            const txs = await r.json();
+            if(Array.isArray(txs)) {
+                txs.forEach(tx => {
+                    if(tx.nativeTransfers) {
+                        tx.nativeTransfers.forEach(tf => {
+                            if(tf.fromUserAccount === publicKey && tf.amount > 0) {
+                                userSponsors.push(tf.toUserAccount);
+                            }
+                        });
+                    }
+                });
             }
         } catch(e) {}
     }
 
-    cards.forEach(card => {
+    for (let card of cards) {
         let iframe = card.querySelector('iframe');
-        if (!publicKey) { card.classList.remove('unlocked'); if (iframe) iframe.src = ""; return; }
+        let targetWallet = card.querySelector('.donate-btn')?.dataset.address;
+        if (!targetWallet) continue;
+
+        let postId = card.id;
+        let vState = globalVideoState[postId] || { locked: true };
         
-        if (isAdmin || unlockedClips.includes(card.id)) { 
+        let isFree = !vState.locked;
+        
+        let rxDiv = card.querySelector('.reaction-container');
+        if (rxDiv) {
+            rxDiv.innerHTML = getReactionHtml(postId, targetWallet, !isFree);
+        }
+
+        if (!publicKey) { 
+            if(isFree) {
+                if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
+                card.classList.add('unlocked'); 
+            } else {
+                card.classList.remove('unlocked'); 
+                if (iframe) iframe.src = ""; 
+            }
+            continue; 
+        }
+        
+        if (isAdmin || isFree || userSponsors.includes(targetWallet) || publicKey === targetWallet) { 
             if (iframe && iframe.src !== iframe.dataset.src) iframe.src = iframe.dataset.src; 
             card.classList.add('unlocked'); 
-        } 
-        else { 
+        } else { 
             card.classList.remove('unlocked'); 
             if (iframe) iframe.src = ""; 
         }
-    });
+    }
 }
 
 // PERSISTENT HASH ROUTER
@@ -1562,6 +1692,8 @@ async function saveProfileWeb3() {
         const name = document.getElementById("edit-name").value; const pic = document.getElementById("edit-pic").value;
         const bio = document.getElementById("edit-bio").value; 
         let stance = "", deck = "", trucks = "", spot = "", yt = "";
+        let isFree = document.getElementById("edit-free-toggle") ? document.getElementById("edit-free-toggle").checked : false;
+
         if (!SPONSOR_ONLY_WALLETS.includes(publicKey)) {
             stance = document.getElementById("edit-stance").value; deck = document.getElementById("edit-deck").value;
             trucks = document.getElementById("edit-trucks").value; spot = document.getElementById("edit-spot").value; 
@@ -1571,7 +1703,7 @@ async function saveProfileWeb3() {
             }
         }
 
-        const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
+        const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt, free: isFree });
         const encoded = new TextEncoder().encode(pData); 
         if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return; }
         
@@ -1636,7 +1768,7 @@ async function sendSOL(amount, dest) {
   } catch (err) {}
 }
 
-async function castReaction(postId, emoji, costStr) {
+async function castReaction(postId, targetWallet, emoji, costStr) {
     if(!publicKey) { alert("Connect Wallet to react!"); return; }
     const costSOL = parseFloat(costStr);
     if(!confirm(`Drop a ${emoji} reaction? Requires a ${costSOL} SOL tip to the skater.`)) return;
@@ -1644,11 +1776,11 @@ async function castReaction(postId, emoji, costStr) {
         const pData = JSON.stringify({ sk8react: "v1", post: postId, react: emoji });
         const encoded = new TextEncoder().encode(pData); 
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(activeFeedWallet); 
+        const to = new solanaWeb3.PublicKey(targetWallet); 
         const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: Math.floor(costSOL * 1e9) })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
         tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
         await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert(`Reaction ${emoji} locked on-chain!`); attemptFeedAccess();
+        alert(`Reaction ${emoji} locked on-chain!`); checkPersistence(); 
     } catch (err) { alert("Reaction failed."); }
 }
 
@@ -1687,10 +1819,10 @@ async function attemptFeedAccess() {
     let isOwner = (publicKey === activeFeedWallet); let hasAccess = isOwner;
 
     if (!isOwner) { 
-        // Use REST API to check if user sponsored the active feed wallet >= 0.05 SOL
         let totalDonated = 0;
         try {
-            const r = await fetch(`${REST_API_BASE}/${publicKey}/transactions/?api-key=${HELIUS_KEY}&limit=100`);
+            const url = `${REST_API_BASE}/${publicKey}/transactions/?api-key=${HELIUS_KEY}&limit=100`;
+            const r = await fetch(url);
             const txs = await r.json();
             if(Array.isArray(txs)) {
                 txs.forEach(tx => {
@@ -1789,12 +1921,12 @@ function renderFeedGrid(isBlurred) {
                             <span style="color:var(--accent-green); font-family:monospace; font-weight:bold;">${donatedSOL.toFixed(4)} SOL <span style="color:#888;">($${usdVal})</span></span>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom: ${isOwner ? '0' : '15px'}; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px;">
-                            <button onclick="castReaction('${p.id}', '🔥', '0.001')" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1.1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
-                            <button onclick="castReaction('${p.id}', '🤮', '0.002')" class="reaction-btn ${rx['🤮']>0 ? 'has-votes' : ''}" title="Gross Style (0.002 SOL)"><span style="font-size: 1.1rem;">🤮</span><span>${rx['🤮']||0}</span></button>
-                            <button onclick="castReaction('${p.id}', '⭐', '0.006')" class="reaction-btn ${rx['⭐']>0 ? 'has-votes' : ''}" title="Great (0.006 SOL)"><span style="font-size: 1.1rem;">⭐</span><span>${rx['⭐']||0}</span></button>
-                            <button onclick="castReaction('${p.id}', '🧈', '0.018')" class="reaction-btn ${rx['🧈']>0 ? 'has-votes' : ''}" title="Butter (0.018 SOL)"><span style="font-size: 1.1rem;">🧈</span><span>${rx['🧈']||0}</span></button>
-                            <button onclick="castReaction('${p.id}', '🥩', '0.054')" class="reaction-btn ${rx['🥩']>0 ? 'has-votes' : ''}" title="Hall of Meat (0.054 SOL)"><span style="font-size: 1.1rem;">🥩</span><span>${rx['🥩']||0}</span></button>
-                            <button onclick="castReaction('${p.id}', '💪', '0.100')" class="reaction-btn ${rx['💪']>0 ? 'has-votes' : ''}" title="Flex (0.1 SOL)"><span style="font-size: 1.1rem;">💪</span><span>${rx['💪']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '🔥', 0.001)" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1.1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '🤮', 0.002)" class="reaction-btn ${rx['🤮']>0 ? 'has-votes' : ''}" title="Gross Style (0.002 SOL)"><span style="font-size: 1.1rem;">🤮</span><span>${rx['🤮']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '⭐', 0.006)" class="reaction-btn ${rx['⭐']>0 ? 'has-votes' : ''}" title="Great (0.006 SOL)"><span style="font-size: 1.1rem;">⭐</span><span>${rx['⭐']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '🧈', 0.018)" class="reaction-btn ${rx['🧈']>0 ? 'has-votes' : ''}" title="Butter (0.018 SOL)"><span style="font-size: 1.1rem;">🧈</span><span>${rx['🧈']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '🥩', 0.054)" class="reaction-btn ${rx['🥩']>0 ? 'has-votes' : ''}" title="Hall of Meat (0.054 SOL)"><span style="font-size: 1.1rem;">🥩</span><span>${rx['🥩']||0}</span></button>
+                            <button onclick="castReaction('${p.id}', '${activeFeedWallet}', '💪', 0.100)" class="reaction-btn ${rx['💪']>0 ? 'has-votes' : ''}" title="Flex (0.1 SOL)"><span style="font-size: 1.1rem;">💪</span><span>${rx['💪']||0}</span></button>
                         </div>
                         ${blessBtn}
                     </div>
