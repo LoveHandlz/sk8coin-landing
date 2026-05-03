@@ -995,8 +995,8 @@ async function refreshLeaderboardData() {
     try {
         const activeRegistry = SKATER_REGISTRY.filter(w => !bannedWallets.includes(w));
         for (let skaterWallet of activeRegistry) {
-            const sSigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterWallet), { limit: 5 });
-            const chunk = sSigs.slice(0, 5);
+            const sSigs = await connection.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterWallet), { limit: 15 });
+            const chunk = sSigs.slice(0, 15);
             const txs = await Promise.all(chunk.map(ss => connection.getTransaction(ss.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null)));
             for (let sTx of txs) {
                 if (sTx && sTx.meta && !sTx.meta.err && sTx.transaction && sTx.transaction.message) {
@@ -1386,10 +1386,13 @@ async function renderProfile(wallet, forceView = null) {
         <div style="margin-top: 15px; padding: 15px; background: rgba(255, 45, 85, 0.1); border: 1px solid var(--accent-red); border-radius: 12px; text-align: left;">
             <h4 style="color: var(--accent-red); font-size: 0.8rem; margin-bottom: 10px;"><i class="fas fa-bolt"></i> GODMODE ADMIN PANEL</h4>
             <button onclick="setIncognitoWeb3(${nextState})" class="tier-btn" style="width:100%; margin-bottom:10px; background:${btnColor}; color:${btnTextColor}; border:none; padding:10px;"><i class="fas fa-bolt"></i> ${btnText}</button>
-            <input type="text" id="admin-target-wallet" placeholder="Enter Skater Wallet..." style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid var(--accent-red); border-radius: 5px; font-size: 0.7rem; font-family: monospace;">
+            <input type="text" id="admin-target-wallet" placeholder="Enter Skater Wallet..." style="width: 100%; padding: 8px; margin-bottom: 10px; background: #000; color: 
+            #fff; border: 1px solid var(--accent-red); border-radius: 5px; font-size: 0.7rem; font-family: monospace;">
             <div style="display: flex; gap: 10px;">
-                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'ban')" class="tier-btn" style="background:var(--accent-red); color:#fff; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">SUSPEND</button>
-                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'unban')" class="tier-btn" style="background:var(--accent-green); color:#000; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">RESURRECT</button>
+                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'ban')" class="tier-btn" style="background:var(--accent-red);
+                color:#fff; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">SUSPEND</button>
+                <button onclick="adminAction(document.getElementById('admin-target-wallet').value, 'unban')" class="tier-btn" style="background:var(--accent-green);
+                color:#000; border:none; padding:8px; font-size:0.65rem; margin-bottom:0;">RESURRECT</button>
             </div>
         </div>`;
     }
@@ -1398,7 +1401,8 @@ async function renderProfile(wallet, forceView = null) {
         const rank = getRankDisplay(stats.ins, true, wallet); header.innerText = "SKATER IDENTITY & BIO";
         rEl.innerHTML = rank.icon + " " + rank.title; rEl.style.color = rank.color; picEl.style.borderColor = rank.color;
         tags.innerHTML = activeProf.styles.map(t => `<span class="style-tag">${t}</span>`).join('');
-        try { const bal = await conn.getBalance(new solanaWeb3.PublicKey(wallet)); bEl.innerText = (bal / 1e9).toFixed(4) + " SOL"; } catch(e) {}
+        try { const 
+        bal = await conn.getBalance(new solanaWeb3.PublicKey(wallet)); bEl.innerText = (bal / 1e9).toFixed(4) + " SOL"; } catch(e) {}
         
         let gHtml = ""; gear.dataset.stance = activeProf.stance; gear.dataset.deck = activeProf.deck; gear.dataset.trucks = activeProf.trucks; gear.dataset.spot = activeProf.spot; gear.dataset.yt = activeProf.yt; 
         if(activeProf.stance) gHtml += `<div class="gear-tag"><i class="fas fa-shoe-prints"></i> ${activeProf.stance}</div>`;
@@ -1421,7 +1425,8 @@ async function renderProfile(wallet, forceView = null) {
         let badgesHtml = "";
         const badgeTiers = [
             { id: 'flow', isUnlocked: stats.outs >= 0.01, icon: '🥉', title: 'FLOW', color: 'var(--bronze-font)', desc: '0.01 SOL' }, { id: 'am', isUnlocked: stats.outs >= 0.05, icon: '🥈', title: 'SILVER', color: 'var(--silver-font)', desc: '0.05 SOL' }, { id: 'pro', isUnlocked: stats.outs >= 0.1, icon: '🥇', title: 'PRO', color: 'var(--gold-font)', desc: '0.10 SOL' }, { id: 'diamond', isUnlocked: stats.outs >= 1.0, icon: '💎', title: 'DIAMOND', color: 'var(--diamond-font)', desc: '1.0 SOL' }, { id: 'whale', isUnlocked: stats.outs >= 50.0, icon: '🐋', title: 'WHALE', color: 'var(--accent-cyan)', desc: '50 SOL' }, 
-            { id: 'sellout', isUnlocked: stats.outs >= 100.0, icon: '🕴️', title: 'CORP SELLOUT', color: 'var(--accent-red)', desc: '100 SOL' }, { id: 'homie', isUnlocked: stats.txCount >= 10, icon: '🤜', title: 'LOCAL HOMIE', color: '#4ade80', desc: '10 BLESSINGS' }, { id: 'plug', isUnlocked: stats.txCount >= 50, icon: '🔌', title: 'THE PLUG', color: '#ff9500', desc: '50 BLESSINGS' }, { id: 'sugar', isUnlocked: stats.txCount >= 100, icon: '🍬', title: 'SUGAR DADDY', color: '#ff2d55', desc: '100 BLESSINGS' }, { id: 'cult', isUnlocked: stats.txCount >= 500, icon: '👁️', title: 'CULT LEADER', color: '#a5d8ff', desc: '500 BLESSINGS' }, { id: 'meat', isUnlocked: stats.txCount >= 1000, icon: '🥩', title: 'HALL OF MEAT', color: '#ff2d55', desc: '1K BLESSINGS' }, { id: 'degen', isUnlocked: stats.outs >= 1000.0, icon: '🐸', title: 'DEGEN DEITY', color: '#4ade80', desc: '1000 SOL' }
+            { id: 'sellout', isUnlocked: stats.outs >= 100.0, icon: '🕴️', title: 'CORP SELLOUT', color: 'var(--accent-red)', desc: '100 SOL' }, { id: 'homie', isUnlocked: stats.txCount >= 10, icon: '🤜', title: 'LOCAL HOMIE', color: '#4ade80', desc: '10 BLESSINGS' }, { id: 'plug', isUnlocked: stats.txCount >= 50, icon: '🔌', title: 'THE PLUG', color: '#ff9500', desc: '50 BLESSINGS' }, { id: 'sugar', isUnlocked: stats.txCount >= 100, icon: '🍬', title: 'SUGAR DADDY', color: '#ff2d55', desc: '100 BLESSINGS' }, { id: 'cult', isUnlocked: stats.txCount >= 500, icon: '👁️', title: 'CULT LEADER', color: '#a5d8ff', desc: '500 BLESSINGS' }, { id: 'meat', isUnlocked: stats.txCount >= 1000, icon: '🥩', title: 
+            'HALL OF MEAT', color: '#ff2d55', desc: '1K BLESSINGS' }, { id: 'degen', isUnlocked: stats.outs >= 1000.0, icon: '🐸', title: 'DEGEN DEITY', color: '#4ade80', desc: '1000 SOL' }
         ];
         badgeTiers.forEach(b => {
             let isUnlocked = b.isUnlocked || ADMIN_WALLETS.includes(wallet); 
@@ -1433,18 +1438,25 @@ async function renderProfile(wallet, forceView = null) {
                         <div>
                         
                             <div style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 8px ${b.color});">${b.icon}</div>
-                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: bold;">Unlocked</div>
-                            <div style="font-size: 0.8rem; color: ${b.color}; font-weight: 900;">${b.title}</div>
+                            <div style="font-size: 0.6rem;
+                            color: var(--text-secondary); text-transform: uppercase; font-weight: bold;">Unlocked</div>
+                            <div style="font-size: 0.8rem;
+                            color: ${b.color}; font-weight: 900;">${b.title}</div>
                         </div>
                         ${claimBtn}
                     </div>`;
             } else {
                
                 badgesHtml += `
-                    <div style="background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center; opacity: 0.5; display: flex; flex-direction: column; justify-content: center;">
-                        <div style="font-size: 1.5rem; color: #555; margin-bottom: 10px;"><i class="fas fa-lock"></i></div>
-                        <div style="font-size: 0.55rem; color: #777; text-transform: uppercase; font-weight: bold;">Requires ${b.desc}</div>
-                        <div style="font-size: 0.8rem; color: #555; font-weight: 900;">${b.title}</div>
+                    <div style="background: rgba(0,0,0,0.2);
+                    border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center; opacity: 0.5; display: flex; flex-direction: column;
+                    justify-content: center;">
+                        <div style="font-size: 1.5rem;
+                        color: #555; margin-bottom: 10px;"><i class="fas fa-lock"></i></div>
+                        <div style="font-size: 0.55rem;
+                        color: #777; text-transform: uppercase; font-weight: bold;">Requires ${b.desc}</div>
+                        <div style="font-size: 0.8rem;
+                        color: #555; font-weight: 900;">${b.title}</div>
                     </div>`;
             }
         });
@@ -1478,12 +1490,14 @@ function openEditModal() {
         document.getElementById('edit-deck').value = d.deck || "";
         document.getElementById('edit-trucks').value = d.trucks || ""; 
         document.getElementById('edit-spot').value = d.spot || "";
-        document.getElementById('edit-yt').value = d.yt ? "https://youtu.be/" + d.yt : "";
+        document.getElementById('edit-yt').value = d.yt ?
+        "https://youtu.be/" + d.yt : "";
     }
     document.getElementById('edit-modal').style.display = 'flex';
 }
 
-function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none';
+}
 
 async function saveProfileWeb3() {
     if(!publicKey) return; const btn = document.getElementById("save-web3-btn"); btn.innerText = "AWAITING SIGNATURE...";
@@ -1502,7 +1516,8 @@ async function saveProfileWeb3() {
 
         const pData = JSON.stringify({ sk8: "v1", name, pic, bio, stance, deck, trucks, spot, yt });
         const encoded = new TextEncoder().encode(pData); 
-        if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return; }
+        if (encoded.length > 566) { alert(`Too large!`); btn.innerText = "SAVE"; return;
+        }
         
         const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
         const from = new solanaWeb3.PublicKey(publicKey);
@@ -1523,21 +1538,25 @@ document.addEventListener('click', (e) => {
       document.getElementById("sponsor-modal").style.display = "flex";
   }
 });
-
 function openSponsorshipModalFromProfile() {
     currentSkaterTarget = document.getElementById('p-wallet').innerText;
-    if (currentSkaterTarget === publicKey) { alert("Cannot sponsor yourself."); return; }
+    if (currentSkaterTarget === publicKey) { alert("Cannot sponsor yourself."); return;
+    }
     activeVideoId = null; document.getElementById('sponsor-modal').style.display = 'flex';
 }
 
-function closeModal() { document.getElementById("sponsor-modal").style.display = "none"; }
+function closeModal() { document.getElementById("sponsor-modal").style.display = "none";
+}
 function closeTreasuryModal() { document.getElementById("treasury-modal").style.display = "none"; }
 function closeSuccessModal() { document.getElementById("success-modal").style.display = "none"; }
-function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First"); return; } document.getElementById("treasury-modal").style.display = "flex"; }
+function openTreasuryModal() { if(!publicKey) { alert("Connect Wallet First");
+return; } document.getElementById("treasury-modal").style.display = "flex"; }
 function selectAmount(amt) { sendSOL(amt, currentSkaterTarget); }
-function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET); }
+function sendDonation(amt) { sendSOL(amt, TREASURY_WALLET);
+}
 function sendCustomTreasury() { const amt = parseFloat(document.getElementById('custom-treasury-amt').value); if(amt > 0) sendDonation(amt); }
-function sendCustomSponsor() { const amt = parseFloat(document.getElementById('custom-sponsor-amt').value); if(amt > 0) selectAmount(amt); }
+function sendCustomSponsor() { const amt = parseFloat(document.getElementById('custom-sponsor-amt').value);
+if(amt > 0) selectAmount(amt); }
 
 async function sendSOL(amount, dest) {
   try {
@@ -1561,7 +1580,8 @@ async function sendSOL(amount, dest) {
 }
 
 async function castReaction(postId, emoji, costStr) {
-    if(!publicKey) { alert("Connect Wallet to react!"); return; }
+    if(!publicKey) { alert("Connect Wallet to react!"); return;
+    }
     const costSOL = parseFloat(costStr);
     if(!confirm(`Drop a ${emoji} reaction? Requires a ${costSOL} SOL tip to the skater.`)) return;
     try {
@@ -1585,7 +1605,8 @@ function createConfetti() {
   }
 }
 
-function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!"); }
+function copyTreasuryAddress() { navigator.clipboard.writeText(TREASURY_WALLET); alert("Copied!");
+}
 
 async function attemptFeedAccess() {
     if(!publicKey) { alert("Connect Wallet First"); return; }
@@ -1606,14 +1627,18 @@ async function attemptFeedAccess() {
     let feedItems = document.getElementById('actual-feed-items'); if(feedItems) feedItems.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;"><i class="fas fa-spinner fa-spin"></i> Scanning blockchain history...</div>';
     feedRenderLimit = FEED_LIMIT; currentSkaterPosts = [];
     let isOwner = (publicKey === activeFeedWallet); let hasAccess = isOwner;
-    if (!isOwner) { const requiredSOL = 0.05; hasAccess = await verifySponsorshipTier(publicKey, activeFeedWallet, requiredSOL); }
+    if (!isOwner) { const requiredSOL = 0.05; hasAccess = await verifySponsorshipTier(publicKey, activeFeedWallet, requiredSOL);
+    }
 
-    if (hasAccess) { if(isOwner && postBox) postBox.style.display = 'block'; fetchSkaterFeed(activeFeedWallet, false); } 
-    else { if(paywall) paywall.style.display = 'flex'; fetchSkaterFeed(activeFeedWallet, true); }
+    if (hasAccess) { if(isOwner && postBox) postBox.style.display = 'block'; fetchSkaterFeed(activeFeedWallet, false);
+    } 
+    else { if(paywall) paywall.style.display = 'flex'; fetchSkaterFeed(activeFeedWallet, true);
+    }
 }
 
 async function verifySponsorshipTier(sponsorPubKey, skaterPubKey, requiredSOL) {
-    if (ADMIN_WALLETS.includes(sponsorPubKey)) { return true; }
+    if (ADMIN_WALLETS.includes(sponsorPubKey)) { return true;
+    }
     const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); let totalDonated = 0;
     try {
         const sigs = await conn.getSignaturesForAddress(new solanaWeb3.PublicKey(skaterPubKey), { limit: 50 });
