@@ -438,7 +438,6 @@ box-shadow: 0 5px 15px rgba(255, 45, 85, 0.4) !important;
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -1711,225 +1710,11 @@ function formatTimeRemaining(expiresAt) {
     if(d > 0) return `${d}d ${h}h`; return `${h}h ${m}m`;
 }
 
-// ========== DAO GOVERNANCE LOGIC ==========
-async function refreshDAODashboard() {
-    const connection = new solanaWeb3.Connection(RPC_URL, "confirmed");
-    const daoList = document.getElementById("dao-proposal-list");
-    if(daoList) daoList.innerHTML = "<li><i class='fas fa-spinner fa-spin' style='margin-right:8px; color:var(--accent-cyan);'></i> Scanning Chain for Proposals...</li>";
-
-    let proposals = {}; let rawVotes = []; let vetoed = [];
-    try {
-        const sigs = await rpcMethodWithRetry(() => connection.getSignaturesForAddress(new solanaWeb3.PublicKey(TREASURY_WALLET), { limit: 1000 }));
-        for (let i = 0; i < sigs.length; i += 20) {
-            const chunk = sigs.slice(i, i + 20);
-            const txs = await Promise.all(chunk.map(s => rpcMethodWithRetry(() => connection.getTransaction(s.signature, { maxSupportedTransactionVersion: 0 }).catch(() => null))));
-            chunk.forEach((s, idx) => {
-                const tx = txs[idx];
-                if (s.memo && s.memo.includes('"sk8dao":"v1"') && tx && tx.transaction) {
-                    try {
-                        const d = JSON.parse(s.memo.replace(/^\[\d+\]\s*/, ''));
-                        const msg = tx.transaction.message;
-                        const keys = msg.staticAccountKeys ? msg.staticAccountKeys.map(k=>k.toString()) : (msg.accountKeys ? msg.accountKeys.map(k=>k.toString()) : []);
-                        const sender = keys[0];
-                        if(d.action === "propose") { proposals[s.signature] = { id: s.signature, title: d.title, desc: d.desc, proposer: sender, yes: 0, no: 0, time: s.blockTime || Date.now()/1000, votedWallets: [] }; } 
-                        else if(d.action === "vote" && d.id) { rawVotes.push({ id: d.id, vote: d.vote, sender: sender }); } 
-                        else if(d.action === "veto" && ADMIN_WALLETS.includes(sender)) { vetoed.push(d.id); }
-                    } catch(e) {}
-                }
-            });
-            await pingDelay(20);
-        }
-    } catch(e) {}
-
-    rawVotes.forEach(v => {
-        if (proposals[v.id]) {
-            if (!proposals[v.id].votedWallets.includes(v.sender)) {
-                proposals[v.id].votedWallets.push(v.sender);
-                if (v.vote === "yes") proposals[v.id].yes++;
-                if (v.vote === "no") proposals[v.id].no++;
-            }
-        }
-    });
-    
-    activeProposals = []; closedProposals = []; let now = Date.now() / 1000;
-    Object.values(proposals).forEach(p => {
-        if(vetoed.includes(p.id)) return; 
-        let expiresAt = p.time + DAO_TTL_SECONDS;
-        if (now > expiresAt) { p.status = 'closed'; closedProposals.push(p); } 
-        else { p.status = 'active'; p.expiresAt = expiresAt; activeProposals.push(p); }
-    });
-    activeProposals.sort((a, b) => b.time - a.time);
-    closedProposals.sort((a, b) => b.time - a.time);
-    renderDAOList();
-}
-
-function renderDAOList() {
-    const list = document.getElementById("dao-proposal-list"); let html = "";
-    if(activeProposals.length === 0 && closedProposals.length === 0) { list.innerHTML = "<div style='color: var(--text-secondary); text-align: center; padding: 20px;'>No motions currently on the floor.</div>"; return; }
-
-    activeProposals.forEach(p => {
-        let totalVotes = p.yes + p.no; let yesPct = totalVotes > 0 ? ((p.yes / totalVotes) * 100).toFixed(0) : 0; let noPct = totalVotes > 0 ? ((p.no / totalVotes) * 100).toFixed(0) : 0; let timeLeft = formatTimeRemaining(p.expiresAt);
-        let vetoBtn = ADMIN_WALLETS.includes(publicKey) ? `<button onclick="removeDAOProposal('${p.id}')" style="background:var(--accent-red); color:#000; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:0.65rem; cursor:pointer;"><i class="fas fa-bolt"></i> REMOVE</button>` : '';
-
-        html += `
-        <div style="background: var(--bg-panel); border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 18px; margin-bottom: 15px; box-shadow: 0 0 15px rgba(0,240,255,0.05);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                <h3 style="color:var(--text-primary); font-size:1.1rem; margin:0; text-transform: uppercase;">${p.title}</h3>
-                <span style="color:var(--accent-orange); font-size:0.7rem; font-weight:bold; display:flex; align-items:center; gap:5px;"><i class="fas fa-hourglass-half"></i> Ends in ${timeLeft}</span>
-            </div>
-            <p style="color:var(--text-secondary); font-size:0.8rem; line-height:1.5; margin-bottom:15px;">${p.desc}</p>
-            <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:10px; margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:bold; margin-bottom:5px;">
-                    <span style="color:var(--accent-green);">YES (${p.yes}) - ${yesPct}%</span>
-                    <span style="color:var(--accent-red);">NO (${p.no}) - ${noPct}%</span>
-                </div>
-                <div style="width:100%; background:rgba(255,255,255,0.1); height:8px; border-radius:4px; display:flex; overflow:hidden;">
-                    <div style="width:${yesPct}%; background:var(--accent-green); height:100%;"></div>
-                    <div style="width:${noPct}%; background:var(--accent-red); height:100%;"></div>
-                </div>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <button onclick="castDAOVote('${p.id}', 'yes')" style="flex:1; background:transparent; color:var(--accent-green); border:1px solid var(--accent-green); padding:10px; border-radius:6px; font-weight:bold; font-family:'Orbitron'; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='var(--accent-green)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-green)';">VOTE YES</button>
-                <button onclick="castDAOVote('${p.id}', 'no')" style="flex:1; background:transparent; color:var(--accent-red); border:1px solid var(--accent-red); padding:10px; border-radius:6px; font-weight:bold; font-family:'Orbitron'; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='var(--accent-red)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-red)';">VOTE NO</button>
-                ${vetoBtn}
-            </div>
-        </div>`;
-    });
-
-    if(closedProposals.length > 0) {
-        html += `<h3 style="color:var(--text-secondary); font-size:0.8rem; margin-top: 30px; margin-bottom: 10px; text-align:center; letter-spacing: 2px;">PAST MOTIONS</h3>`;
-        closedProposals.forEach(p => {
-            let totalVotes = p.yes + p.no; let yesPct = totalVotes > 0 ? ((p.yes / totalVotes) * 100).toFixed(0) : 0; let noPct = totalVotes > 0 ? ((p.no / totalVotes) * 100).toFixed(0) : 0; let passed = p.yes > p.no;
-            html += `
-            <div style="background: rgba(0,0,0,0.3); border: 1px dashed var(--card-border); border-radius: 12px; padding: 15px; margin-bottom: 10px; opacity: 0.7;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="color:var(--text-secondary); font-size:0.9rem; margin:0;">${p.title}</h4>
-                    <span style="font-weight:bold; font-size:0.7rem; color:${passed ? 'var(--accent-green)' : 'var(--accent-red)'}">${passed ? 'PASSED' : 'REJECTED'}</span>
-                </div>
-                <div style="display:flex; gap:15px; margin-top:5px; font-size: 0.65rem; color:var(--text-secondary);">
-                    <span>YES: ${p.yes} (${yesPct}%)</span><span>NO: ${p.no} (${noPct}%)</span>
-                </div>
-            </div>`;
-        });
-    }
-    list.innerHTML = html;
-}
-
-function openProposalModal() { if(!publicKey) { triggerOnboarding(); return; } document.getElementById("proposal-modal").style.display = "flex"; }
-function closeProposalModal() { document.getElementById("proposal-modal").style.display = "none"; }
-
-async function submitDAOProposal() {
-    if(!publicKey) { triggerOnboarding(); return; }
-    const stats = await fetchWalletStats(publicKey);
-    if(stats.outs < 0.1 && !ADMIN_WALLETS.includes(publicKey)) { alert("You must be rank PRO (0.1+ SOL donated) to submit motions."); return; }
-
-    const title = document.getElementById("dao-prop-title").value; const desc = document.getElementById("dao-prop-desc").value;
-    if(!title || !desc) { alert("Fill all fields"); return; }
-
-    const btn = document.getElementById("submit-dao-btn"); btn.innerText = "AWAITING SIGNATURE...";
-    try {
-        const pData = JSON.stringify({ sk8dao: "v1", action: "propose", title, desc });
-        const encoded = new TextEncoder().encode(pData); 
-        if (encoded.length > 566) { alert(`Proposal too long for Memo!`); btn.innerText = "SIGN & BROADCAST"; return; }
-        
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed");
-        const from = new solanaWeb3.PublicKey(publicKey); const to = new solanaWeb3.PublicKey(TREASURY_WALLET);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: Math.floor(DAO_VOTE_FEE * 1e9) })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        btn.innerText = "BROADCASTED!";
-        setTimeout(() => { closeProposalModal(); refreshDAODashboard(); btn.innerText = "SIGN & BROADCAST"; }, 2000);
-    } catch (err) { btn.innerText = "FAILED"; setTimeout(() => btn.innerText = "SIGN & BROADCAST", 3000); }
-}
-
-async function castDAOVote(propId, voteType) {
-    if(!publicKey) { triggerOnboarding(); return; }
-    if(!confirm(`Cast ${voteType.toUpperCase()} vote? This requires a ${DAO_VOTE_FEE} SOL anti-sybil fee to the Treasury.`)) return;
-    try {
-        const pData = JSON.stringify({ sk8dao: "v1", action: "vote", id: propId, vote: voteType });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(TREASURY_WALLET);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: Math.floor(DAO_VOTE_FEE * 1e9) })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert("Vote Cast! Refreshing dashboard..."); refreshDAODashboard();
-    } catch (err) { alert("Vote Failed."); }
-}
-
-async function removeDAOProposal(propId) {
-    if(!ADMIN_WALLETS.includes(publicKey)) return;
-    if(!confirm("ADMIN: Permanently remove this motion from the floor?")) return;
-    try {
-        const pData = JSON.stringify({ sk8dao: "v1", action: "veto", id: propId });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(TREASURY_WALLET);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: 1000 })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert("Removal Broadcasted!"); refreshDAODashboard();
-    } catch(e) {}
-}
-
-async function setIncognitoWeb3(state) {
-    if(!confirm(`Are you sure you want to ${state ? 'HIDE' : 'SHOW'} Godmode on public leaderboards?`)) return;
-    try {
-        const pData = JSON.stringify({ sk8admin: "v1", action: "incognito", state: state });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(TREASURY_WALLET);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: 1000 })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert(`Visibility updated! Please wait a moment for the blockchain to sync.`);
-        setTimeout(async () => { await syncAdminState(); renderProfile(publicKey); refreshLeaderboardData(); }, 3000);
-    } catch(e) { alert("Admin action failed."); }
-}
-
-async function adminAction(targetWallet, action) {
-    if(!targetWallet) { alert("Enter a wallet address first."); return; }
-    if(!confirm(`Are you sure you want to ${action.toUpperCase()} skater ${targetWallet.slice(0,4)}...${targetWallet.slice(-4)}?`)) return;
-    try {
-        const pData = JSON.stringify({ sk8admin: "v1", action: action, wallet: targetWallet });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); const from = new solanaWeb3.PublicKey(publicKey);
-        const to = new solanaWeb3.PublicKey(TREASURY_WALLET);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: 1000 })).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert(`Skater ${action === 'ban' ? 'suspended' : 'resurrected'}!`);
-        document.getElementById('admin-target-wallet').value = ""; await syncAdminState(); renderProfile(publicKey); 
-    } catch(e) { alert("Admin action failed."); }
-}
-
-async function toggleVideoLock(postId, targetWallet, currentlyLocked) {
-    if(!publicKey) { triggerOnboarding(); return; }
-    let newState = !currentlyLocked;
-    let actionText = newState ? "LOCK" : "UNLOCK (Make Free)";
-    if(!confirm(`Are you sure you want to ${actionText} this video?`)) return;
-    try {
-        const pData = JSON.stringify({ sk8vid: "v1", post: postId, locked: newState });
-        const encoded = new TextEncoder().encode(pData); 
-        const conn = new solanaWeb3.Connection(RPC_URL, "confirmed"); 
-        const from = new solanaWeb3.PublicKey(publicKey);
-        const tx = new solanaWeb3.Transaction().add(PRIORITY_FEE_IX).add(new solanaWeb3.TransactionInstruction({ keys: [{ pubkey: from, isSigner: true, isWritable: true }], programId: MEMO_PROGRAM_ID, data: encoded }));
-        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash; tx.feePayer = from;
-        await conn.sendRawTransaction((await provider.signTransaction(tx)).serialize());
-        alert(`Video ${newState ? 'LOCKED' : 'UNLOCKED'}!`);
-        setTimeout(() => {
-            if(document.getElementById('profile-content').style.display === 'block') { renderProfile(targetWallet); }
-            else if(document.getElementById('feed-content').style.display === 'block') { attemptFeedAccess(); }
-            else { window.location.reload(); }
-        }, 2500);
-    } catch(e) { alert("Action failed."); }
-}
-
 // ========== PROFILE & GAMIFICATION LOGIC ==========
 function getReactionHtml(postId, targetWallet, isLocked) {
     let state = globalVideoState[postId] || { locked: true, reactions: {'🔥':0, '🤮':0, '⭐':0, '🧈':0, '🥩':0, '💪':0}, totalSOL: 0 };
     let rx = state.reactions;
+    let usdVal = (state.totalSOL * solPrice).toFixed(2); // Calculate USD value dynamically
     let isOwner = (publicKey === targetWallet); let isAdmin = ADMIN_WALLETS.includes(publicKey);
     let effectivelyLocked = state.locked !== undefined ? state.locked : isLocked; 
     
@@ -1942,10 +1727,11 @@ function getReactionHtml(postId, targetWallet, isLocked) {
         </div>`;
     }
     
-    // Blessings string SOL and USD converted amounts removed as requested
+    // Re-injected Clip Treasury SOL amount and USD converter here
     return `
-    <div style="display:flex; align-items:center; margin-top: 10px; margin-bottom: 5px;">
-        <span style="color:var(--text-secondary); font-size: 0.60rem; text-transform: uppercase; font-weight: bold;"><i class="fas fa-box-open" style="margin-right: 4px;"></i>Clip Treasury</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 10px; margin-bottom: 5px; font-size: 0.75rem;">
+        <span style="color:var(--text-secondary); font-size: 0.60rem; text-transform: uppercase;"><i class="fas fa-box-open" style="margin-right: 4px;"></i>Clip Treasury:</span>
+        <span style="color:var(--accent-green); font-family:monospace; font-weight:bold;">${state.totalSOL.toFixed(4)} SOL <span style="color:#888; font-size:0.65rem;">($${usdVal})</span></span>
     </div>
     <div style="display:flex; justify-content:space-between; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px;">
         <button onclick="castReaction('${postId}', '${targetWallet}', '🔥', '0.001')" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
