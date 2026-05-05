@@ -237,6 +237,7 @@ color: var(--bronze-font) !important; }
 .tier-am:hover { background: var(--silver-font) !important; color: #000 !important; }
 .tier-pro { border-color: var(--gold-font) !important; color: var(--gold-font) !important;
 }
+
 .tier-pro:hover { background: var(--gold-font) !important; color: #000 !important; }
 
 .confetti { position: fixed; width: 10px; height: 10px; top: -10px;
@@ -1487,7 +1488,6 @@ async function fetchSkaterBalances() {
         try {
             const bal = await rpcMethodWithRetry(() => connection.getBalance(new solanaWeb3.PublicKey(el.dataset.address)));
             const sol = bal / 1e9; const rank = getRankDisplay(sol, true, el.dataset.address);
-            // Blessings scrubbed: only display the skater's rank and hide raw SOL/USD
             el.innerHTML = `<div style="color:${rank.color}; font-size:0.75rem; margin-bottom:4px; font-weight:900;">${rank.icon} ${rank.title}</div>`;
         } catch(e) {}
     }
@@ -1918,6 +1918,7 @@ function getReactionHtml(postId, targetWallet, isLocked) {
     let rx = state.reactions;
     let isOwner = (publicKey === targetWallet); let isAdmin = ADMIN_WALLETS.includes(publicKey);
     let effectivelyLocked = state.locked !== undefined ? state.locked : isLocked; 
+    let usdValue = (state.totalSOL * solPrice).toFixed(2);
     
     let toggleHtml = "";
     if (isOwner || isAdmin) {
@@ -1928,10 +1929,10 @@ function getReactionHtml(postId, targetWallet, isLocked) {
         </div>`;
     }
     
-    // Blessings string SOL and USD converted amounts removed as requested
     return `
-    <div style="display:flex; align-items:center; margin-top: 10px; margin-bottom: 5px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top: 10px; margin-bottom: 5px;">
         <span style="color:var(--text-secondary); font-size: 0.60rem; text-transform: uppercase; font-weight: bold;"><i class="fas fa-box-open" style="margin-right: 4px;"></i>Clip Treasury</span>
+        <span style="color:var(--accent-green); font-size: 0.60rem; font-family: 'Inter', sans-serif; font-weight: bold;">$${usdValue}</span>
     </div>
     <div style="display:flex; justify-content:space-between; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px;">
         <button onclick="castReaction('${postId}', '${targetWallet}', '🔥', '0.001')" class="reaction-btn ${rx['🔥']>0 ? 'has-votes' : ''}" title="Fire (0.001 SOL)"><span style="font-size: 1rem;">🔥</span><span>${rx['🔥']||0}</span></button>
@@ -2652,7 +2653,6 @@ window.addEventListener('load', async () => {
 </script>
   
 </body>
-</html> 
-
+</html>
 
 
