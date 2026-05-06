@@ -844,7 +844,6 @@ footer { background: var(--bg-panel); border-top: 1px solid var(--card-border); 
 
 <audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 
-<audio id="jingle" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
 <script>
 // ========== AUDIO PLAYER ENGINE ==========
 let ytAudioPlayer;
@@ -1036,13 +1035,57 @@ function getProvider() {
 
 function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 function toggleMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
+
 function updateDonateButtons() { 
     document.querySelectorAll('#video-content .donate-btn').forEach(btn => { 
-        if (publicKey && btn.dataset.address === publicKey) btn.style.display = 'none'; 
-        else btn.style.display = ''; 
+        const card = btn.closest('.video-card');
+        
+        if (publicKey && btn.dataset.address === publicKey) { 
+            btn.style.display = 'none'; 
+            
+            // Add Edit/Delete controls if they don't exist yet
+            if (card && !card.querySelector('.owner-controls')) {
+                const controls = document.createElement('div');
+                controls.className = 'owner-controls';
+                controls.style.display = 'flex';
+                controls.style.gap = '8px';
+                controls.style.marginTop = 'auto';
+                controls.innerHTML = `
+                    <button onclick="editVideo(this)" style="flex:1; background:transparent; color:var(--accent-cyan); border:1px solid var(--accent-cyan); padding:8px; border-radius:6px; font-family:'Orbitron'; font-size:0.7rem; font-weight:bold; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='var(--accent-cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-cyan)';">EDIT</button>
+                    <button onclick="deleteVideo(this)" style="flex:1; background:transparent; color:var(--accent-red); border:1px solid var(--accent-red); padding:8px; border-radius:6px; font-family:'Orbitron'; font-size:0.7rem; font-weight:bold; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='var(--accent-red)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-red)';">DELETE</button>
+                `;
+                btn.parentNode.insertBefore(controls, btn);
+            } else if (card && card.querySelector('.owner-controls')) {
+                card.querySelector('.owner-controls').style.display = 'flex';
+            }
+        } else { 
+            btn.style.display = ''; 
+            if (card && card.querySelector('.owner-controls')) {
+                card.querySelector('.owner-controls').style.display = 'none';
+            }
+        } 
     });
 }
 
+function editVideo(btnEl) {
+    const card = btnEl.closest('.video-card');
+    if(!card) return;
+    const titleEl = card.querySelector('.card-title');
+    const currentTitle = titleEl.innerText;
+    const newTitle = prompt("Update video title:", currentTitle);
+    if(newTitle && newTitle.trim() !== "") {
+        titleEl.innerText = newTitle.trim();
+    }
+}
+
+function deleteVideo(btnEl) {
+    if(confirm("Are you sure you want to remove this video from your feed?")) {
+        const card = btnEl.closest('.video-card');
+        if(card) {
+            card.style.display = 'none';
+        }
+    }
+}
 // ========== UI TOGGLES & MODALS ==========
 function triggerOnboarding() { document.getElementById("onboarding-modal").style.display = "flex"; }
 function closeOnboardingModal() { document.getElementById("onboarding-modal").style.display = "none"; }
@@ -2357,5 +2400,7 @@ window.addEventListener('load', async () => {
     }
 });
 </script>
+</body>
+</html>
 </body>
 </html>
