@@ -343,7 +343,7 @@
                     <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL BALANCE <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-balance" style="width: 0%"></div></div></div>
                     <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL SPEED <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-speed" style="width: 0%"></div></div></div>
                     <div style="margin-top:15px; border-top:1px dashed #333; padding-top:15px;">
-                        <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TRUE TOTAL POWER <span style="color: #fff;">0/60</span></div><div class="stat-bar-container"><div class="stat-bar stat-total" style="width: 0%"></div></div></div>
+                        <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TRUE TOTAL POWER <span style="color: #fff;">0/30</span></div><div class="stat-bar-container"><div class="stat-bar stat-total" style="width: 0%"></div></div></div>
                     </div>
                     <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                         <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
@@ -355,7 +355,6 @@
         </div>
     </div>
 </div>
-
 <div class="dashboard-wrapper" id="clips-wrapper" style="display: none;">
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">CRYPTO CLIPS <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// RAW FOOTY</span></h2>
     
@@ -1400,7 +1399,7 @@ async function fetchLeaderboard() {
         } catch (e) { list.innerHTML = `<div style="padding:40px; text-align:center; color:#ff3366; font-family:'Orbitron';">BLOCKCHAIN CONNECTION FAILED</div>`; }
     }
 
-    const renderStat = (label, value, cssClass, max) => {
+const renderStat = (label, value, cssClass, max) => {
         const num = parseInt(value) || 0, pct = Math.min((num / max) * 100, 100); 
         return `<div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">${label} <span style="color: #fff;">${num}/${max}</span></div><div class="stat-bar-container"><div class="stat-bar ${cssClass}" style="width: ${pct}%"></div></div></div>`;
     };
@@ -1411,7 +1410,7 @@ async function fetchLeaderboard() {
             <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL BALANCE <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-balance" style="width: 0%"></div></div></div>
             <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL SPEED <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-speed" style="width: 0%"></div></div></div>
             <div style="margin-top:15px; border-top:1px dashed #333; padding-top:15px;">
-                <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TRUE TOTAL POWER <span style="color: #fff;">0/60</span></div><div class="stat-bar-container"><div class="stat-bar stat-total" style="width: 0%"></div></div></div>
+                <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TRUE TOTAL POWER <span style="color: #fff;">0/30</span></div><div class="stat-bar-container"><div class="stat-bar stat-total" style="width: 0%"></div></div></div>
             </div>
             <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                 <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
@@ -1434,7 +1433,9 @@ async function fetchLeaderboard() {
 
             const fPop = getGroupScore('pop'), fSpeed = getGroupScore('speed'), fBal = getGroupScore('bal');
             let totalPower = fPop + fSpeed + fBal;
-            if (totalPower > 60) totalPower = 60;
+            
+            // MAX POWER CAPPED AT 30
+            if (totalPower > 30) totalPower = 30; 
             const rewards = totalPower * 1000;
             selectedAssetIds = [d.value, t1.value, t2.value, w1.value, w2.value, w3.value, w4.value];
             
@@ -1470,7 +1471,7 @@ async function fetchLeaderboard() {
                 ${renderStat('TOTAL BALANCE', fBal, 'stat-balance', 20)}
                 ${renderStat('TOTAL SPEED', fSpeed, 'stat-speed', 20)}
                 <div style="margin-top:15px; border-top:1px dashed #333; padding-top:15px;">
-                    ${renderStat('TRUE TOTAL POWER', totalPower, 'stat-total', 60)}
+                    ${renderStat('TRUE TOTAL POWER', totalPower, 'stat-total', 30)}
                 </div>
                 <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                     <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
@@ -1534,7 +1535,9 @@ async function fetchLeaderboard() {
 
                     if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
-                        if (totalPower > 60) totalPower = 60;
+                        
+                        // MAX POWER CAPPED AT 30
+                        if (totalPower > 30) totalPower = 30; 
                         
                         const skateReward = totalPower * 1000;
                         const waxValue = (skateReward * sWax).toFixed(2);
@@ -1551,7 +1554,7 @@ async function fetchLeaderboard() {
                                 </div>
                                 <div class="meta-title">PERFORMANCE</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
-                                    ${renderStat('POP', pop, 'stat-pop', 20)}${renderStat('BALANCE', balance, 'stat-balance', 20)}${renderStat('SPEED', speed, 'stat-speed', 20)}${renderStat('TOTAL POWER', totalPower, 'stat-total', 60)}
+                                    ${renderStat('POP', pop, 'stat-pop', 20)}${renderStat('BALANCE', balance, 'stat-balance', 20)}${renderStat('SPEED', speed, 'stat-speed', 20)}${renderStat('TOTAL POWER', totalPower, 'stat-total', 30)}
                                 </div>
                             </div>`;
                         
