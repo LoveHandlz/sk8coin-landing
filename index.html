@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <title>sk8dao | THE SENATE CHAMBER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    /* --- RGB BEARING EFFECT --- */
+        @keyframes rainbowText {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .text-rgb {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            color: transparent !important; /* Makes the actual text invisible so the background shows through */
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: rainbowText 1.5s linear infinite; /* 1.5s keeps the flow fast and smooth */
+            font-weight: 900;
+        }
+    
     <style>
        :root {
             --bg-deep: #050a1a;
@@ -1598,15 +1614,21 @@ const renderStat = (label, value, cssClass, max) => {
                     let statHtml = "";
                     let actionHtml = "";
 
-                    if (currentSchema === 'skateboards') {
+if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
                         if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
                         
                         const skateReward = totalPower * 1000;
                         const waxValue = (skateReward * sWax).toFixed(2);
+                        
+                        // Parse all components, including the new Bearings trait
                         const deckName = MetaParser.getString(n, 'deck', 'STOCK');
                         const truckName = MetaParser.getString(n, 'trucks', 'STOCK');
                         const wheelName = MetaParser.getString(n, 'wheels', 'STOCK');
+                        const bearingName = MetaParser.getString(n, 'bearings', 'STOCK');
+                        
+                        // God-Mode Trigger: Check if Bearings are RGB
+                        const bearingClass = bearingName === 'RGB' ? 'text-rgb' : '';
                         
                         statHtml = `
                             <div class="meta-group">
@@ -1614,6 +1636,7 @@ const renderStat = (label, value, cssClass, max) => {
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:var(--accent-cyan)">${deckName}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:var(--accent-cyan)">${truckName}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:var(--accent-cyan)">${wheelName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:var(--accent-cyan)" class="${bearingClass}">${bearingName}</span></div>
                                 </div>
                                 <div class="meta-title">PERFORMANCE</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
