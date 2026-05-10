@@ -23,6 +23,23 @@
         }
     
    
+.rgb-god-frame {
+            position: relative;
+            z-index: 1;
+            border: none !important;
+        }
+        .rgb-god-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            z-index: -1;
+            border-radius: 12px;
+            animation: rainbowText 1.5s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
        :root {
             --bg-deep: #050a1a;
             --bg-panel: rgba(15, 26, 71, 0.95);
@@ -39,9 +56,9 @@
             
             /* --- GOD TIER BASE COLORS --- */
             --rarity-legendary: #ffd700; 
-            --rarity-mythic: #ff00ff; /* Fallback, handled by rainbow animation */
+            --rarity-mythic: #ff6600; /* Glowing Orange */
             --rarity-insane: #ff0033; /* Deep Intense Red */
-            --rarity-ridiculous: #00ffff; /* Ice Diamond Cyan */
+            --rarity-ridiculous: #00f0ff; /* Ice Diamond Cyan */
         }
 
         /* --- EXTREME GOD TIER GLOW CLASSES --- */
@@ -49,51 +66,17 @@
         .card-glow-legendary .rarity-header { background: var(--rarity-legendary) !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 215, 0, 0.7) !important; }
         .card-glow-legendary .skate-img { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
 
+        .card-glow-mythic { box-shadow: inset 0 0 60px rgba(255, 102, 0, 0.3), 0 0 25px rgba(255, 102, 0, 0.5) !important; border-color: var(--rarity-mythic) !important; }
+        .card-glow-mythic .rarity-header { background: var(--rarity-mythic) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 102, 0, 0.9) !important; }
+        .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 102, 0, 1)); }
+
         .card-glow-insane { box-shadow: inset 0 0 60px rgba(255, 0, 51, 0.3), 0 0 25px rgba(255, 0, 51, 0.5) !important; border-color: var(--rarity-insane) !important; }
         .card-glow-insane .rarity-header { background: var(--rarity-insane) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 51, 0.9) !important; }
         .card-glow-insane .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 51, 1)); }
 
-        /* Rainbow Animation for Mythic */
-        @keyframes mythicRainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-        .card-glow-mythic { box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.3), 0 0 25px rgba(255, 0, 255, 0.5) !important; border-color: #ff00ff !important; animation: mythicRainbow 4s linear infinite; }
-        .card-glow-mythic .rarity-header { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important; background-size: 200% !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 40px rgba(255, 0, 255, 0.7) !important; animation: mythicRainbow 3s linear infinite; }
-        .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8)); }      
-        
-        /* High-Speed RGB-Gold Loop for Ridiculous (No Glow) */
-        @keyframes ridiculousStrobeBorder {
-            0%, 100% { border-color: #ff0000; }
-            25%  { border-color: #00ff00; }
-            50%  { border-color: #0000ff; }
-            75%  { border-color: #ffd700; }
-        }
-        @keyframes ridiculousStrobeBg {
-            0%, 100% { background: #ff0000; color: #fff; }
-            25%  { background: #00ff00; color: #000; }
-            50%  { background: #0000ff; color: #fff; }
-            75%  { background: #ffd700; color: #000; }
-        }
-        @keyframes ridiculousStrobeText {
-            0%, 100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-            25%  { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-            50%  { color: #0000ff; text-shadow: 0 0 10px #0000ff; }
-            75%  { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
-        }
-
-        .card-glow-ridiculous { 
-            box-shadow: none !important; 
-            animation: ridiculousStrobeBorder 0.3s infinite !important; 
-        }
-        .card-glow-ridiculous .rarity-header { 
-            animation: ridiculousStrobeBg 0.3s infinite !important; 
-            box-shadow: none !important; 
-        }
-        .card-glow-ridiculous .rarity-header-text,
-        .card-glow-ridiculous .board-name { 
-            animation: ridiculousStrobeText 0.3s infinite !important; 
-        }
-        .card-glow-ridiculous .skate-img { 
-            filter: none !important; 
-        }
+        .card-glow-ridiculous { box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.3), 0 0 25px rgba(0, 240, 255, 0.5) !important; border-color: var(--rarity-ridiculous) !important; }
+        .card-glow-ridiculous .rarity-header { background: var(--rarity-ridiculous) !important; color: #000 !important; box-shadow: 0 0 40px rgba(0, 240, 255, 0.9) !important; }
+        .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(0, 240, 255, 1)); }
 
         body { 
             background-color: var(--bg-deep);
@@ -877,10 +860,25 @@
     const HISTORY_RPC = "https://api.waxsweden.org"; 
     const ADMIN_WALLET = "ufuau.wam";
 
-    class MetaParser {
+class MetaParser {
         static getRaw(nft, key) {
-            if (nft.data && nft.data[key] !== undefined) return nft.data[key];
-            if (nft.template && nft.template.immutable_data && nft.template.immutable_data[key] !== undefined) return nft.template.immutable_data[key];
+            const targetKey = key.toLowerCase();
+            
+            // Helper to search any object case-insensitively
+            const findValue = (obj) => {
+                if (!obj) return null;
+                const foundKey = Object.keys(obj).find(k => k.toLowerCase() === targetKey);
+                return foundKey ? obj[foundKey] : null;
+            };
+
+            // Check specific NFT mutable data first, then immutable template data
+            let val = findValue(nft.data);
+            if (val !== null) return val;
+            
+            if (nft.template && nft.template.immutable_data) {
+                return findValue(nft.template.immutable_data);
+            }
+            
             return null;
         }
         static getInt(nft, key) { return parseInt(this.getRaw(nft, key)) || 0; }
@@ -892,6 +890,23 @@
         static getRarity(nft) { return this.getString(nft, 'rarity', 'COMMON').toLowerCase(); }
     }
 
+
+    // --- SMART COLOR SNIFFER HELPER ---
+    function getTraitColor(traitName) {
+        const name = (traitName || "").toUpperCase();
+        if (name.includes('BLUE') || name.includes('CYAN') || name.includes('ICE') || name.includes('AQUA')) return 'var(--accent-cyan)';
+        if (name.includes('RED') || name.includes('CRIMSON') || name.includes('BLOOD') || name.includes('RUBY')) return 'var(--accent-pink)';
+        if (name.includes('GOLD') || name.includes('YELLOW') || name.includes('SUN')) return 'var(--accent-gold)';
+        if (name.includes('GREEN') || name.includes('TOXIC') || name.includes('EMERALD') || name.includes('LIME')) return '#00ffaa';
+        if (name.includes('PURPLE') || name.includes('MYTHIC') || name.includes('VOID') || name.includes('AMETHYST')) return '#a855f7';
+        if (name.includes('ORANGE') || name.includes('MAGMA') || name.includes('FIRE')) return '#ff6600';
+        if (name.includes('SILVER') || name.includes('CHROME') || name.includes('STEEL') || name.includes('IRON')) return '#c0c0c0';
+        if (name.includes('BRONZE') || name.includes('RUST') || name.includes('COPPER')) return '#cd7f32';
+        if (name.includes('BLACK') || name.includes('CARBON') || name.includes('OBSIDIAN')) return '#888888'; 
+        if (name.includes('PINK') || name.includes('MAGENTA') || name.includes('NEON')) return '#ff00ff';
+        return '#ffffff'; // The Fallback: If no elemental color words are detected, it stays pristine white
+    }
+    
     const sessionKit = new SessionKit({
         appName: 'sk8dao',
         chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: WAX_RPC }],
@@ -1615,30 +1630,38 @@ const renderStat = (label, value, cssClass, max) => {
                     
                     let statHtml = "";
                     let actionHtml = "";
+                    let isRgbFrame = false; 
 
-if (currentSchema === 'skateboards') {
+                    if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
                         if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
                         
                         const skateReward = totalPower * 1000;
                         const waxValue = (skateReward * sWax).toFixed(2);
                         
-                        // Parse all components, including the new Bearings trait
+                        // Parse all components using the new Case-Insensitive Engine
                         const deckName = MetaParser.getString(n, 'deck', 'STOCK');
                         const truckName = MetaParser.getString(n, 'trucks', 'STOCK');
                         const wheelName = MetaParser.getString(n, 'wheels', 'STOCK');
                         const bearingName = MetaParser.getString(n, 'bearings', 'STOCK');
                         
+                        // Sniff colors dynamically and assign hex values
+                        const deckColor = getTraitColor(deckName);
+                        const truckColor = getTraitColor(truckName);
+                        const wheelColor = getTraitColor(wheelName);
+                        const bearingColor = getTraitColor(bearingName);
+                        
                         // God-Mode Trigger: Check if Bearings are RGB
-                        const bearingClass = bearingName === 'RGB' ? 'text-rgb' : '';
+                        if (bearingName === 'RGB') isRgbFrame = true;
+                        const bearingClass = isRgbFrame ? 'text-rgb' : '';
                         
                         statHtml = `
                             <div class="meta-group">
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:var(--accent-cyan)">${deckName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:var(--accent-cyan)">${truckName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:var(--accent-cyan)">${wheelName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:var(--accent-cyan)" class="${bearingClass}">${bearingName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:${deckColor}; text-shadow: 0 0 5px ${deckColor};">${deckName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:${truckColor}; text-shadow: 0 0 5px ${truckColor};">${truckName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:${wheelColor}; text-shadow: 0 0 5px ${wheelColor};">${wheelName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:${isRgbFrame ? 'transparent' : bearingColor}; text-shadow: ${isRgbFrame ? 'none' : '0 0 5px ' + bearingColor};" class="${bearingClass}">${bearingName}</span></div>
                                 </div>
                                 <div class="meta-title">PERFORMANCE</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
@@ -1656,14 +1679,16 @@ if (currentSchema === 'skateboards') {
                             </div>`;
 
                     } else {
+                        // Handle standalone components (Trucks, Wheels, Decks) with dynamic colors
                         const brandStr = MetaParser.getString(n, 'brand', 'STOCK');
                         const colorStr = MetaParser.getString(n, 'color', 'STOCK');
+                        const traitColor = getTraitColor(colorStr);
 
                         statHtml = `
                             <div class="meta-group">
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BRAND <span style="color:#fff">${brandStr}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">COLOR <span style="color:#fff">${colorStr}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">COLOR <span style="color:${traitColor}; text-shadow: 0 0 5px ${traitColor};">${colorStr}</span></div>
                                 </div>
                                 <div class="meta-title">COMPONENT TRAITS</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
@@ -1678,14 +1703,26 @@ if (currentSchema === 'skateboards') {
                             </div>`;
                     }
 
-                    // --- GOD TIER LOGIC INJECTION ---
+                   // --- GOD TIER LOGIC INJECTION & ELEMENTAL AURAS ---
                     const cleanRar = rarity.toLowerCase();
                     const isGodTier = ['legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
-                    const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
-                    const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
+                    let cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    
+                    // Inject RGB Frame if active
+                    if (isRgbFrame) cardClass += " rgb-god-frame";
+
+                    // Elemental Aura: If it's a standard board, project an aura matching the bearing color
+                    let dynamicStyle = "";
+                    if (!isGodTier && !isRgbFrame && bearingColor !== '#ffffff' && currentSchema === 'skateboards') {
+                        // Takes the hex from the sniffer and creates a custom metallic glow around the card
+                        dynamicStyle = `border-color: ${bearingColor}; box-shadow: inset 0 0 15px ${bearingColor}40, 0 0 15px ${bearingColor}20;`;
+                    } else if (!isGodTier) {
+                        dynamicStyle = `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
+                    }
+
+                    const cardStyle = isGodTier ? "" : dynamicStyle;
                     const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
                     
-                    // Default to white text, override to neon green if it is the #1 mint
                     let badgeStyle = "color: #ffffff; border-color: rgba(255, 255, 255, 0.4);";
                     if (mN == 1) badgeStyle = "color: #00ffaa; border-color: #00ffaa; text-shadow: 0 0 10px #00ffaa;";
 
