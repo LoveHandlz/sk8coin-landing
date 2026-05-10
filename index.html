@@ -4,25 +4,7 @@
     <meta charset="UTF-8">
     <title>sk8dao | THE SENATE CHAMBER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-
-     <style>
-
-    /* --- RGB BEARING EFFECT --- */
-        @keyframes rainbowText {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        .text-rgb {
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
-            background-size: 200% auto;
-            color: transparent !important; /* Makes the actual text invisible so the background shows through */
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: rainbowText 1.5s linear infinite; /* 1.5s keeps the flow fast and smooth */
-            font-weight: 900;
-        }
-    
-   
+    <style>
        :root {
             --bg-deep: #050a1a;
             --bg-panel: rgba(15, 26, 71, 0.95);
@@ -39,9 +21,41 @@
             
             /* --- GOD TIER BASE COLORS --- */
             --rarity-legendary: #ffd700; 
-            --rarity-mythic: #ff00ff; /* Fallback, handled by rainbow animation */
-            --rarity-insane: #ff0033; /* Deep Intense Red */
-            --rarity-ridiculous: #00ffff; /* Ice Diamond Cyan */
+            --rarity-mythic: #ff00ff;
+            --rarity-insane: #ff0033;
+            --rarity-ridiculous: #00ffff;
+        }
+
+        /* --- RGB BEARING EFFECT & GOD FRAME --- */
+        @keyframes rainbowText {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .text-rgb {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            color: transparent !important; 
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: rainbowText 1.5s linear infinite; 
+            font-weight: 900;
+        }
+
+        .rgb-god-frame {
+            position: relative;
+            z-index: 1;
+            border: none !important;
+        }
+        .rgb-god-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            z-index: -1;
+            border-radius: 12px;
+            animation: rainbowText 1.5s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         /* --- EXTREME GOD TIER GLOW CLASSES --- */
@@ -98,6 +112,231 @@
         body { 
             background-color: var(--bg-deep);
             color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            background-image: radial-gradient(circle at 50% 50%, #162a5e 0%, #050a1a 100%); 
+            background-attachment: fixed; 
+            min-height: 100vh;
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* --- HEADER & NAV --- */
+        header { 
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 40px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-cyan);
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.1);
+        }
+        .header-inner { 
+            width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .senate-logo {
+            margin: 0; font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; cursor: pointer; letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
+            color: var(--accent-cyan); text-transform: lowercase;
+        }
+        .senate-logo span {
+            color: var(--accent-pink); text-shadow: 0 0 10px var(--accent-pink), 0 0 20px var(--accent-pink);
+        }
+
+        nav ul { display: flex; list-style: none; gap: 18px; margin: 0; padding: 0; }
+        nav a { 
+            color: #888; text-decoration: none; font-family: 'Orbitron';
+            font-size: 0.75rem; font-weight: 900; letter-spacing: 2px; padding-bottom: 5px; transition: 0.2s;
+        }
+        nav a.active, nav a:hover { 
+            color: var(--accent-cyan); text-shadow: 0 0 8px var(--accent-cyan);
+            border-bottom: 2px solid var(--accent-cyan); 
+        }
+        
+        .balance-pill { 
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid var(--accent-cyan); padding: 6px 15px; border-radius: 50px; font-family: 'Orbitron'; font-size: 0.65rem; display: flex; gap: 15px;
+        }
+        .balance-pill span { color: var(--accent-gold); font-weight: 900; }
+        .wallet-btn { 
+            background: var(--accent-cyan); color: #000; border: none; padding: 10px 20px; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); transition: 0.2s;
+        }
+        .wallet-btn:hover { background: #fff; }
+        .wallet-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+        /* --- LAYOUT WRAPPERS --- */
+        .dashboard-wrapper { padding: 40px; max-width: 1400px; margin: auto; flex: 1; width: 100%; box-sizing: border-box; position: relative; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        /* --- INVENTORY CARDS --- */
+        .skate-card { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .skate-card:hover { transform: translateY(-5px); border-color: var(--accent-gold); box-shadow: 0 5px 20px rgba(255,215,0,0.15); }
+        .rarity-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; border-bottom: 2px solid rgba(255,255,255,0.4); }
+        .rarity-header-text { font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-top: 2px; line-height: 1; text-transform: uppercase; }
+        .mint-badge { background: #000; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: 900; border: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 5px rgba(255,255,255,0.2); }
+        .img-wrap { width: 100%; height: 200px; display: flex; justify-content: center; align-items: center; background: #000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .skate-img { max-height: 85%; max-width: 85%; object-fit: contain; }
+        .card-body { padding: 20px; flex: 1; }
+        .board-name { font-family: 'Orbitron'; font-weight: 900; font-size: 1.4rem; margin: 0 0 15px 0; text-transform: uppercase; line-height: 1.1; color: var(--accent-cyan); }
+        .meta-title { font-family: 'Orbitron'; font-weight: 400; font-size: 0.6rem; color: #888; letter-spacing: 2px; margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px; text-transform: uppercase; }
+        .stat-bar-container { width: 100%; height: 6px; background: #111; border: 1px solid #333; border-radius: 3px; margin-top: 3px; overflow: hidden; }
+        .stat-bar { height: 100%; transition: width 0.5s ease-out; }
+        .stat-pop { background: linear-gradient(90deg, #ff0055, #ff55aa); }
+        .stat-balance { background: linear-gradient(90deg, #aa00ff, #e066ff); }
+        .stat-speed { background: linear-gradient(90deg, #00aaff, #00ffff); }
+        .stat-total { background: linear-gradient(90deg, #ffaa00, #ffff00); }
+        .claim-zone { padding: 15px 20px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--accent-gold); display: flex; justify-content: space-between; align-items: center; }
+        .reward-skate { font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; color: #fff; line-height: 1; margin-bottom: 4px; }
+        .reward-wax { font-family: 'Inter'; font-size: 0.75rem; color: var(--accent-gold); font-weight: 900; }
+        .skate-icon { width: 26px; height: 26px; vertical-align: middle; margin-right: 8px; }
+
+        /* --- CRAFTING --- */
+        .crafting-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px; border: 1px solid var(--accent-cyan); }
+        .craft-slot { background: rgba(0,240,255,0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .craft-slot h4 { margin: 0 0 10px 0; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; }
+        .craft-slot select { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #333; font-size: 0.8rem; margin-bottom: 5px; outline: none; }
+        .projected-stats { background: #000; padding: 25px; border-radius: 8px; border: 1px solid var(--accent-gold); display: flex; flex-direction: column; justify-content: space-between; }
+        .nft-visual-thumbnail { width: 45px; height: 45px; object-fit: contain; background: #111; border: 1px solid var(--accent-cyan); border-radius: 4px; padding: 3px; }
+
+        /* --- LEADERBOARDS & TREASURY --- */
+        .lb-row { display: flex; padding: 15px 20px; border-bottom: 1px solid #333; font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; align-items: center; }
+        .lb-header { background: rgba(0, 240, 255, 0.1); color: var(--accent-cyan); font-weight: 900; font-size: 0.75rem; border-bottom: 2px solid var(--accent-cyan); }
+
+        /* --- MICRO-BADGES & DAO RANKS --- */
+        .badge-pill-container { display: inline-flex; gap: 4px; margin-left: 10px; vertical-align: middle; }
+        .micro-badge-pill { font-family: 'Orbitron'; font-size: 0.5rem; font-weight: 900; padding: 3px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+        .m-badge-poser { background: rgba(148, 163, 184, 0.1); border: 1px solid #94a3b8; color: #94a3b8; }
+        .m-badge-grom { background: rgba(0, 255, 170, 0.1); border: 1px solid #00ffaa; color: #00ffaa; }
+        .m-badge-flow { background: rgba(205, 127, 50, 0.1); border: 1px solid #cd7f32; color: #cd7f32; }
+        .m-badge-amateur { background: rgba(192, 192, 192, 0.1); border: 1px solid #c0c0c0; color: #c0c0c0; }
+        .m-badge-pro { background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #ffd700; }
+        .m-badge-elite { background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; color: #2196f3; }
+        .m-badge-legendary { background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; color: #fff; text-shadow: 0 0 5px #fff; box-shadow: 0 0 10px rgba(168, 85, 247, 0.8); }
+        
+        .m-badge-lawmaker { background: rgba(0, 240, 255, 0.1); border: 1px dashed var(--accent-cyan); color: var(--accent-cyan); }
+        .m-badge-veto { background: rgba(255, 51, 102, 0.2); border: 1px solid #ff3366; color: #ff3366; }
+
+        /* --- SENATE UI CLASSES --- */
+        .dao-hud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .dao-hud-card { 
+            background: linear-gradient(180deg, rgba(15,26,71,0.9), rgba(5,10,26,0.9)); 
+            border: 2px solid #333; border-radius: 12px; padding: 25px; text-align: center; 
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden;
+        }
+        .dao-hud-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+        .dao-hud-card.active-rank { 
+            border-color: var(--accent-cyan); box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.1); 
+        }
+        .dao-hud-card.active-rank::before {
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+        
+        .motion-card { 
+            background: linear-gradient(180deg, #111, #000); 
+            border: 2px solid #333; border-radius: 12px; padding: 30px; position: relative; margin-bottom: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .motion-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 5px;
+            background: repeating-linear-gradient(90deg, #333, #333 10px, transparent 10px, transparent 20px);
+        }
+        .motion-card.tipped { border-color: var(--accent-gold); box-shadow: 0 0 25px rgba(255,215,0,0.15); }
+        .motion-timer { font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 5px; background: #000; padding: 5px 10px; border-radius: 4px; border: 1px solid #333;}
+        .motion-timer.safe { color: #00ffaa; border-color: rgba(0,255,170,0.3); }
+        .motion-timer.danger { color: var(--accent-pink); animation: pulse 1.5s infinite; border-color: rgba(255,0,85,0.3); }
+        
+        .vote-bar-bg { width: 100%; height: 12px; background: rgba(255, 0, 85, 0.2); border-radius: 6px; margin: 20px 0; display: flex; overflow: hidden; border: 1px solid #333; }
+        .vote-bar-yes { height: 100%; background: linear-gradient(90deg, #00aa77, #00ffaa); transition: width 0.5s; box-shadow: 0 0 10px rgba(0,255,170,0.5); }
+        
+        .dao-action-btn { 
+            background: #000; border: 2px solid #555; color: #fff; font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; padding: 10px 20px; cursor: pointer; transition: 0.2s; border-radius: 6px; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .dao-action-btn:hover { transform: translateY(-2px); }
+        .btn-yes { border-color: #00ffaa; color: #00ffaa; box-shadow: inset 0 0 10px rgba(0,255,170,0.1); } 
+        .btn-yes:hover { background: #00ffaa; color: #000; box-shadow: 0 0 15px rgba(0,255,170,0.4); }
+        .btn-no { border-color: var(--accent-pink); color: var(--accent-pink); box-shadow: inset 0 0 10px rgba(255,0,85,0.1);} 
+        .btn-no:hover { background: var(--accent-pink); color: #000; box-shadow: 0 0 15px rgba(255,0,85,0.4); }
+        .btn-veto { border-color: var(--accent-pink); background: rgba(255,0,85,0.1); color: var(--accent-pink); }
+        .btn-veto:hover { background: var(--accent-pink); color: #000; }
+        .btn-retract { border-color: #ffaa00; color: #ffaa00; }
+
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 5px rgba(255,0,85,0); } 50% { opacity: 0.7; box-shadow: 0 0 15px rgba(255,0,85,0.5); } 100% { opacity: 1; box-shadow: 0 0 5px rgba(255,0,85,0); } }
+
+        /* --- SK8SWAP & COMPONENTS --- */
+        .sk8swap-terminal { background: rgba(0, 0, 0, 0.8); border: 2px solid var(--accent-cyan); border-radius: 12px; padding: 40px; max-width: 600px; margin: 0 auto 50px auto; box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); position: relative; }
+        .swap-input-group { background: #050a1a; border: 1px solid #333; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .swap-input-group input { background: transparent; border: none; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; width: 50%; outline: none; }
+        .token-selector { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 8px 15px; border-radius: 50px; cursor: pointer; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem; transition: 0.2s; }
+        .token-selector:hover { border-color: var(--accent-cyan); }
+        .swap-toggle-wrap { text-align: center; margin: 10px 0; position: relative; z-index: 10; }
+        .swap-toggle-btn { background: #050a1a; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); border-radius: 50%; width: 40px; height: 40px; display: inline-flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+        .swap-toggle-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px var(--accent-cyan); transform: rotate(180deg); }
+        .slip-btn { background: transparent; border: 1px solid #333; color: #888; padding: 5px 12px; font-family: 'Orbitron'; font-size: 0.75rem; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .slip-btn.active-slip { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,240,255,0.1); font-weight: 900; }
+        .hud-pill { background: rgba(0,240,255,0.05); border: 1px solid var(--accent-cyan); border-radius: 50px; padding: 8px 20px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.8rem; color: #888; display: inline-block; margin: 5px; }
+        .hud-pill span { color: #fff; margin-left: 10px; }
+        .caution-tape { height: 15px; width: 100%; background: repeating-linear-gradient(45deg, #000, #000 15px, var(--accent-gold) 15px, var(--accent-gold) 30px); }
+
+        /* --- FOOTER & MODALS --- */
+        footer { background: rgba(0, 0, 0, 0.95); padding: 40px 40px; margin-top: auto; border-top: 2px solid var(--accent-cyan); display: flex; justify-content: center; backdrop-filter: blur(10px); }
+        .footer-inner { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-brand { font-family: 'Orbitron'; font-size: 0.65rem; color: #888; letter-spacing: 2px; line-height: 1.8; }
+        .footer-brand span { color: var(--accent-gold); font-weight: 900; }
+        .footer-logos { display: flex; gap: 25px; align-items: center; }
+        .footer-logos img { height: 28px; opacity: 0.5; filter: grayscale(100%); transition: all 0.3s ease; }
+        .footer-logos img:hover { opacity: 1; filter: grayscale(0%); transform: scale(1.05); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--bg-panel); padding: 40px; border-radius: 15px; border: 2px solid var(--accent-cyan); text-align: center; box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
+        
+        .master-dash-btn { background: rgba(0, 0, 0, 0.6); color: #fff; border: 1px solid var(--accent-cyan); padding: 15px 25px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+        .master-dash-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 15px var(--accent-cyan); }
+        .master-dash-btn.gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .master-dash-btn.gold:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-gold); }
+
+        #dapp-back-btn { display: none; position: fixed; top: 120px; left: 40px; z-index: 999; background: rgba(0,0,0,0.85); color: var(--accent-cyan); border: 2px solid var(--accent-cyan); padding: 12px 25px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: 900; cursor: pointer; backdrop-filter: blur(8px); clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: 0.2s; }
+        #dapp-back-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 25px var(--accent-cyan); }
+
+        /* --- SK8SHOP UPGRADES --- */
+        .lore-profile { display: flex; flex-wrap: wrap; gap: 30px; background: rgba(0,0,0,0.6); border: 1px solid #333; border-radius: 8px; padding: 30px; margin-bottom: 30px; align-items: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        .lore-profile.guardian { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.1); }
+        .lore-profile.mythic { border-color: #a855f7; box-shadow: 0 0 20px rgba(168,85,247,0.1); }
+        .lore-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #333; }
+        .guardian .lore-avatar { border-color: var(--accent-cyan); }
+        .mythic .lore-avatar { border-color: #a855f7; }
+        .lore-details { flex: 1; min-width: 250px; }
+        .lore-name { font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; margin: 0 0 5px 0; display: flex; align-items: center; gap: 10px; }
+        .guardian .lore-name { color: var(--accent-cyan); }
+        .mythic .lore-name { color: #a855f7; text-shadow: 0 0 10px #a855f7; }
+        .lore-title { font-size: 0.75rem; color: #888; font-family: 'Orbitron'; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        .lore-bio { color: #ccc; font-size: 0.95rem; line-height: 1.6; }
+        
+        .media-matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .video-embed-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border: 2px solid #333; border-radius: 8px; background: #000; }
+        .video-embed-wrapper iframe, .video-embed-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .video-embed-wrapper:hover { border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+        
+        .physical-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .physical-card { background: var(--bg-panel); border: 1px dashed #555; border-radius: 8px; padding: 20px; text-align: center; transition: 0.3s; }
+        .physical-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px); }
+        .physical-img-placeholder { width: 100%; height: 150px; background: #111; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #555; font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 15px; }
+
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column; gap: 15px; }
+            nav ul { flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .dashboard-wrapper { padding: 20px 15px; }
+            .master-dash-btn { width: 100%; margin-bottom: 5px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            #dapp-back-btn { top: auto; bottom: 20px; left: 20px; z-index: 2000; }
+            .sk8swap-terminal { padding: 20px; }
+            .swap-input-group input { font-size: 1.4rem; }
+            .lore-profile { text-align: center; justify-content: center; }
+        }
+    </style>
+
+    #fff; 
             font-family: 'Inter', sans-serif; 
             margin: 0; 
             background-image: radial-gradient(circle at 50% 50%, #162a5e 0%, #050a1a 100%); 
@@ -470,6 +709,7 @@
 </div>
 
 <div class="dashboard-wrapper" id="defi-wrapper" style="display: none;">
+
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">DEFI <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// THE REBEL BASE</span></h2>
     
     <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-pink); border-radius: 8px; padding: 40px; max-width: 900px; margin: 0 auto 50px auto; text-align: center; box-shadow: 0 5px 25px rgba(255,0,85,0.15);">
@@ -866,7 +1106,7 @@
     </div>
 </div>
 
-<script type="module">
+    <script type="module">
     import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
     import { WebRenderer } from 'https://esm.sh/@wharfkit/web-renderer?bundle';
     import { WalletPluginCloudWallet } from 'https://esm.sh/@wharfkit/wallet-plugin-cloudwallet?bundle';
@@ -890,6 +1130,22 @@
         }
         static getImg(nft) { return this.getRaw(nft, 'img') || ''; }
         static getRarity(nft) { return this.getString(nft, 'rarity', 'COMMON').toLowerCase(); }
+    }
+
+    // --- SMART COLOR SNIFFER HELPER ---
+    function getTraitColor(traitName) {
+        const name = (traitName || "").toUpperCase();
+        if (name.includes('BLUE') || name.includes('CYAN') || name.includes('ICE') || name.includes('AQUA')) return 'var(--accent-cyan)';
+        if (name.includes('RED') || name.includes('CRIMSON') || name.includes('BLOOD') || name.includes('RUBY')) return 'var(--accent-pink)';
+        if (name.includes('GOLD') || name.includes('YELLOW') || name.includes('SUN')) return 'var(--accent-gold)';
+        if (name.includes('GREEN') || name.includes('TOXIC') || name.includes('EMERALD')) return '#00ffaa';
+        if (name.includes('PURPLE') || name.includes('MYTHIC') || name.includes('VOID') || name.includes('AMETHYST')) return '#a855f7';
+        if (name.includes('ORANGE') || name.includes('MAGMA') || name.includes('FIRE')) return '#ff6600';
+        if (name.includes('SILVER') || name.includes('CHROME') || name.includes('STEEL')) return '#c0c0c0';
+        if (name.includes('BRONZE') || name.includes('RUST')) return '#cd7f32';
+        if (name.includes('BLACK') || name.includes('CARBON') || name.includes('OBSIDIAN')) return '#888888'; 
+        if (name.includes('PINK') || name.includes('MAGENTA') || name.includes('NEON')) return '#ff00ff';
+        return '#ffffff';
     }
 
     const sessionKit = new SessionKit({
@@ -949,7 +1205,7 @@
         }
     }
 
-    // --- SENATE RANKING LOGIC (Proof of Bleeding) ---
+    // --- SENATE RANKING LOGIC ---
     function calculateDaoRank(cumulativeUsd) {
         if (cumulativeUsd >= 50000) return { rank: "LEGENDARY", votes: 2000, color: "#a855f7", badge: "m-badge-legendary" };
         if (cumulativeUsd >= 10000) return { rank: "ELITE", votes: 1000, color: "#2196f3", badge: "m-badge-elite" };
@@ -960,7 +1216,7 @@
         return { rank: "POSER", votes: 0, color: "#94a3b8", badge: "m-badge-poser" };
     }
 
-    // --- ON-CHAIN SCRAPER (Treasury & Blessings) ---
+    // --- ON-CHAIN SCRAPER ---
     async function fetchTreasuryData() {
         await syncPrices();
         
@@ -979,7 +1235,6 @@
         if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900;">INTERCEPTING BLESSINGS...</div>`;
 
         try {
-            // Live Reserve Extraction
             const waxRes = await fetch(`${WAX_RPC}/v1/chain/get_currency_balance`, { method: 'POST', body: JSON.stringify({ code: "eosio.token", account: "skatecoinwax", symbol: "WAX" }) });
             const waxBalArr = await waxRes.json(); 
             const waxBal = waxBalArr[0] ? parseFloat(waxBalArr[0].split(' ')[0]) : 0;
@@ -990,7 +1245,6 @@
 
             const skatePriceUSD = sWax * waxUsdPrice;
             
-            // True Mathematical Aggregations
             const circulating_supply = 1000000;
             const total_supply = 1000000000; 
             const circMcapUsd = circulating_supply * skatePriceUSD;
@@ -1003,7 +1257,6 @@
             if(skateResDOM) skateResDOM.innerText = skateBal.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) + ' SKATE';
             if(skateUsdDOM) skateUsdDOM.innerText = `≈ $${(skateBal * skatePriceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
 
-            // Hyperion Historical Scraper Logic (100 LIMIT)
             const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=100`;
             const hRes = await fetch(historyUrl);
             const hJson = await hRes.json();
@@ -1052,11 +1305,9 @@
                 });
             }
 
-            // Extract Logged-In User's Power
             if (currentSession) {
                 const myAcc = currentSession.actor.toString();
                 if (sponsors[myAcc]) currentUserUsdTotal = sponsors[myAcc].powerValueUsd;
-                // Godmode exception for Veto Hammer
                 if (myAcc === ADMIN_WALLET) currentUserUsdTotal = 100000; 
                 
                 const myRankInfo = calculateDaoRank(currentUserUsdTotal);
@@ -1084,7 +1335,6 @@
                 }
             }
 
-            // Render Whale Board
             if(whaleList) {
                 const sortedSponsors = Object.keys(sponsors).map(acc => ({
                     account: acc,
@@ -1111,7 +1361,6 @@
                 }
             }
 
-            // Render Live Pulse Feed
             if(pulseList) {
                 pulseItems.sort((a, b) => b.timestamp - a.timestamp);
                 const activePulse = pulseItems.slice(0, 100);
@@ -1139,7 +1388,7 @@
         }
     }
 
-// --- THE LIVE BLESSING PIPES (POPUP FREE) ---
+    // --- THE LIVE BLESSING PIPES ---
     let activeDonationCurrency = 'WAX';
 
     window.openDonationModal = (currency) => {
@@ -1152,25 +1401,24 @@
         const btnAmateur = document.getElementById('tier-btn-amateur');
         const btnPro = document.getElementById('tier-btn-pro');
         
-        // 10x Scaling for $SKATE Token
         if (currency === 'SKATE') {
-            btnFlow.innerText = '[ FLOW ] - 1,000';
-            btnFlow.onclick = () => selectTier(1000);
+            btnFlow.innerText = '[ FLOW ] - 0.01';
+            btnFlow.onclick = () => selectTier(0.01);
             
-            btnAmateur.innerText = '[ AMATEUR ] - 10,000';
-            btnAmateur.onclick = () => selectTier(10000);
+            btnAmateur.innerText = '[ AMATEUR ] - 0.05';
+            btnAmateur.onclick = () => selectTier(0.05);
             
-            btnPro.innerText = '[ PRO ] - 100,000';
-            btnPro.onclick = () => selectTier(100000);
+            btnPro.innerText = '[ PRO ] - 0.1';
+            btnPro.onclick = () => selectTier(0.1);
         } else {
-            btnFlow.innerText = '[ FLOW ] - 100';
-            btnFlow.onclick = () => selectTier(100);
+            btnFlow.innerText = '[ FLOW ] - 0.01';
+            btnFlow.onclick = () => selectTier(0.01);
             
-            btnAmateur.innerText = '[ AMATEUR ] - 1,000';
-            btnAmateur.onclick = () => selectTier(1000);
+            btnAmateur.innerText = '[ AMATEUR ] - 0.05';
+            btnAmateur.onclick = () => selectTier(0.05);
             
-            btnPro.innerText = '[ PRO ] - 10,000';
-            btnPro.onclick = () => selectTier(10000);
+            btnPro.innerText = '[ PRO ] - 0.1';
+            btnPro.onclick = () => selectTier(0.1);
         }
 
         document.getElementById('donation-tier-modal').style.display = 'flex';
@@ -1215,7 +1463,7 @@
         }
     };
 
-    // --- SK8SWAP LOGIC: BI-DIRECTIONAL DECENTRALIZED CALCULATORS ---
+        // --- SK8SWAP LOGIC: BI-DIRECTIONAL DECENTRALIZED CALCULATORS ---
     window.flipSwapDirection = () => {
         isWaxToSkate = !isWaxToSkate;
         
@@ -1457,7 +1705,7 @@
         } catch (e) {}
     }
 
-async function fetchLeaderboard() {
+    async function fetchLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = `<div style="padding:40px; text-align:center; color:var(--accent-cyan); font-family:'Orbitron';">SCANNING WAX BLOCKCHAIN...</div>`;
         try {
@@ -1482,7 +1730,7 @@ async function fetchLeaderboard() {
         } catch (e) { list.innerHTML = `<div style="padding:40px; text-align:center; color:#ff3366; font-family:'Orbitron';">BLOCKCHAIN CONNECTION FAILED</div>`; }
     }
 
-const renderStat = (label, value, cssClass, max) => {
+    const renderStat = (label, value, cssClass, max) => {
         const num = parseInt(value) || 0, pct = Math.min((num / max) * 100, 100); 
         return `<div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">${label} <span style="color: #fff;">${num}/${max}</span></div><div class="stat-bar-container"><div class="stat-bar ${cssClass}" style="width: ${pct}%"></div></div></div>`;
     };
@@ -1517,7 +1765,6 @@ const renderStat = (label, value, cssClass, max) => {
             const fPop = getGroupScore('pop'), fSpeed = getGroupScore('speed'), fBal = getGroupScore('bal');
             let totalPower = fPop + fSpeed + fBal;
             
-            // MAX POWER CAPPED AT 30
             if (totalPower > 30) totalPower = 30; 
             const rewards = totalPower * 1000;
             selectedAssetIds = [d.value, t1.value, t2.value, w1.value, w2.value, w3.value, w4.value];
@@ -1615,30 +1862,35 @@ const renderStat = (label, value, cssClass, max) => {
                     
                     let statHtml = "";
                     let actionHtml = "";
+                    let isRgbFrame = false; 
 
-if (currentSchema === 'skateboards') {
+                    if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
-                        if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
+                        if (totalPower > 30) totalPower = 30; 
                         
                         const skateReward = totalPower * 1000;
                         const waxValue = (skateReward * sWax).toFixed(2);
                         
-                        // Parse all components, including the new Bearings trait
                         const deckName = MetaParser.getString(n, 'deck', 'STOCK');
                         const truckName = MetaParser.getString(n, 'trucks', 'STOCK');
                         const wheelName = MetaParser.getString(n, 'wheels', 'STOCK');
                         const bearingName = MetaParser.getString(n, 'bearings', 'STOCK');
                         
-                        // God-Mode Trigger: Check if Bearings are RGB
-                        const bearingClass = bearingName === 'RGB' ? 'text-rgb' : '';
+                        const deckColor = getTraitColor(deckName);
+                        const truckColor = getTraitColor(truckName);
+                        const wheelColor = getTraitColor(wheelName);
+                        const bearingColor = getTraitColor(bearingName);
+                        
+                        if (bearingName === 'RGB') isRgbFrame = true;
+                        const bearingClass = isRgbFrame ? 'text-rgb' : '';
                         
                         statHtml = `
                             <div class="meta-group">
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:var(--accent-cyan)">${deckName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:var(--accent-cyan)">${truckName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:var(--accent-cyan)">${wheelName}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:var(--accent-cyan)" class="${bearingClass}">${bearingName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:${deckColor};">${deckName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:${truckColor};">${truckName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:${wheelColor};">${wheelName}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:${isRgbFrame ? 'transparent' : bearingColor};" class="${bearingClass}">${bearingName}</span></div>
                                 </div>
                                 <div class="meta-title">PERFORMANCE</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
@@ -1658,12 +1910,13 @@ if (currentSchema === 'skateboards') {
                     } else {
                         const brandStr = MetaParser.getString(n, 'brand', 'STOCK');
                         const colorStr = MetaParser.getString(n, 'color', 'STOCK');
+                        const traitColor = getTraitColor(colorStr);
 
                         statHtml = `
                             <div class="meta-group">
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BRAND <span style="color:#fff">${brandStr}</span></div>
-                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">COLOR <span style="color:#fff">${colorStr}</span></div>
+                                    <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">COLOR <span style="color:${traitColor}; text-shadow: 0 0 5px ${traitColor};">${colorStr}</span></div>
                                 </div>
                                 <div class="meta-title">COMPONENT TRAITS</div>
                                 <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
@@ -1678,14 +1931,15 @@ if (currentSchema === 'skateboards') {
                             </div>`;
                     }
 
-                    // --- GOD TIER LOGIC INJECTION ---
                     const cleanRar = rarity.toLowerCase();
                     const isGodTier = ['legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
-                    const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    let cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    
+                    if (isRgbFrame) cardClass += " rgb-god-frame";
+
                     const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
                     const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
                     
-                    // Default to white text, override to neon green if it is the #1 mint
                     let badgeStyle = "color: #ffffff; border-color: rgba(255, 255, 255, 0.4);";
                     if (mN == 1) badgeStyle = "color: #00ffaa; border-color: #00ffaa; text-shadow: 0 0 10px #00ffaa;";
 
@@ -1758,3 +2012,11 @@ if (currentSchema === 'skateboards') {
 </script>
 </body>
 </html>
+
+        
+
+    
+
+    
+
+    
