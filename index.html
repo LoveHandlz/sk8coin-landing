@@ -1637,7 +1637,9 @@ const renderStat = (label, value, cssClass, max) => {
                         if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
                         
                         const skateReward = totalPower * 1000;
-                        const waxValue = (skateReward * sWax).toFixed(2);
+                        // Bulletproof check: If sWax is not loaded yet, default WAX estimate to 0.00
+                        const currentPriceFactor = (typeof sWax !== 'undefined' && !isNaN(sWax)) ? sWax : 0;
+                        const waxValue = (skateReward * currentPriceFactor).toFixed(2);
                         
                         // Parse all components using the new Case-Insensitive Engine
                         const deckName = MetaParser.getString(n, 'deck', 'STOCK');
