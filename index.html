@@ -5,21 +5,23 @@
     <title>sk8dao | THE SENATE CHAMBER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-deep: #050a1a;
-            --bg-panel: rgba(15, 26, 71, 0.95);
-            --accent-cyan: #00f0ff;
-            --accent-pink: #ff0055;
-            --accent-gold: #ffd700;
-            --card-border: rgba(0, 240, 255, 0.2);
-            --rarity-common: #94a3b8; --rarity-uncommon: #00ffaa; --rarity-rare: #2196f3;
-            --rarity-epic: #d946ef; --rarity-legendary: var(--accent-gold); --rarity-mythic: #a855f7;          
-        }
+  /* --- THE GOD TIERS --- */
+        --rarity-legendary: #ffd700; /* Golden */
+        --rarity-mythic: #ff8800; /* Orange */
+        --rarity-ridiculous: #ff4500; /* Intense Neon Orange */
+        --rarity-insane: #cc0000; /* Dark Red */
+    }  /* <---- THIS BRACE IS THE END OF THE :ROOT BLOCK */
 
-        body { 
-            background-color: var(--bg-deep);
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
+    /* --- EXTREME GLOW OVERRIDES --- */
+    .rarity-header[style*="legendary"] { box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255, 215, 0, 0.5) !important; }
+    .rarity-header[style*="mythic"] { box-shadow: 0 0 20px #ff8800, 0 0 40px rgba(255, 136, 0, 0.6) !important; }
+    .rarity-header[style*="ridiculous"] { box-shadow: 0 0 25px #ff4500, 0 0 50px #ff4500, 0 0 80px rgba(255, 69, 0, 0.8) !important; text-shadow: 0 0 5px #fff; }
+    .rarity-header[style*="insane"] { box-shadow: 0 0 25px #cc0000, 0 0 50px #cc0000, 0 0 80px rgba(204, 0, 0, 0.9) !important; text-shadow: 0 0 5px #fff; }
+
+    body {  /* <---- THIS IS THE CSS STYLING FOR THE HTML BODY TAG */
+        background-color: var(--bg-deep);
+        color: #fff; 
+        font-family: 'Inter', sans-serif;
             margin: 0; 
             background-image: radial-gradient(circle at 50% 50%, #162a5e 0%, #050a1a 100%); 
             background-attachment: fixed; 
@@ -1450,7 +1452,7 @@ const renderStat = (label, value, cssClass, max) => {
                 return;
             }
 
-            const rarityMap = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6 };
+            const rarityMap = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6, 'ridiculous': 7, 'insane': 8 };
             const rarities = [d.dataset.rarity, t1.dataset.rarity, t2.dataset.rarity, w1.dataset.rarity, w2.dataset.rarity, w3.dataset.rarity, w4.dataset.rarity];
             
             let maxTier = 1;
