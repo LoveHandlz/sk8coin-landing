@@ -5,23 +5,51 @@
     <title>sk8dao | THE SENATE CHAMBER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-  /* --- THE GOD TIERS --- */
-        --rarity-legendary: #ffd700; /* Golden */
-        --rarity-mythic: #ff8800; /* Orange */
-        --rarity-ridiculous: #ff4500; /* Intense Neon Orange */
-        --rarity-insane: #cc0000; /* Dark Red */
-    }  /* <---- THIS BRACE IS THE END OF THE :ROOT BLOCK */
+       :root {
+            --bg-deep: #050a1a;
+            --bg-panel: rgba(15, 26, 71, 0.95);
+            --accent-cyan: #00f0ff;
+            --accent-pink: #ff0055;
+            --accent-gold: #ffd700;
+            --card-border: rgba(0, 240, 255, 0.2);
+            
+            /* --- BASE RARITIES --- */
+            --rarity-common: #94a3b8; 
+            --rarity-uncommon: #00ffaa; 
+            --rarity-rare: #2196f3;
+            --rarity-epic: #d946ef; 
+            
+            /* --- GOD TIER BASE COLORS --- */
+            --rarity-legendary: #ffd700; 
+            --rarity-mythic: #ff00ff; /* Fallback, handled by rainbow animation */
+            --rarity-insane: #ff0033; /* Deep Intense Red */
+            --rarity-ridiculous: #00ffff; /* Ice Diamond Cyan */
+        }
 
-    /* --- EXTREME GLOW OVERRIDES --- */
-    .rarity-header[style*="legendary"] { box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255, 215, 0, 0.5) !important; }
-    .rarity-header[style*="mythic"] { box-shadow: 0 0 20px #ff8800, 0 0 40px rgba(255, 136, 0, 0.6) !important; }
-    .rarity-header[style*="ridiculous"] { box-shadow: 0 0 25px #ff4500, 0 0 50px #ff4500, 0 0 80px rgba(255, 69, 0, 0.8) !important; text-shadow: 0 0 5px #fff; }
-    .rarity-header[style*="insane"] { box-shadow: 0 0 25px #cc0000, 0 0 50px #cc0000, 0 0 80px rgba(204, 0, 0, 0.9) !important; text-shadow: 0 0 5px #fff; }
+        /* --- EXTREME GOD TIER GLOW CLASSES --- */
+        .card-glow-legendary { box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.4) !important; border-color: var(--rarity-legendary) !important; }
+        .card-glow-legendary .rarity-header { background: var(--rarity-legendary) !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 215, 0, 0.7) !important; }
+        .card-glow-legendary .skate-img { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
 
-    body {  /* <---- THIS IS THE CSS STYLING FOR THE HTML BODY TAG */
-        background-color: var(--bg-deep);
-        color: #fff; 
-        font-family: 'Inter', sans-serif;
+        .card-glow-insane { box-shadow: inset 0 0 60px rgba(255, 0, 51, 0.3), 0 0 25px rgba(255, 0, 51, 0.5) !important; border-color: var(--rarity-insane) !important; }
+        .card-glow-insane .rarity-header { background: var(--rarity-insane) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 51, 0.9) !important; }
+        .card-glow-insane .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 51, 1)); }
+
+        .card-glow-ridiculous { box-shadow: inset 0 0 80px rgba(0, 255, 255, 0.3), 0 0 30px rgba(0, 255, 255, 0.6) !important; border-color: var(--rarity-ridiculous) !important; }
+        .card-glow-ridiculous .rarity-header { background: #e0ffff !important; color: #000 !important; box-shadow: 0 0 50px rgba(0, 255, 255, 1) !important; text-shadow: 0 0 5px #00ffff; }
+        .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 25px rgba(0, 255, 255, 1)) drop-shadow(0 0 5px #fff); }
+
+        /* Rainbow Animation for Mythic */
+        @keyframes mythicRainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        .card-glow-mythic { box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.3), 0 0 25px rgba(255, 0, 255, 0.5) !important; border-color: #ff00ff !important; animation: mythicRainbow 4s linear infinite; }
+        .card-glow-mythic .rarity-header { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important; background-size: 200% !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 40px rgba(255, 0, 255, 0.7) !important; animation: mythicRainbow 3s linear infinite; }
+        .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8)); }      
+        }
+
+        body { 
+            background-color: var(--bg-deep);
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
             margin: 0; 
             background-image: radial-gradient(circle at 50% 50%, #162a5e 0%, #050a1a 100%); 
             background-attachment: fixed; 
@@ -1541,9 +1569,7 @@ const renderStat = (label, value, cssClass, max) => {
 
                     if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
-                        
-                        // MAX POWER CAPPED AT 30
-                        if (totalPower > 30) totalPower = 30; 
+                        if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
                         
                         const skateReward = totalPower * 1000;
                         const waxValue = (skateReward * sWax).toFixed(2);
@@ -1596,9 +1622,17 @@ const renderStat = (label, value, cssClass, max) => {
                             </div>`;
                     }
 
-                    return `<div class="skate-card">
-                                <div class="rarity-header" style="background: var(--rarity-${rarity.toLowerCase()}); box-shadow: 0 0 20px var(--rarity-${rarity.toLowerCase()});">
-                                    <div class="mint-badge">#${mN}</div>
+                    // --- GOD TIER LOGIC INJECTION ---
+                    const cleanRar = rarity.toLowerCase();
+                    const isGodTier = ['legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
+                    const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
+                    const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
+                    const badgeStyle = isGodTier ? "color: #fff; border-color: rgba(255,255,255,0.5);" : `color: var(--bg-deep); border-color: var(--bg-deep);`;
+
+                    return `<div class="${cardClass}" style="${cardStyle}">
+                                <div class="rarity-header" style="${headerStyle}">
+                                    <div class="mint-badge" style="${badgeStyle}">#${mN}</div>
                                     <div class="rarity-header-text">${rarity}</div>
                                 </div>
                                 <div class="img-wrap"><img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'"></div>
