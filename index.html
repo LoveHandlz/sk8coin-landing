@@ -105,21 +105,7 @@
         .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 127, 1)); }
         
 
-        .card-glow-ridiculous { 
-            box-shadow: inset 0 0 60px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.5) !important; 
-            border-color: var(--rarity-ridiculous) !important; 
-        }
-        .card-glow-ridiculous .rarity-header { 
-            animation: ridiculousStrobeBg 0.3s infinite !important; 
-            box-shadow: none !important; 
-        }
-        .card-glow-ridiculous .rarity-header-text,
-        .card-glow-ridiculous .board-name { 
-            animation: ridiculousStrobeText 0.3s infinite !important; 
-        }
-        .card-glow-ridiculous .skate-img { 
-            filter: none !important; 
-        }
+   
 
         body { 
             background-color: var(--bg-deep);
@@ -1134,8 +1120,7 @@
             let currentUserUsdTotal = 0;
 
             if (hJson && hJson.actions)   {
-                hJson.actions.forEach(action => {
-                   hJson.actions.forEach(action => {
+                 hJson.actions.forEach(action => {
                     const data = action.act.data;
                     const fromAcc = data.from;
                     const blockTime = new Date(action.timestamp);
@@ -1275,44 +1260,12 @@
                 }
             }
 
-        } catch (e) {
+       } catch (e) {
             console.error(e);
             if(whaleList) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR QUERYING LEDGER</div>`;
             if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR INTERCEPTING BLESSINGS</div>`;
         }
     }
-
-            // Render Live Pulse Feed
-            if(pulseList) {
-                pulseItems.sort((a, b) => b.timestamp - a.timestamp);
-                const activePulse = pulseItems.slice(0, 100);
-
-                if (activePulse.length === 0) {
-                    pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
-                } else {
-                   pulseList.innerHTML = activePulse.map(item => `
-    <div style="display:flex; justify-content:space-between; padding: 15px 10px; border-bottom: 1px dashed #112; align-items: center; background: rgba(255,255,255,0.02);">
-        <div>
-            <div style="font-size:0.6rem; color:${item.labelColor}; font-weight:900; font-family:'Orbitron'; letter-spacing:1px;">${item.itemType}</div>
-            <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900; font-size:0.85rem;">${item.account}</div>
-        </div>
-        <div style="text-align: center; flex: 1;">
-            <div style="color:#fff; font-weight: 900; font-size:0.9rem;">${item.amountStr}</div>
-            <div style="font-size:0.7rem; color:#888; font-style: italic;">"${item.displayMemo}"</div>
-        </div>
-        <div style="color:#444; font-size: 0.65rem; font-family:'Orbitron';">${item.time}</div>
-    </div>
-`).join('');
-                }
-            }
-
-        } catch (e) {
-            console.error(e);
-            if(whaleList) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR QUERYING LEDGER</div>`;
-            if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR INTERCEPTING BLESSINGS</div>`;
-        }
-    }
-
 // --- THE LIVE BLESSING PIPES (POPUP FREE) ---
     let activeDonationCurrency = 'WAX';
 
