@@ -43,22 +43,30 @@
             --rarity-insane: #ff0033; 
             --rarity-ridiculous: #ff007f; 
 
-       /* --- INTENSE EPIC GLOW --- */
+       /* --- EXTREME GOD TIER GLOW CLASSES --- */
+        
+        /* EPIC (Sky Blue / Purple intense glow) */
         .card-glow-epic { box-shadow: inset 0 0 50px rgba(217, 70, 239, 0.3), 0 0 20px rgba(217, 70, 239, 0.5) !important; border-color: var(--rarity-epic) !important; }
         .card-glow-epic .rarity-header { background: var(--rarity-epic) !important; color: #fff !important; box-shadow: 0 0 30px rgba(217, 70, 239, 0.8) !important; }
         .card-glow-epic .skate-img { filter: drop-shadow(0 0 15px rgba(217, 70, 239, 0.9)); }
 
+        /* LEGENDARY (Gold) */
+        .card-glow-legendary { box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.4) !important; border-color: var(--rarity-legendary) !important; }
+        .card-glow-legendary .rarity-header { background: var(--rarity-legendary) !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 215, 0, 0.7) !important; }
+        .card-glow-legendary .skate-img { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
+
+        /* INSANE (Deep Intense Red) */
         .card-glow-insane { box-shadow: inset 0 0 60px rgba(255, 0, 51, 0.3), 0 0 25px rgba(255, 0, 51, 0.5) !important; border-color: var(--rarity-insane) !important; }
         .card-glow-insane .rarity-header { background: var(--rarity-insane) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 51, 0.9) !important; }
         .card-glow-insane .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 51, 1)); }
 
-        /* Rainbow Animation for Mythic */
+        /* MYTHIC (Rainbow Animation) */
         @keyframes mythicRainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
         .card-glow-mythic { box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.3), 0 0 25px rgba(255, 0, 255, 0.5) !important; border-color: #ff00ff !important; animation: mythicRainbow 4s linear infinite; }
         .card-glow-mythic .rarity-header { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important; background-size: 200% !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 40px rgba(255, 0, 255, 0.7) !important; animation: mythicRainbow 3s linear infinite; }
         .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8)); }      
         
-       /* --- DARK PINK RIDICULOUS GLOW --- */
+        /* RIDICULOUS (Dark Pink) */
         .card-glow-ridiculous { box-shadow: inset 0 0 60px rgba(255, 0, 127, 0.3), 0 0 25px rgba(255, 0, 127, 0.5) !important; border-color: var(--rarity-ridiculous) !important; }
         .card-glow-ridiculous .rarity-header { background: var(--rarity-ridiculous) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 127, 0.9) !important; }
         .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 127, 1)); }
