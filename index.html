@@ -1133,44 +1133,62 @@
             let pulseItems = [];
             let currentUserUsdTotal = 0;
 
-            if (hJson && hJson.actions) {
+            if (hJson && hJson.actions)   {
                 hJson.actions.forEach(action => {
+                   hJson.actions.forEach(action => {
                     const data = action.act.data;
-                    
+                    const fromAcc = data.from;
+                    const blockTime = new Date(action.timestamp);
+
                     if (data && data.to === 'skatecoinwax' && data.quantity) {
-                        const fromAcc = data.from;
-                        const memo = data.memo || "";
                         const quantityStr = data.quantity;
                         const [amtVal, symbol] = quantityStr.split(' ');
                         const amount = parseFloat(amtVal) || 0;
-                        const blockTime = new Date(action.timestamp);
+                        const memo = data.memo || "";
 
                         if (!blacklist.includes(fromAcc) && amount > 0) {
                             const valueInWax = symbol === 'WAX' ? amount : amount * sWax;
                             const valueInUsd = valueInWax * waxUsdPrice;
 
+                            // --- MEMO SENSING ENGINE ---
+                            let itemType = "BLESSING";
+                            let labelColor = "var(--accent-gold)";
+                            let displayMemo = memo || "Direct Support";
+
+                            if (memo.startsWith("VOTE:")) {
+                                itemType = "GOVERNANCE";
+                                labelColor = "var(--accent-cyan)";
+                                const parts = memo.split(',');
+                                const choice = memo.includes("CHOICE:YES") ? "YES" : "NO";
+                                const motion = parts[0].split(':')[1];
+                                displayMemo = `Voted ${choice} on ${motion}`;
+                            } else if (memo.startsWith("PROPOSE:")) {
+                                itemType = "LEGISLATION";
+                                labelColor = "var(--accent-pink)";
+                                displayMemo = `Drafted Bill: ${memo.split(':')[1]}`;
+                            }
+
+                            // Update Leaderboard Power
                             if (!sponsors[fromAcc]) {
                                 sponsors[fromAcc] = { waxTotal: 0, skateTotal: 0, powerValueUsd: 0 };
                             }
                             if (symbol === 'WAX') sponsors[fromAcc].waxTotal += amount;
                             else sponsors[fromAcc].skateTotal += amount;
-                            
                             sponsors[fromAcc].powerValueUsd += valueInUsd;
 
-                            const displayMemo = memo.length > 25 ? memo.substring(0, 22) + "..." : memo;
-                            const timeString = blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                            
+                            // Add to Live Feed
                             pulseItems.push({
                                 account: fromAcc,
-                                amountStr: `${amount.toLocaleString(undefined, {maximumFractionDigits: 2})} ${symbol}`,
-                                memo: displayMemo || "Blessing",
-                                time: timeString,
+                                amountStr: `${amount.toLocaleString()} ${symbol}`,
+                                displayMemo: displayMemo,
+                                itemType: itemType,
+                                labelColor: labelColor,
+                                time: blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                 timestamp: blockTime.getTime()
                             });
                         }
                     }
                 });
-            }
 
             // Extract Logged-In User's Power
             if (currentSession) {
@@ -1204,7 +1222,9 @@
                 }
             }
 
-            // Render Whale Board
+          // --- STEP 3: THE RENDER ENGINE ---
+            
+            // 1. Render the Whale Board (Leaderboard)
             if(whaleList) {
                 const sortedSponsors = Object.keys(sponsors).map(acc => ({
                     account: acc,
@@ -1231,6 +1251,37 @@
                 }
             }
 
+            // 2. Render the Live Pulse Feed (The Blessing Feed)
+            if(pulseList) {
+                pulseItems.sort((a, b) => b.timestamp - a.timestamp);
+                const activePulse = pulseItems.slice(0, 50);
+
+                if (activePulse.length === 0) {
+                    pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
+                } else {
+                    pulseList.innerHTML = activePulse.map(item => `
+                        <div style="display:flex; justify-content:space-between; padding: 15px 10px; border-bottom: 1px dashed #112; align-items: center; background: rgba(255,255,255,0.01);">
+                            <div style="min-width: 100px;">
+                                <div style="font-size:0.55rem; color:${item.labelColor}; font-weight:900; font-family:'Orbitron'; letter-spacing:1px; margin-bottom:2px;">${item.itemType}</div>
+                                <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900; font-size:0.8rem;">${item.account}</div>
+                            </div>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="color:#fff; font-weight: 900; font-size:0.9rem;">${item.amountStr}</div>
+                                <div style="font-size:0.7rem; color:#888; font-style: italic;">"${item.displayMemo}"</div>
+                            </div>
+                            <div style="color:#444; font-size: 0.65rem; font-family:'Orbitron'; text-align: right; min-width: 60px;">${item.time}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+        } catch (e) {
+            console.error(e);
+            if(whaleList) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR QUERYING LEDGER</div>`;
+            if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR INTERCEPTING BLESSINGS</div>`;
+        }
+    }
+
             // Render Live Pulse Feed
             if(pulseList) {
                 pulseItems.sort((a, b) => b.timestamp - a.timestamp);
@@ -1239,16 +1290,19 @@
                 if (activePulse.length === 0) {
                     pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
                 } else {
-                    pulseList.innerHTML = activePulse.map(item => `
-                        <div style="display:flex; justify-content:space-between; padding: 12px 10px; border-bottom: 1px dashed #112; font-size: 0.85rem; align-items: center;">
-                            <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900;">${item.account}</div>
-                            <div style="text-align: center;">
-                                <div style="color:#fff; font-weight: 900;">${item.amountStr}</div>
-                                <div style="font-size:0.65rem; color:#888;">"${item.memo}"</div>
-                            </div>
-                            <div style="color:#555; font-size: 0.7rem; font-family:'Orbitron';">${item.time}</div>
-                        </div>
-                    `).join('');
+                   pulseList.innerHTML = activePulse.map(item => `
+    <div style="display:flex; justify-content:space-between; padding: 15px 10px; border-bottom: 1px dashed #112; align-items: center; background: rgba(255,255,255,0.02);">
+        <div>
+            <div style="font-size:0.6rem; color:${item.labelColor}; font-weight:900; font-family:'Orbitron'; letter-spacing:1px;">${item.itemType}</div>
+            <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900; font-size:0.85rem;">${item.account}</div>
+        </div>
+        <div style="text-align: center; flex: 1;">
+            <div style="color:#fff; font-weight: 900; font-size:0.9rem;">${item.amountStr}</div>
+            <div style="font-size:0.7rem; color:#888; font-style: italic;">"${item.displayMemo}"</div>
+        </div>
+        <div style="color:#444; font-size: 0.65rem; font-family:'Orbitron';">${item.time}</div>
+    </div>
+`).join('');
                 }
             }
 
