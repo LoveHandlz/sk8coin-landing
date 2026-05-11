@@ -105,7 +105,21 @@
         .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 127, 1)); }
         
 
-   
+        .card-glow-ridiculous { 
+            box-shadow: inset 0 0 60px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.5) !important; 
+            border-color: var(--rarity-ridiculous) !important; 
+        }
+        .card-glow-ridiculous .rarity-header { 
+            animation: ridiculousStrobeBg 0.3s infinite !important; 
+            box-shadow: none !important; 
+        }
+        .card-glow-ridiculous .rarity-header-text,
+        .card-glow-ridiculous .board-name { 
+            animation: ridiculousStrobeText 0.3s infinite !important; 
+        }
+        .card-glow-ridiculous .skate-img { 
+            filter: none !important; 
+        }
 
         body { 
             background-color: var(--bg-deep);
@@ -332,53 +346,6 @@
             .swap-input-group input { font-size: 1.4rem; }
             .lore-profile { text-align: center; justify-content: center; }
         }
-
-           /* --- SUPREME COURT MATRIX (DAO V2) --- */
-        .senate-jumbotron { width: 100%; border: 2px solid var(--accent-cyan); border-radius: 8px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 0 30px rgba(0,240,255,0.2); position: relative; background: #000; }
-        .senate-jumbotron video { width: 100%; display: block; max-height: 400px; object-fit: cover; opacity: 0.8; }
-        .senate-jumbotron::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,240,255,0.05) 3px, rgba(0,240,255,0.05) 4px); pointer-events: none; }
-
-        .senate-matrix { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; margin-bottom: 50px; }
-        
-        .senator-hud { background: rgba(5, 10, 26, 0.8); border: 1px solid #222; padding: 20px; border-radius: 6px; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; transition: 0.3s; }
-        .senator-hud:hover { border-color: #555; transform: translateY(-2px); }
-        .senator-hud::before { content:''; position:absolute; left:0; top:0; height:100%; width:4px; background: #333; }
-        
-        /* Voting Status Borders */
-        .senator-hud.vote-yes::before { background: #00ffaa; box-shadow: 0 0 15px #00ffaa; }
-        .senator-hud.vote-no::before { background: var(--accent-pink); box-shadow: 0 0 15px var(--accent-pink); }
-        .senator-hud.vote-abstain::before { background: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold); }
-
-        /* Asymmetrical Grid Sizing */
-        .hud-chief { grid-column: span 6; border-color: rgba(0,240,255,0.3); }
-        .hud-senior { grid-column: span 4; }
-        .hud-junior { grid-column: span 3; }
-        
-        @media (max-width: 900px) {
-            .hud-chief, .hud-senior, .hud-junior { grid-column: span 12; }
-        }
-
-        .senator-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 10px; }
-        .sen-address { font-family: 'Orbitron'; font-weight: 900; color: #ccc; font-size: 0.9rem; letter-spacing: 1px; }
-        .hud-chief .sen-address { font-size: 1.3rem; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
-        
-        .sen-weight { color: var(--accent-gold); font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; text-align: right; }
-        .hud-chief .sen-weight { font-size: 0.9rem; }
-        .sen-stance { font-size: 0.6rem; color: #888; font-family: 'Inter'; letter-spacing: 1px; margin-top: 5px; text-transform: uppercase; }
-
-        .badge-rack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .hud-chief .badge-rack { grid-template-columns: repeat(6, 1fr); }
-        
-        /* 6-Slot Justice Badge System */
-        .exotic-badge { background: #050a1a; border: 1px solid #111; height: 35px; display: flex; justify-content: center; align-items: center; font-size: 0.55rem; font-family: 'Orbitron'; color: #222; border-radius: 3px; font-weight: 900; letter-spacing: 1px; text-align: center; line-height: 1.1; transition: 0.3s; }
-        
-        .badge-gavel { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,240,255,0.05); box-shadow: inset 0 0 10px rgba(0,240,255,0.1); }
-        .badge-filibuster { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(255,215,0,0.05); }
-        .badge-amicus { border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.05); }
-        .badge-subpoena { border-color: #ffaa00; color: #ffaa00; background: rgba(255,170,0,0.05); }
-        .badge-veto { border-color: #ff3366; color: #ff3366; background: rgba(255,51,102,0.05); box-shadow: inset 0 0 10px rgba(255,51,102,0.2); }
-        .badge-pardon { border-color: #00ffaa; color: #00ffaa; background: rgba(0,255,170,0.05); }
-
     </style>
 </head>
 
@@ -749,128 +716,81 @@
 <div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
     
-    <div class="senate-jumbotron">
-        <video autoplay loop muted playsinline>
-            <source src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeiavqnl4xahwm4ckvdbgdbk6ototw7jjoksaxecvtytkrjdtxukhey" type="video/mp4">
-        </video>
-    </div>
-
     <div class="dao-hud-grid">
         <div class="dao-hud-card active-rank" id="dao-rank-card">
-            <div style="font-family:'Orbitron'; font-size:0.75rem; color:var(--accent-cyan); margin-bottom:10px; letter-spacing: 2px;">YOUR SENATE SEAT</div>
-            <div id="user-dao-rank" style="font-family:'Orbitron'; font-weight:900; font-size:2.2rem; color:#94a3b8; text-transform: uppercase;">[ NOT CONNECTED ]</div>
+            <div style="font-family:'Orbitron'; font-size:0.75rem; color:var(--accent-cyan); margin-bottom:10px; letter-spacing: 2px;">SENATE SEAT RANK</div>
+            <div id="user-dao-rank" style="font-family:'Orbitron'; font-weight:900; font-size:2.2rem; color:#94a3b8; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.2);">[ NOT CONNECTED ]</div>
             <div class="badge-pill-container" id="user-badges-container" style="justify-content: center; margin-top:15px;"></div>
         </div>
         <div class="dao-hud-card">
             <div style="font-family:'Orbitron'; font-size:0.75rem; color:#888; margin-bottom:10px; letter-spacing: 1px;">MAX VOTING WEIGHT</div>
             <div id="user-vote-weight" style="font-family:'Orbitron'; font-weight:900; font-size:2.2rem; color:#fff;">0</div>
-            <div style="font-size:0.7rem; color:var(--accent-pink); margin-top:10px; font-family:'Inter'; font-weight:900;">1 $SKATE = 1 VOTE</div>
+            <div style="font-size:0.7rem; color:var(--accent-pink); margin-top:10px; font-family:'Inter'; font-weight:900;">REQUIRES 1 $SKATE PER VOTE</div>
+        </div>
+        <div class="dao-hud-card">
+            <div style="font-family:'Orbitron'; font-size:0.75rem; color:#888; margin-bottom:10px; letter-spacing: 1px;">YOUR TREASURY IMPACT</div>
+            <div id="global-skate-burned" style="font-family:'Orbitron'; font-weight:900; font-size:2.2rem; color:#00ffaa;">$0.00</div>
+            <div style="font-size:0.7rem; color:#888; margin-top:10px; font-family:'Inter';">CUMULATIVE USD BLESSED</div>
         </div>
     </div>
 
-    <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">ACTIVE MOTIONS // THE FLOOR</h3>
+    <div style="text-align: center; margin-bottom: 50px; padding-bottom: 40px; border-bottom: 2px dashed rgba(255,255,255,0.1);">
+        <button id="btn-set-motion" class="wallet-btn" onclick="showErrorModal('You must be AMATEUR rank (Silver) to set a motion.')" style="background: var(--accent-gold); color: #000; padding: 20px 40px; font-size: 1.2rem;">📝 DRAFT LEGISLATION</button>
+        <p style="font-size: 0.8rem; color: var(--accent-pink); font-family: 'Inter'; margin-top: 15px; font-weight: 900; letter-spacing: 1px;">WARNING: REJECTED MOTIONS ARE SUBJECT TO THE POSER TAX (TOKEN SLASHING).</p>
+    </div>
+
+    <h3 style="color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; letter-spacing: 3px; margin-bottom: 30px; text-shadow: 0 0 10px rgba(255,255,255,0.2);">ACTIVE MOTIONS</h3>
+
     <div id="active-motions-list">
+        
         <div class="motion-card tipped">
             <div class="motion-timer safe">⏳ 4d 12h 00m</div>
             <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan); margin-bottom: 10px;">SCP-11: Upgrade Builder Rewards Pool</div>
             <div style="display:flex; align-items:center; gap:10px; margin-bottom: 25px;">
                 <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">cryptosk8.wam</span></span>
                 <span class="micro-badge-pill m-badge-elite">ELITE</span>
+                <span class="micro-badge-pill m-badge-lawmaker">LAWMAKER</span>
             </div>
-            <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 25px;">Motion to increase the total power reward multiplier in the Builder from 1000x to 1250x.</p>
+            <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 25px;">Motion to increase the total power reward multiplier in the Skateboard Builder from 1000x to 1250x to incentivize higher rarity crafting.</p>
+            <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.8rem; font-weight:900; margin-bottom: 5px;">
+                <span style="color:#00ffaa;">YES (85%)</span><span style="color:var(--accent-pink);">NO (15%)</span>
+            </div>
             <div class="vote-bar-bg"><div class="vote-bar-yes" style="width: 85%;"></div></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 30px; flex-wrap: wrap; gap: 15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 30px;">
                 <div style="display:flex; gap:15px;">
-                    <button class="dao-action-btn btn-yes" onclick="showSuccessModal('SIGNATURE CONFIRMED', 'Your YES vote has been broadcast to the network. Weight recorded.')">VOTE YES (1 $SKATE)</button>
-                    <button class="dao-action-btn btn-no" onclick="showSuccessModal('SIGNATURE CONFIRMED', 'Your NO vote has been broadcast to the network. Weight recorded.')">VOTE NO (1 $SKATE)</button>
+                    <button class="dao-action-btn btn-yes">VOTE YES (1 $SKATE)</button>
+                    <button class="dao-action-btn btn-no">VOTE NO (1 $SKATE)</button>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <button class="dao-action-btn" style="border-color: var(--accent-gold); color: var(--accent-gold);">🙏 BLESSING JAR</button>
+                    <button class="dao-action-btn btn-veto" onclick="showErrorModal('Admin VETO executed. Motion crushed.')">🔨 VETO</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">LIVE COURT ROSTER // TRACKING</h3>
-    
-    <div class="senate-matrix">
-        
-        <div class="senator-hud hud-chief vote-yes">
-            <div class="senator-header">
-                <div>
-                    <div class="sen-address">UFUAU.WAM</div>
-                    <div class="sen-stance" style="color:#00ffaa;">VOTING YES ON SCP-11</div>
+        <div class="motion-card">
+            <div class="motion-timer danger">⏳ 12h 45m 11s</div>
+            <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:#fff; margin-bottom: 10px;">SCP-12: Reduce Skate Lending Fee Limit</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 25px;">
+                <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">grommet4.wam</span></span>
+                <span class="micro-badge-pill m-badge-amateur">AMAT</span>
+            </div>
+            <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 25px;">Motion to cap the peer-to-peer lending fee to 5 $SKATE per day to allow easier access for new riders.</p>
+            <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.8rem; font-weight:900; margin-bottom: 5px;">
+                <span style="color:#00ffaa;">YES (10%)</span><span style="color:var(--accent-pink);">NO (90%) - POSER TAX IMMINENT</span>
+            </div>
+            <div class="vote-bar-bg"><div class="vote-bar-yes" style="width: 10%;"></div></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 30px;">
+                <div style="display:flex; gap:15px;">
+                    <button class="dao-action-btn btn-yes">VOTE YES (1 $SKATE)</button>
+                    <button class="dao-action-btn btn-no">VOTE NO (1 $SKATE)</button>
                 </div>
-                <div class="sen-weight">250,490 SKATE<br><span style="color:#888; font-size:0.6rem;">CHIEF JUSTICE</span></div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-gavel" title="10x Voting Weight Active">10X GAVEL</div>
-                <div class="exotic-badge badge-amicus" title="Treasury Funded Vote">AMICUS CURIAE</div>
-                <div class="exotic-badge badge-veto" title="Can block admin veto">VETO OVERRIDE</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-chief vote-no">
-            <div class="senator-header">
-                <div>
-                    <div class="sen-address">WHALE.NEFTY</div>
-                    <div class="sen-stance" style="color:var(--accent-pink);">VOTING NO ON SCP-11</div>
+                <div style="display:flex; gap:15px;">
+                    <button class="dao-action-btn btn-retract" onclick="showSuccessModal('MOTION RETRACTED', 'You pulled the plug. The motion is dead and your stake is returned.')">🛑 RETRACT</button>
+                    <button class="dao-action-btn btn-veto" onclick="showErrorModal('Admin VETO executed. Motion crushed.')">🔨 VETO</button>
                 </div>
-                <div class="sen-weight">198,000 SKATE<br><span style="color:#888; font-size:0.6rem;">CHIEF JUSTICE</span></div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-filibuster" title="Motion frozen for 24h">FILIBUSTER</div>
-                <div class="exotic-badge badge-subpoena" title="Target wallet revealed">SUBPOENA</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
             </div>
         </div>
-
-        <div class="senator-hud hud-senior vote-abstain">
-            <div class="senator-header">
-                <div><div class="sen-address">SK8DEGEN.WAM</div><div class="sen-stance">ABSTAINING</div></div>
-                <div class="sen-weight">45,200 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-pardon">POSER PARDON</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-senior vote-yes">
-            <div class="senator-header">
-                <div><div class="sen-address">RIPPER.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div>
-                <div class="sen-weight">38,900 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-amicus">AMICUS</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-senior vote-yes">
-            <div class="senator-header">
-                <div><div class="sen-address">STREETS.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div>
-                <div class="sen-weight">31,000 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-gavel">10X GAVEL</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-junior vote-no"><div class="senator-header"><div><div class="sen-address">GROM1.WAM</div><div class="sen-stance" style="color:var(--accent-pink);">VOTING NO</div></div></div><div class="badge-rack"><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-no"><div class="senator-header"><div><div class="sen-address">GROM2.WAM</div><div class="sen-stance" style="color:var(--accent-pink);">VOTING NO</div></div></div><div class="badge-rack"><div class="exotic-badge badge-subpoena">SUBPOENA</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-yes"><div class="senator-header"><div><div class="sen-address">LOCAL.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div></div><div class="badge-rack"><div class="exotic-badge badge-pardon">PARDON</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-abstain"><div class="senator-header"><div><div class="sen-address">LURK.WAM</div><div class="sen-stance">ABSTAINING</div></div></div><div class="badge-rack"><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
 
     </div>
 </div>
@@ -1119,61 +1039,44 @@
             let pulseItems = [];
             let currentUserUsdTotal = 0;
 
-            if (hJson && hJson.actions)   {
-                 hJson.actions.forEach(action => {
+            if (hJson && hJson.actions) {
+                hJson.actions.forEach(action => {
                     const data = action.act.data;
-                    const fromAcc = data.from;
-                    const blockTime = new Date(action.timestamp);
-
+                    
                     if (data && data.to === 'skatecoinwax' && data.quantity) {
+                        const fromAcc = data.from;
+                        const memo = data.memo || "";
                         const quantityStr = data.quantity;
                         const [amtVal, symbol] = quantityStr.split(' ');
                         const amount = parseFloat(amtVal) || 0;
-                        const memo = data.memo || "";
+                        const blockTime = new Date(action.timestamp);
 
                         if (!blacklist.includes(fromAcc) && amount > 0) {
                             const valueInWax = symbol === 'WAX' ? amount : amount * sWax;
                             const valueInUsd = valueInWax * waxUsdPrice;
 
-                            // --- MEMO SENSING ENGINE ---
-                            let itemType = "BLESSING";
-                            let labelColor = "var(--accent-gold)";
-                            let displayMemo = memo || "Direct Support";
-
-                            if (memo.startsWith("VOTE:")) {
-                                itemType = "GOVERNANCE";
-                                labelColor = "var(--accent-cyan)";
-                                const parts = memo.split(',');
-                                const choice = memo.includes("CHOICE:YES") ? "YES" : "NO";
-                                const motion = parts[0].split(':')[1];
-                                displayMemo = `Voted ${choice} on ${motion}`;
-                            } else if (memo.startsWith("PROPOSE:")) {
-                                itemType = "LEGISLATION";
-                                labelColor = "var(--accent-pink)";
-                                displayMemo = `Drafted Bill: ${memo.split(':')[1]}`;
-                            }
-
-                            // Update Leaderboard Power
                             if (!sponsors[fromAcc]) {
                                 sponsors[fromAcc] = { waxTotal: 0, skateTotal: 0, powerValueUsd: 0 };
                             }
                             if (symbol === 'WAX') sponsors[fromAcc].waxTotal += amount;
                             else sponsors[fromAcc].skateTotal += amount;
+                            
                             sponsors[fromAcc].powerValueUsd += valueInUsd;
 
-                            // Add to Live Feed
+                            const displayMemo = memo.length > 25 ? memo.substring(0, 22) + "..." : memo;
+                            const timeString = blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            
                             pulseItems.push({
                                 account: fromAcc,
-                                amountStr: `${amount.toLocaleString()} ${symbol}`,
-                                displayMemo: displayMemo,
-                                itemType: itemType,
-                                labelColor: labelColor,
-                                time: blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                amountStr: `${amount.toLocaleString(undefined, {maximumFractionDigits: 2})} ${symbol}`,
+                                memo: displayMemo || "Blessing",
+                                time: timeString,
                                 timestamp: blockTime.getTime()
                             });
                         }
                     }
                 });
+            }
 
             // Extract Logged-In User's Power
             if (currentSession) {
@@ -1207,9 +1110,7 @@
                 }
             }
 
-          // --- STEP 3: THE RENDER ENGINE ---
-            
-            // 1. Render the Whale Board (Leaderboard)
+            // Render Whale Board
             if(whaleList) {
                 const sortedSponsors = Object.keys(sponsors).map(acc => ({
                     account: acc,
@@ -1236,36 +1137,34 @@
                 }
             }
 
-            // 2. Render the Live Pulse Feed (The Blessing Feed)
+            // Render Live Pulse Feed
             if(pulseList) {
                 pulseItems.sort((a, b) => b.timestamp - a.timestamp);
-                const activePulse = pulseItems.slice(0, 50);
+                const activePulse = pulseItems.slice(0, 100);
 
                 if (activePulse.length === 0) {
                     pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
                 } else {
                     pulseList.innerHTML = activePulse.map(item => `
-                        <div style="display:flex; justify-content:space-between; padding: 15px 10px; border-bottom: 1px dashed #112; align-items: center; background: rgba(255,255,255,0.01);">
-                            <div style="min-width: 100px;">
-                                <div style="font-size:0.55rem; color:${item.labelColor}; font-weight:900; font-family:'Orbitron'; letter-spacing:1px; margin-bottom:2px;">${item.itemType}</div>
-                                <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900; font-size:0.8rem;">${item.account}</div>
+                        <div style="display:flex; justify-content:space-between; padding: 12px 10px; border-bottom: 1px dashed #112; font-size: 0.85rem; align-items: center;">
+                            <div style="color:var(--accent-cyan); font-family:'Orbitron'; font-weight: 900;">${item.account}</div>
+                            <div style="text-align: center;">
+                                <div style="color:#fff; font-weight: 900;">${item.amountStr}</div>
+                                <div style="font-size:0.65rem; color:#888;">"${item.memo}"</div>
                             </div>
-                            <div style="text-align: center; flex: 1;">
-                                <div style="color:#fff; font-weight: 900; font-size:0.9rem;">${item.amountStr}</div>
-                                <div style="font-size:0.7rem; color:#888; font-style: italic;">"${item.displayMemo}"</div>
-                            </div>
-                            <div style="color:#444; font-size: 0.65rem; font-family:'Orbitron'; text-align: right; min-width: 60px;">${item.time}</div>
+                            <div style="color:#555; font-size: 0.7rem; font-family:'Orbitron';">${item.time}</div>
                         </div>
                     `).join('');
                 }
             }
 
-       } catch (e) {
+        } catch (e) {
             console.error(e);
             if(whaleList) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR QUERYING LEDGER</div>`;
             if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR INTERCEPTING BLESSINGS</div>`;
         }
     }
+
 // --- THE LIVE BLESSING PIPES (POPUP FREE) ---
     let activeDonationCurrency = 'WAX';
 
