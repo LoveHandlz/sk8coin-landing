@@ -320,7 +320,7 @@
             .sk8swap-terminal { padding: 20px; }
             .swap-input-group input { font-size: 1.4rem; }
             .lore-profile { text-align: center; justify-content: center; }
-        }
+        }}
     </style>
 </head>
 <body>
@@ -763,7 +763,7 @@
     </div>
 </div>
 
-<div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
+ <div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
     
     <div class="senate-jumbotron">
@@ -801,135 +801,9 @@
 
     <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">ACTIVE MOTIONS // THE FLOOR</h3>
     <div id="active-motions-list">
-        
-        <div class="motion-card tipped">
-            <div class="motion-timer safe">⏳ 4d 12h 00m</div>
-            <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan); margin-bottom: 10px;">SCP-11: Upgrade Builder Rewards Pool</div>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 25px;">
-                <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">cryptosk8.wam</span></span>
-                <span class="micro-badge-pill m-badge-elite">ELITE</span>
-            </div>
-            <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 20px;">Motion to increase the total power reward multiplier in the Builder from 1000x to 1250x.</p>
-            
-            <div class="slider-box">
-                <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
-                <input type="range" id="vote-slider-scp11" class="weight-slider" min="1" max="100" value="1" oninput="document.getElementById('vote-weight-display-scp11').innerText = this.value">
-                <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 50px; text-align: right;"><span id="vote-weight-display-scp11">1</span> $SKATE</span>
-            </div>
-
-            <div style="display:flex; gap:15px; margin-top: 20px;">
-                <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('SCP-11', 'YES', parseInt(document.getElementById('vote-slider-scp11').value))">VOTE YES</button>
-                <button class="dao-action-btn btn-no" onclick="executeOnChainVote('SCP-11', 'NO', parseInt(document.getElementById('vote-slider-scp11').value))">VOTE NO</button>
-            </div>
-        </div>
-
-        <div class="motion-card">
-            <div class="motion-timer danger">⏳ 12h 45m 11s</div>
-            <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:#fff; margin-bottom: 10px;">SCP-12: Reduce Skate Lending Fee Limit</div>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 20px;">
-                <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">grommet4.wam</span></span>
-                <span class="micro-badge-pill m-badge-amateur">AMAT</span>
-            </div>
-            <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 15px;">Motion to cap the peer-to-peer lending fee to 5 $SKATE per day to allow easier access for new riders.</p>
-            
-            <div class="slider-box">
-                <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
-                <input type="range" id="vote-slider-scp12" class="weight-slider" min="1" max="100" value="1" oninput="document.getElementById('vote-weight-display-scp12').innerText = this.value">
-                <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 50px; text-align: right;"><span id="vote-weight-display-scp12">1</span> $SKATE</span>
-            </div>
-
-            <div style="display:flex; gap:15px; margin-top: 20px;">
-                <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('SCP-12', 'YES', parseInt(document.getElementById('vote-slider-scp12').value))">VOTE YES</button>
-                <button class="dao-action-btn btn-no" onclick="executeOnChainVote('SCP-12', 'NO', parseInt(document.getElementById('vote-slider-scp12').value))">VOTE NO</button>
-            </div>
-        </div>
-
+        <div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>
     </div>
 
-    <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">LIVE COURT ROSTER // TRACKING</h3>
-    
-    <div class="senate-matrix">
-        
-        <div class="senator-hud hud-chief vote-yes">
-            <div class="senator-header">
-                <div>
-                    <div class="sen-address">UFUAU.WAM</div>
-                    <div class="sen-stance" style="color:#00ffaa;">VOTING YES ON SCP-11</div>
-                </div>
-                <div class="sen-weight">250,490 SKATE<br><span style="color:#888; font-size:0.6rem;">CHIEF JUSTICE</span></div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-gavel" title="10x Voting Weight Active">10X GAVEL</div>
-                <div class="exotic-badge badge-amicus" title="Treasury Funded Vote">AMICUS CURIAE</div>
-                <div class="exotic-badge badge-veto" title="Can block admin veto">VETO OVERRIDE</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-chief vote-no">
-            <div class="senator-header">
-                <div>
-                    <div class="sen-address">WHALE.NEFTY</div>
-                    <div class="sen-stance" style="color:var(--accent-pink);">VOTING NO ON SCP-11</div>
-                </div>
-                <div class="sen-weight">198,000 SKATE<br><span style="color:#888; font-size:0.6rem;">CHIEF JUSTICE</span></div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-filibuster" title="Motion frozen for 24h">FILIBUSTER</div>
-                <div class="exotic-badge badge-subpoena" title="Target wallet revealed">SUBPOENA</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-senior vote-abstain">
-            <div class="senator-header">
-                <div><div class="sen-address">SK8DEGEN.WAM</div><div class="sen-stance">ABSTAINING</div></div>
-                <div class="sen-weight">45,200 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-pardon">POSER PARDON</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-senior vote-yes">
-            <div class="senator-header">
-                <div><div class="sen-address">RIPPER.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div>
-                <div class="sen-weight">38,900 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-amicus">AMICUS</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-senior vote-yes">
-            <div class="senator-header">
-                <div><div class="sen-address">STREETS.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div>
-                <div class="sen-weight">31,000 SKATE</div>
-            </div>
-            <div class="badge-rack">
-                <div class="exotic-badge badge-gavel">10X GAVEL</div>
-                <div class="exotic-badge">EMPTY</div>
-                <div class="exotic-badge">EMPTY</div>
-            </div>
-        </div>
-
-        <div class="senator-hud hud-junior vote-no"><div class="senator-header"><div><div class="sen-address">GROM1.WAM</div><div class="sen-stance" style="color:var(--accent-pink);">VOTING NO</div></div></div><div class="badge-rack"><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-no"><div class="senator-header"><div><div class="sen-address">GROM2.WAM</div><div class="sen-stance" style="color:var(--accent-pink);">VOTING NO</div></div></div><div class="badge-rack"><div class="exotic-badge badge-subpoena">SUBPOENA</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-yes"><div class="senator-header"><div><div class="sen-address">LOCAL.WAM</div><div class="sen-stance" style="color:#00ffaa;">VOTING YES</div></div></div><div class="badge-rack"><div class="exotic-badge badge-pardon">PARDON</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-        
-        <div class="senator-hud hud-junior vote-abstain"><div class="senator-header"><div><div class="sen-address">LURK.WAM</div><div class="sen-stance">ABSTAINING</div></div></div><div class="badge-rack"><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div><div class="exotic-badge">EMPTY</div></div></div>
-    </div>
 </div>
 
 <footer>
@@ -1090,7 +964,6 @@
             let currentUserUsdTotal = 0;
 
             if (hJson && hJson.actions) {
-                // CLEANED UP: Only ONE loop here now!
                 hJson.actions.forEach(action => {
                     const data = action.act.data;
                     const fromAcc = data.from;
@@ -1111,17 +984,19 @@
                             let labelColor = "var(--accent-gold)";
                             let displayMemo = memo || "Direct Support";
 
-                            if (memo.startsWith("VOTE:")) {
-                                itemType = "GOVERNANCE";
-                                labelColor = "var(--accent-cyan)";
-                                const parts = memo.split(',');
-                                const choice = memo.includes("CHOICE:YES") ? "YES" : "NO";
-                                const motion = parts[0].split(':')[1];
-                                displayMemo = `Voted ${choice} on ${motion}`;
-                            } else if (memo.startsWith("PROPOSE:")) {
-                                itemType = "LEGISLATION";
-                                labelColor = "var(--accent-pink)";
-                                displayMemo = `Drafted Bill: ${memo.split(':')[1]}`;
+                            if (memo.includes('"sk8dao":"v1"')) {
+                                try {
+                                    const pMemo = JSON.parse(memo);
+                                    if(pMemo.action === "vote") {
+                                        itemType = "GOVERNANCE";
+                                        labelColor = "var(--accent-cyan)";
+                                        displayMemo = `Voted ${pMemo.vote} on Motion`;
+                                    } else if(pMemo.action === "propose") {
+                                        itemType = "LEGISLATION";
+                                        labelColor = "var(--accent-pink)";
+                                        displayMemo = `Drafted Bill: ${pMemo.title}`;
+                                    }
+                                } catch(e) {}
                             }
 
                             // Update Leaderboard Power
@@ -1214,12 +1089,150 @@
                 }
             }
 
-        // CLEANED UP: Only ONE catch block here now!
         } catch (e) {
             console.error(e);
             if(whaleList) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR QUERYING LEDGER</div>`;
             if(pulseList) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-size: 0.8rem;">ERROR INTERCEPTING BLESSINGS</div>`;
         }
+    }
+
+    // --- NEW DAO V2 SCRAPING ENGINE ---
+    let activeProposals = [];
+    let closedProposals = [];
+
+    async function refreshDAODashboard() {
+        const list = document.getElementById("active-motions-list");
+        if(list) list.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>`;
+
+        let proposals = {};
+        let rawVotes = [];
+        const DAO_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 Days in milliseconds
+
+        try {
+            const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=skatecoinwax:transfer&limit=500`;
+            const res = await fetch(historyUrl);
+            const json = await res.json();
+
+            if (json && json.actions) {
+                json.actions.forEach(action => {
+                    const data = action.act.data;
+                    const memo = data.memo || "";
+                    const blockTime = new Date(action.timestamp).getTime();
+
+                    if (data.to === 'skatecoinwax' && memo.includes('"sk8dao":"v1"')) {
+                        try {
+                            const parsedMemo = JSON.parse(memo);
+                            const sender = data.from;
+                            const amountStr = data.quantity;
+                            const weight = parseFloat(amountStr.split(' ')[0]);
+
+                            if (parsedMemo.action === "propose") {
+                                proposals[action.trx_id] = { 
+                                    id: action.trx_id, 
+                                    title: parsedMemo.title, 
+                                    desc: parsedMemo.desc, 
+                                    proposer: sender, 
+                                    yesWeight: 0, 
+                                    noWeight: 0, 
+                                    time: blockTime, 
+                                    votedWallets: [] 
+                                };
+                            } else if (parsedMemo.action === "vote" && parsedMemo.id) {
+                                rawVotes.push({ 
+                                    id: parsedMemo.id, 
+                                    vote: parsedMemo.vote, 
+                                    sender: sender, 
+                                    weight: weight 
+                                });
+                            }
+                        } catch(e) {}
+                    }
+                });
+            }
+        } catch(e) { console.error("Hyperion scrape failed:", e); }
+
+        rawVotes.forEach(v => {
+            if (proposals[v.id]) {
+                if (!proposals[v.id].votedWallets.includes(v.sender)) {
+                    proposals[v.id].votedWallets.push(v.sender);
+                    if (v.vote === "YES") proposals[v.id].yesWeight += v.weight;
+                    if (v.vote === "NO") proposals[v.id].noWeight += v.weight;
+                }
+            }
+        });
+
+        activeProposals = [];
+        closedProposals = [];
+        const now = Date.now();
+
+        Object.values(proposals).forEach(p => {
+            const expiresAt = p.time + DAO_TTL_MS;
+            if (now > expiresAt) {
+                p.status = 'closed';
+                closedProposals.push(p);
+            } else {
+                p.status = 'active';
+                p.expiresAt = expiresAt;
+                activeProposals.push(p);
+            }
+        });
+
+        activeProposals.sort((a, b) => b.time - a.time);
+        renderDAOList();
+    }
+
+    function renderDAOList() {
+        const list = document.getElementById("active-motions-list");
+        let html = "";
+
+        if (activeProposals.length === 0) {
+            list.innerHTML = "<div style='color: #888; text-align: center; padding: 20px; font-family: Orbitron;'>NO MOTIONS ON THE FLOOR.</div>";
+            return;
+        }
+
+        activeProposals.forEach((p, index) => {
+            const totalWeight = p.yesWeight + p.noWeight;
+            const yesPct = totalWeight > 0 ? ((p.yesWeight / totalWeight) * 100).toFixed(0) : 0;
+            const noPct = totalWeight > 0 ? ((p.noWeight / totalWeight) * 100).toFixed(0) : 0;
+            
+            const diffMs = p.expiresAt - Date.now();
+            const d = Math.floor(diffMs / 86400000);
+            const h = Math.floor((diffMs % 86400000) / 3600000);
+            const timeLeft = `${d}d ${h}h`;
+
+            html += `
+            <div class="motion-card">
+                <div class="motion-timer ${d < 1 ? 'danger' : 'safe'}">⏳ ${timeLeft}</div>
+                <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan); margin-bottom: 10px;">${p.title}</div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom: 25px;">
+                    <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">${p.proposer}</span></span>
+                </div>
+                <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 20px;">${p.desc}</p>
+                
+                <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:10px; margin-bottom:15px; border: 1px solid #333;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:'Orbitron'; font-weight:bold; margin-bottom:8px;">
+                        <span style="color:#00ffaa;">YES: ${p.yesWeight.toFixed(0)} SKATE (${yesPct}%)</span>
+                        <span style="color:var(--accent-pink);">NO: ${p.noWeight.toFixed(0)} SKATE (${noPct}%)</span>
+                    </div>
+                    <div class="vote-bar-bg">
+                        <div class="vote-bar-yes" style="width:${yesPct}%;"></div>
+                    </div>
+                </div>
+
+                <div class="slider-box">
+                    <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
+                    <input type="range" id="vote-slider-${index}" class="weight-slider" min="1" max="1000" value="1" oninput="document.getElementById('weight-display-${index}').innerText = this.value">
+                    <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">1</span> SKATE</span>
+                </div>
+
+                <div style="display:flex; gap:15px; margin-top: 20px;">
+                    <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE YES</button>
+                    <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE NO</button>
+                </div>
+            </div>`;
+        });
+
+        list.innerHTML = html;
     }
 
     // --- THE LIVE BLESSING PIPES ---
@@ -1342,7 +1355,7 @@
         btn.innerText = "EXECUTE DECENTRALIZED SWAP";
     };
 
-    // --- ON-CHAIN GOVERNANCE ENGINE (VOTING & PROPOSALS) ---
+    // --- ON-CHAIN GOVERNANCE ENGINE (JSON V2) ---
     window.executeOnChainProposal = async () => {
         if (!currentSession) return toggleAuthModal();
         const title = document.getElementById('bill-proposal-title').value.trim();
@@ -1351,31 +1364,62 @@
         
         const feeAmount = (1000).toFixed(4) + " SKATE";
         const sender = currentSession.actor.toString();
-        const cleanTitle = title.replace(/[^a-zA-Z0-9\s-_:]/g, '');
-        const proposalMemo = `PROPOSE:${cleanTitle.substring(0, 50)}`;
+        
+        const memoData = JSON.stringify({ 
+            sk8dao: "v1", 
+            action: "propose", 
+            title: title.substring(0, 30), 
+            desc: desc.substring(0, 100) 
+        });
         
         try {
-            const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: feeAmount, memo: proposalMemo } }];
+            const actions = [{ 
+                account: 'skatecoinwax', 
+                name: 'transfer', 
+                authorization: [currentSession.permissionLevel], 
+                data: { from: sender, to: 'skatecoinwax', quantity: feeAmount, memo: memoData } 
+            }];
             await currentSession.transact({ actions });
-            showSuccessModal("📜 PROPOSAL INITIATED 📜", "Your 1,000 $SKATE draft fee has been processed. Your motion has been submitted.");
-            document.getElementById('bill-proposal-title').value = ''; document.getElementById('bill-proposal-desc').value = '';
-            updateBalances(sender); fetchTreasuryData();
-        } catch(e) { console.error(e); showErrorModal("Transaction aborted or rejected."); }
+            showSuccessModal("📜 PROPOSAL INITIATED 📜", "Your 1,000 $SKATE draft fee has been processed.");
+            document.getElementById('bill-proposal-title').value = ''; 
+            document.getElementById('bill-proposal-desc').value = '';
+            refreshDAODashboard();
+            updateBalances(sender);
+            fetchTreasuryData();
+        } catch(e) { 
+            console.error(e); showErrorModal("Transaction aborted or rejected."); 
+        }
     };
 
     window.executeOnChainVote = async (motionId, stance, weight) => {
         if (!currentSession) return toggleAuthModal();
         if (weight <= 0 || isNaN(weight)) return showErrorModal("Select a valid voting weight.");
+        
         const voteCost = parseFloat(weight).toFixed(4) + " SKATE";
         const sender = currentSession.actor.toString();
-        const voteMemo = `VOTE:${motionId},CHOICE:${stance},WEIGHT:${weight}`;
+        
+        const voteMemo = JSON.stringify({ 
+            sk8dao: "v1", 
+            action: "vote", 
+            id: motionId, 
+            vote: stance.toUpperCase() 
+        });
         
         try {
-            const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: voteCost, memo: voteMemo } }];
+            const actions = [{ 
+                account: 'skatecoinwax', 
+                name: 'transfer', 
+                authorization: [currentSession.permissionLevel], 
+                data: { from: sender, to: 'skatecoinwax', quantity: voteCost, memo: voteMemo } 
+            }];
             await currentSession.transact({ actions });
-            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance} for ${motionId} directly to the blockchain.`);
-            updateBalances(sender); fetchTreasuryData();
-        } catch(e) { console.error(e); showErrorModal("Voting transaction aborted."); }
+            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}.`);
+            refreshDAODashboard();
+            updateBalances(sender);
+            fetchTreasuryData();
+        } catch(e) { 
+            console.error(e); showErrorModal("Voting transaction aborted."); 
+        }
     };
 
     // --- INITIALIZATION & STATE RECOVERY ---
@@ -1409,7 +1453,7 @@
         } else if (schema === 'clips') { document.getElementById('clips-wrapper').style.display = 'block';
         } else if (schema === 'defi') { document.getElementById('defi-wrapper').style.display = 'block'; syncPrices(); if(!defiWarningShown) { document.getElementById('defi-warning-modal').style.display = 'flex'; defiWarningShown = true; }
         } else if (schema === 'treasury') { document.getElementById('treasury-wrapper').style.display = 'block'; fetchTreasuryData();
-        } else if (schema === 'dao') { document.getElementById('dao-wrapper').style.display = 'block'; fetchTreasuryData();
+        } else if (schema === 'dao') { document.getElementById('dao-wrapper').style.display = 'block'; fetchTreasuryData(); refreshDAODashboard();
         } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
         } else { document.getElementById('inventory-wrapper').style.display = 'block'; if (currentSession) fetchInventory(currentSession.actor.toString()); }
     };
@@ -1670,3 +1714,5 @@
 </script>
 </body>
 </html>
+
+    
