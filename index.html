@@ -320,7 +320,7 @@
             .sk8swap-terminal { padding: 20px; }
             .swap-input-group input { font-size: 1.4rem; }
             .lore-profile { text-align: center; justify-content: center; }
-        }}
+        }
     </style>
 </head>
 <body>
@@ -522,7 +522,7 @@
     </div>
 </div>
 
-<div class="dashboard-wrapper" id="clips-wrapper" style="display: none;">
+    <div class="dashboard-wrapper" id="clips-wrapper" style="display: none;">
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">CRYPTO CLIPS <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// RAW FOOTY</span></h2>
     <div style="background: rgba(0,0,0,0.7); border: 2px solid var(--accent-gold); border-radius: 8px; position: relative; overflow: hidden; max-width: 900px; margin: 30px auto 0 auto; box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
         <div class="caution-tape"></div>
@@ -763,7 +763,7 @@
     </div>
 </div>
 
- <div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
+<div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
     
     <div class="senate-jumbotron">
@@ -1096,11 +1096,7 @@
         }
     }
 
-    // --- NEW DAO V2 SCRAPING ENGINE ---
-    let activeProposals = [];
-    let closedProposals = [];
-
-   // --- NEW DAO V2 SCRAPING ENGINE (WITH RETRACT SUPPORT) ---
+    // --- NEW DAO V2 SCRAPING ENGINE (WITH RETRACT SUPPORT) ---
     let activeProposals = [];
     let closedProposals = [];
 
@@ -1139,7 +1135,7 @@
                                     yesWeight: 0, 
                                     noWeight: 0, 
                                     time: blockTime, 
-                                    voterStates: {} // NEW: Track voter states
+                                    voterStates: {} // Track voter states
                                 };
                             } else if (parsedMemo.action === "vote" && parsedMemo.id) {
                                 rawVotes.push({ 
@@ -1155,10 +1151,9 @@
             }
         } catch(e) { console.error("Hyperion scrape failed:", e); }
 
-        // --- NEW RETRACT LOGIC: Read newest-first to get the final vote state ---
+        // --- RETRACT LOGIC: Read newest-first to get the final vote state ---
         rawVotes.forEach(v => {
             if (proposals[v.id]) {
-                // Initialize the object if it doesn't exist
                 if (!proposals[v.id].voterStates) proposals[v.id].voterStates = {};
                 
                 // If we haven't seen this wallet yet for this proposal, this is their latest action
@@ -1438,7 +1433,12 @@
                 data: { from: sender, to: 'skatecoinwax', quantity: voteCost, memo: voteMemo } 
             }];
             await currentSession.transact({ actions });
-            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}.`);
+            
+            if (stance.toUpperCase() === "RETRACT") {
+                showSuccessModal("🗳️ VOTE RETRACTED 🗳️", `Your vote on motion ${motionId} has been withdrawn.`);
+            } else {
+                showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}.`);
+            }
             refreshDAODashboard();
             updateBalances(sender);
             fetchTreasuryData();
