@@ -1673,9 +1673,9 @@ const renderStat = (label, value, cssClass, max) => {
                             </div>`;
                     }
 
-                    // --- GOD TIER LOGIC INJECTION ---
+                 // --- GOD TIER LOGIC INJECTION ---
                     const cleanRar = rarity.toLowerCase().trim();
-                    const isGodTier = ['legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
+                    const isGodTier = ['epic', 'legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
                     const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
                     const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
                     const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
