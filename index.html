@@ -44,7 +44,20 @@
             --rarity-ridiculous: #ff007f; 
 
        /* --- EXTREME GOD TIER GLOW CLASSES --- */
-        
+           /* --- SUPREME RGB BEARING GLOW --- */
+        @keyframes rgbCardPulse {
+            0% { box-shadow: inset 0 0 50px rgba(255,0,0,0.3), 0 0 25px rgba(255,0,0,0.6); border-color: #ff0000; }
+            33% { box-shadow: inset 0 0 50px rgba(0,255,0,0.3), 0 0 25px rgba(0,255,0,0.6); border-color: #00ff00; }
+            66% { box-shadow: inset 0 0 50px rgba(0,0,255,0.3), 0 0 25px rgba(0,0,255,0.6); border-color: #0000ff; }
+            100% { box-shadow: inset 0 0 50px rgba(255,0,0,0.3), 0 0 25px rgba(255,0,0,0.6); border-color: #ff0000; }
+        }
+        .card-glow-rgb { animation: rgbCardPulse 2s linear infinite !important; }
+        .card-glow-rgb .rarity-header { background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000) !important; background-size: 200% !important; animation: rainbowText 2s linear infinite !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 20px rgba(255,255,255,0.3) !important; }
+        .card-glow-rgb .skate-img { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); }
+
+
+
+           
         /* EPIC (Sky Blue / Purple intense glow) */
         .card-glow-epic { box-shadow: inset 0 0 50px rgba(217, 70, 239, 0.3), 0 0 20px rgba(217, 70, 239, 0.5) !important; border-color: var(--rarity-epic) !important; }
         .card-glow-epic .rarity-header { background: var(--rarity-epic) !important; color: #fff !important; box-shadow: 0 0 30px rgba(217, 70, 239, 0.8) !important; }
@@ -1673,12 +1686,22 @@ const renderStat = (label, value, cssClass, max) => {
                             </div>`;
                     }
 
-                 // --- GOD TIER LOGIC INJECTION ---
+               // --- GOD TIER LOGIC INJECTION ---
                     const cleanRar = rarity.toLowerCase().trim();
                     const isGodTier = ['epic', 'legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
-                    const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
-                    const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
-                    const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
+                    
+                    // Notice we changed 'const' to 'let' so we can overwrite them!
+                    let cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    let cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
+                    let headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
+
+                    // --- RGB BEARING SUPREME OVERRIDE ---
+                    const checkBearing = MetaParser.getString(n, 'bearings', 'STOCK');
+                    if (checkBearing === 'RGB') {
+                        cardClass = 'skate-card card-glow-rgb';
+                        cardStyle = ''; // Clears inline colors
+                        headerStyle = ''; // Clears inline colors
+                    }
                     
                     // Default to white text, override to neon green if it is the #1 mint
                     let badgeStyle = "color: #ffffff; border-color: rgba(255, 255, 255, 0.4);";
