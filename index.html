@@ -1608,7 +1608,7 @@ const renderStat = (label, value, cssClass, max) => {
                     const pop = MetaParser.getInt(n, 'pop');
                     const speed = MetaParser.getInt(n, 'speed');
                     const balance = MetaParser.getInt(n, 'balance');
-                  let rarity = MetaParser.getRarity(n);
+                  
 
                    const rarity = MetaParser.getRarity(n);
                     const img = MetaParser.getImg(n);
@@ -1618,7 +1618,7 @@ const renderStat = (label, value, cssClass, max) => {
                     let statHtml = "";
                     let actionHtml = "";
 
-if (currentSchema === 'skateboards') {
+                        if (currentSchema === 'skateboards') {
                         let totalPower = speed + pop + balance;
                         if (totalPower > 30) totalPower = 30; // Max Power Capped at 30
                         
