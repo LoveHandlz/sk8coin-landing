@@ -80,8 +80,8 @@
         }
 
         .card-glow-ridiculous { 
-            box-shadow: none !important; 
-            animation: ridiculousStrobeBorder 0.3s infinite !important; 
+            box-shadow: inset 0 0 60px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.5) !important; 
+            border-color: var(--rarity-ridiculous) !important; 
         }
         .card-glow-ridiculous .rarity-header { 
             animation: ridiculousStrobeBg 0.3s infinite !important; 
@@ -1608,7 +1608,9 @@ const renderStat = (label, value, cssClass, max) => {
                     const pop = MetaParser.getInt(n, 'pop');
                     const speed = MetaParser.getInt(n, 'speed');
                     const balance = MetaParser.getInt(n, 'balance');
-                    const rarity = MetaParser.getRarity(n);
+                  let rarity = MetaParser.getRarity(n);
+
+                   const rarity = MetaParser.getRarity(n);
                     const img = MetaParser.getImg(n);
                     const tplId = n.template ? n.template.template_id : 'N/A';
                     const mN = n.template_mint ? n.template_mint : 'N/A';
