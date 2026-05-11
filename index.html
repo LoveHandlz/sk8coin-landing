@@ -1100,6 +1100,10 @@
     let activeProposals = [];
     let closedProposals = [];
 
+   // --- NEW DAO V2 SCRAPING ENGINE (WITH RETRACT SUPPORT) ---
+    let activeProposals = [];
+    let closedProposals = [];
+
     async function refreshDAODashboard() {
         const list = document.getElementById("active-motions-list");
         if(list) list.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>`;
@@ -1135,7 +1139,7 @@
                                     yesWeight: 0, 
                                     noWeight: 0, 
                                     time: blockTime, 
-                                    votedWallets: [] 
+                                    voterStates: {} // NEW: Track voter states
                                 };
                             } else if (parsedMemo.action === "vote" && parsedMemo.id) {
                                 rawVotes.push({ 
@@ -1151,13 +1155,30 @@
             }
         } catch(e) { console.error("Hyperion scrape failed:", e); }
 
+        // --- NEW RETRACT LOGIC: Read newest-first to get the final vote state ---
         rawVotes.forEach(v => {
             if (proposals[v.id]) {
-                if (!proposals[v.id].votedWallets.includes(v.sender)) {
-                    proposals[v.id].votedWallets.push(v.sender);
-                    if (v.vote === "YES") proposals[v.id].yesWeight += v.weight;
-                    if (v.vote === "NO") proposals[v.id].noWeight += v.weight;
+                // Initialize the object if it doesn't exist
+                if (!proposals[v.id].voterStates) proposals[v.id].voterStates = {};
+                
+                // If we haven't seen this wallet yet for this proposal, this is their latest action
+                if (!proposals[v.id].voterStates[v.sender]) {
+                    proposals[v.id].voterStates[v.sender] = {
+                        vote: v.vote,
+                        weight: v.weight
+                    };
                 }
+            }
+        });
+
+        // Tally up the final locked-in states
+        Object.values(proposals).forEach(p => {
+            if (p.voterStates) {
+                Object.values(p.voterStates).forEach(vState => {
+                    if (vState.vote === "YES") p.yesWeight += vState.weight;
+                    if (vState.vote === "NO") p.noWeight += vState.weight;
+                    // If vote === "RETRACT", we intentionally do not add weight
+                });
             }
         });
 
@@ -1229,6 +1250,10 @@
                     <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE YES</button>
                     <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE NO</button>
                 </div>
+                
+                <button onclick="executeOnChainVote('${p.id}', 'RETRACT', 0.0001)" style="width: 100%; background: transparent; color: #888; border: 1px dashed #555; padding: 10px; margin-top: 10px; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; border-radius: 6px; font-size: 0.7rem;" onmouseover="this.style.color='#fff'; this.style.borderColor='#fff';" onmouseout="this.style.color='#888'; this.style.borderColor='#555';">
+                    [ RETRACT VOTE ]
+                </button>
             </div>`;
         });
 
