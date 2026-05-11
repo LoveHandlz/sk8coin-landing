@@ -43,7 +43,27 @@
             --rarity-insane: #ff0033; 
             --rarity-ridiculous: #ff007f; 
 
-       /* --- EXTREME GOD TIER GLOW CLASSES --- */
+            /* --- EXTREME GOD TIER GLOW CLASSES --- */
+    
+           /* --- RGB HUD & STAT BAR INFECTION --- */
+        @keyframes rgbHudPulse {
+            0% { border-color: rgba(255,0,0,0.8); box-shadow: inset 0 0 10px rgba(255,0,0,0.2); }
+            33% { border-color: rgba(0,255,0,0.8); box-shadow: inset 0 0 10px rgba(0,255,0,0.2); }
+            66% { border-color: rgba(0,0,255,0.8); box-shadow: inset 0 0 10px rgba(0,0,255,0.2); }
+            100% { border-color: rgba(255,0,0,0.8); box-shadow: inset 0 0 10px rgba(255,0,0,0.2); }
+        }
+        .card-glow-rgb .rgb-hud-frame {
+            border: 1px solid #ff0000; /* Fallback */
+            animation: rgbHudPulse 2s linear infinite !important;
+        }
+        .card-glow-rgb .stat-bar {
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important;
+            background-size: 200% !important;
+            animation: rainbowText 1.5s linear infinite !important;
+        }
+
+
+           
            /* --- SUPREME RGB BEARING GLOW --- */
         @keyframes rgbCardPulse {
             0% { box-shadow: inset 0 0 50px rgba(255,0,0,0.3), 0 0 25px rgba(255,0,0,0.6); border-color: #ff0000; }
@@ -1642,14 +1662,14 @@ const renderStat = (label, value, cssClass, max) => {
                         
                         statHtml = `
                             <div class="meta-group">
-                                <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
+                               <div class="rgb-hud-frame" style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">DECK <span style="color:var(--accent-cyan)">${deckName}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">TRUCKS <span style="color:var(--accent-cyan)">${truckName}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">WHEELS <span style="color:var(--accent-cyan)">${wheelName}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BEARINGS <span style="color:var(--accent-cyan)" class="${bearingClass}">${bearingName}</span></div>
                                 </div>
                                 <div class="meta-title">PERFORMANCE</div>
-                                <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
+                                <div class="rgb-hud-frame" style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
                                     ${renderStat('POP', pop, 'stat-pop', 20)}${renderStat('BALANCE', balance, 'stat-balance', 20)}${renderStat('SPEED', speed, 'stat-speed', 20)}${renderStat('TOTAL POWER', totalPower, 'stat-total', 30)}
                                 </div>
                             </div>`;
@@ -1669,12 +1689,12 @@ const renderStat = (label, value, cssClass, max) => {
 
                         statHtml = `
                             <div class="meta-group">
-                                <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
+                             <div class="rgb-hud-frame" style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 10px;">
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">BRAND <span style="color:#fff">${brandStr}</span></div>
                                     <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.55rem; color:#888; margin-bottom:4px;">COLOR <span style="color:#fff">${colorStr}</span></div>
                                 </div>
                                 <div class="meta-title">COMPONENT TRAITS</div>
-                                <div style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
+                               <div class="rgb-hud-frame" style="padding: 10px; background: rgba(0,0,0,0.4); border-radius: 6px;">
                                     ${renderStat('POP', pop, 'stat-pop', 20)}${renderStat('BALANCE', balance, 'stat-balance', 20)}${renderStat('SPEED', speed, 'stat-speed', 20)}
                                 </div>
                             </div>`;
