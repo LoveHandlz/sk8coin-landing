@@ -72,50 +72,38 @@
         .card-glow-rgb .skate-img { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); }
 
         /* --- EXTREME GOD TIER GLOW CLASSES --- */
-        
-        /* EPIC (Sky Blue / Purple intense glow) */
         .card-glow-epic { box-shadow: inset 0 0 50px rgba(217, 70, 239, 0.3), 0 0 20px rgba(217, 70, 239, 0.5) !important; border-color: var(--rarity-epic) !important; }
         .card-glow-epic .rarity-header { background: var(--rarity-epic) !important; color: #fff !important; box-shadow: 0 0 30px rgba(217, 70, 239, 0.8) !important; }
         .card-glow-epic .skate-img { filter: drop-shadow(0 0 15px rgba(217, 70, 239, 0.9)); }
 
-        /* LEGENDARY (Gold) */
         .card-glow-legendary { box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.4) !important; border-color: var(--rarity-legendary) !important; }
         .card-glow-legendary .rarity-header { background: var(--rarity-legendary) !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 215, 0, 0.7) !important; }
         .card-glow-legendary .skate-img { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
 
-        /* INSANE (Deep Intense Red) */
         .card-glow-insane { box-shadow: inset 0 0 60px rgba(255, 0, 51, 0.3), 0 0 25px rgba(255, 0, 51, 0.5) !important; border-color: var(--rarity-insane) !important; }
         .card-glow-insane .rarity-header { background: var(--rarity-insane) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 51, 0.9) !important; }
         .card-glow-insane .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 51, 1)); }
 
-        /* MYTHIC (Rainbow Animation) */
         @keyframes mythicRainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
         .card-glow-mythic { box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.3), 0 0 25px rgba(255, 0, 255, 0.5) !important; border-color: #ff00ff !important; animation: mythicRainbow 4s linear infinite; }
         .card-glow-mythic .rarity-header { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important; background-size: 200% !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 40px rgba(255, 0, 255, 0.7) !important; animation: mythicRainbow 3s linear infinite; }
         .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8)); }      
         
-        /* RIDICULOUS (Dark Pink - CLEANED UP) */
         .card-glow-ridiculous { box-shadow: inset 0 0 60px rgba(255, 0, 127, 0.3), 0 0 25px rgba(255, 0, 127, 0.5) !important; border-color: var(--rarity-ridiculous) !important; }
         .card-glow-ridiculous .rarity-header { background: var(--rarity-ridiculous) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 127, 0.9) !important; }
         .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 127, 1)); }
 
         /* --- BASE BODY & LAYOUT --- */
         body { 
-            background-color: var(--bg-deep);
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; 
+            background-color: var(--bg-deep); color: #fff; font-family: 'Inter', sans-serif; margin: 0; 
             background-image: radial-gradient(circle at 50% 50%, #162a5e 0%, #050a1a 100%); 
-            background-attachment: fixed; 
-            min-height: 100vh;
-            display: flex; 
-            flex-direction: column; 
+            background-attachment: fixed; min-height: 100vh; display: flex; flex-direction: column; 
         }
 
-      /* --- HEADER & NAV --- */
+        /* --- HEADER & NAV --- */
         header { 
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px 40px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-cyan);
+            background: rgba(0, 0, 0, 0.9); padding: 15px 40px; display: flex; justify-content: center; 
+            position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-cyan);
             box-shadow: 0 5px 20px rgba(0, 240, 255, 0.1);
         }
         .header-inner { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; }
@@ -180,44 +168,8 @@
         .m-badge-pro { background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #ffd700; }
         .m-badge-elite { background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; color: #2196f3; }
         .m-badge-legendary { background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; color: #fff; text-shadow: 0 0 5px #fff; box-shadow: 0 0 10px rgba(168, 85, 247, 0.8); }
-        .m-badge-lawmaker { background: rgba(0, 240, 255, 0.1); border: 1px dashed var(--accent-cyan); color: var(--accent-cyan); }
-        .m-badge-veto { background: rgba(255, 51, 102, 0.2); border: 1px solid #ff3366; color: #ff3366; }
 
         /* --- SENATE UI CLASSES (DAO V2 MATRIX) --- */
-        .senate-jumbotron { width: 100%; border: 2px solid var(--accent-cyan); border-radius: 8px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 0 30px rgba(0,240,255,0.2); position: relative; background: #000; }
-        .senate-jumbotron video { width: 100%; display: block; max-height: 400px; object-fit: cover; opacity: 0.8; }
-        .senate-jumbotron::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,240,255,0.05) 3px, rgba(0,240,255,0.05) 4px); pointer-events: none; }
-
-        .senate-matrix { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; margin-bottom: 50px; }
-        .senator-hud { background: rgba(5, 10, 26, 0.8); border: 1px solid #222; padding: 20px; border-radius: 6px; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); overflow: hidden; transition: 0.3s; }
-        .senator-hud:hover { border-color: #555; transform: translateY(-2px); }
-        .senator-hud::before { content:''; position:absolute; left:0; top:0; height:100%; width:4px; background: #333; }
-        
-        .senator-hud.vote-yes::before { background: #00ffaa; box-shadow: 0 0 15px #00ffaa; }
-        .senator-hud.vote-no::before { background: var(--accent-pink); box-shadow: 0 0 15px var(--accent-pink); }
-        .senator-hud.vote-abstain::before { background: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold); }
-
-        .hud-chief { grid-column: span 6; border-color: rgba(0,240,255,0.3); }
-        .hud-senior { grid-column: span 4; }
-        .hud-junior { grid-column: span 3; }
-
-        .senator-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 10px; }
-        .sen-address { font-family: 'Orbitron'; font-weight: 900; color: #ccc; font-size: 0.9rem; letter-spacing: 1px; }
-        .hud-chief .sen-address { font-size: 1.3rem; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
-        .sen-weight { color: var(--accent-gold); font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; text-align: right; }
-        .hud-chief .sen-weight { font-size: 0.9rem; }
-        .sen-stance { font-size: 0.6rem; color: #888; font-family: 'Inter'; letter-spacing: 1px; margin-top: 5px; text-transform: uppercase; }
-
-        .badge-rack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .hud-chief .badge-rack { grid-template-columns: repeat(6, 1fr); }
-        .exotic-badge { background: #050a1a; border: 1px solid #111; height: 35px; display: flex; justify-content: center; align-items: center; font-size: 0.55rem; font-family: 'Orbitron'; color: #222; border-radius: 3px; font-weight: 900; letter-spacing: 1px; text-align: center; line-height: 1.1; transition: 0.3s; }
-        .badge-gavel { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,240,255,0.05); box-shadow: inset 0 0 10px rgba(0,240,255,0.1); }
-        .badge-filibuster { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(255,215,0,0.05); }
-        .badge-amicus { border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.05); }
-        .badge-subpoena { border-color: #ffaa00; color: #ffaa00; background: rgba(255,170,0,0.05); }
-        .badge-veto { border-color: #ff3366; color: #ff3366; background: rgba(255,51,102,0.05); box-shadow: inset 0 0 10px rgba(255,51,102,0.2); }
-        .badge-pardon { border-color: #00ffaa; color: #00ffaa; background: rgba(0,255,170,0.05); }
-
         .dao-hud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .dao-hud-card { background: linear-gradient(180deg, rgba(15,26,71,0.9), rgba(5,10,26,0.9)); border: 2px solid #333; border-radius: 12px; padding: 25px; text-align: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
         .dao-hud-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
@@ -241,14 +193,14 @@
         .btn-no { border-color: var(--accent-pink); color: var(--accent-pink); box-shadow: inset 0 0 10px rgba(255,0,85,0.1);} 
         .btn-no:hover { background: var(--accent-pink); color: #000; box-shadow: 0 0 15px rgba(255,0,85,0.4); }
 
-        /* --- LEGISLATIVE DRAFT & SLIDER INTERFACES --- */
-        .proposal-form-container { background: rgba(5,10,26,0.95); border: 1px dashed var(--accent-gold); padding: 30px; border-radius: 8px; margin-bottom: 45px; box-shadow: 0 0 25px rgba(255,215,0,0.05); }
+        /* --- PROPOSAL MODAL SPECIFICS --- */
         .proposal-input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px; box-sizing: border-box; margin-bottom: 15px; outline: none; }
         .proposal-input:focus { border-color: var(--accent-gold); }
         .slider-box { background: rgba(0,0,0,0.5); border: 1px solid #222; padding: 15px; border-radius: 6px; margin: 20px 0; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
         .weight-slider { -webkit-appearance: none; appearance: none; flex: 1; height: 8px; border-radius: 4px; background: #111; outline: none; border: 1px solid #333; }
         .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-cyan); border: 2px solid #000; cursor: pointer; box-shadow: 0 0 10px var(--accent-cyan); }
         .weight-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-cyan); border: 2px solid #000; cursor: pointer; box-shadow: 0 0 10px var(--accent-cyan); }
+        
         .treasury-link-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; padding: 10px 18px; border-radius: 4px; cursor: pointer; text-decoration: none; transition: 0.2s; margin-top: 10px; }
         .treasury-link-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 15px var(--accent-cyan); }
 
@@ -434,6 +386,23 @@
         <p id="error-modal-msg" style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.6;"></p>
         <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">The chain rejected your request. Check your liquidity, adjust your slippage, and try again.</p>
         <button class="wallet-btn" onclick="closeModals()" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px; font-size: 1.1rem;">TRY AGAIN</button>
+    </div>
+</div>
+
+<div id="propose-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--accent-gold); max-width: 500px; padding: 30px;">
+        <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" alt="SK8COIN" style="height: 60px; margin-bottom: 15px;">
+        <h2 style="font-family:'Orbitron'; color:var(--accent-gold); margin-bottom: 5px; font-weight: 900;">WELCOME TO SK8DAO</h2>
+        <h4 style="color:var(--accent-cyan); font-family:'Orbitron'; font-size:0.8rem; letter-spacing:1px; margin-bottom:15px; font-weight: 900;">DECENTRALIZED GOVERNANCE</h4>
+        <p style="color:#ccc; font-size:0.85rem; line-height:1.6; margin-bottom:20px; text-align:left;">
+            The Supreme Court is where the community shapes the protocol. By submitting a motion, you are permanently inscribing a legislative proposal onto the WAX blockchain. 
+            If passed by the community's $SKATE weight, it becomes law. A <strong>1,000 $SKATE</strong> filing fee prevents spam.
+        </p>
+        <input type="text" id="bill-proposal-title" class="proposal-input" placeholder="Motion Title (e.g. SCP-13: Fund Local Skatepark)">
+        <textarea id="bill-proposal-desc" class="proposal-input" rows="4" placeholder="Explain the details, the requirements, and how this expands the ecosystem..."></textarea>
+        
+        <button class="wallet-btn" style="width:100%; background: var(--accent-gold); color:#000; padding:15px; margin-bottom:10px;" onclick="executeOnChainProposal()">SUBMIT TO LEDGER (1,000 $SKATE)</button>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ CANCEL ]</button>
     </div>
 </div>
 
@@ -783,19 +752,8 @@
             <div id="user-vote-weight" style="font-family:'Orbitron'; font-weight:900; font-size:2.2rem; color:#fff;">0</div>
             <div style="font-size:0.7rem; color:var(--accent-pink); margin-top:10px; font-family:'Inter'; font-weight:900;">1 $SKATE = 1 VOTE</div>
         </div>
-    </div>
-
-    <div class="proposal-form-container">
-        <h4 style="font-family: 'Orbitron'; font-weight: 900; color: var(--accent-gold); margin: 0 0 10px 0; font-size: 1.2rem; letter-spacing: 1px;">📝 PROPOSE NEW SENATE MOTION</h4>
-        <p style="color: #888; font-size: 0.8rem; line-height: 1.5; margin-bottom: 15px;">A filing fee of <strong>1,000 $SKATE</strong> will be charged to register your motion on the ledger and initiate a vote.</p>
-        <input type="text" id="bill-proposal-title" class="proposal-input" placeholder="e.g. SCP-13: Fund the Local Skatepark Pool">
-        <textarea id="bill-proposal-desc" class="proposal-input" rows="3" placeholder="Explain the details, the requirements, and how this expands the ecosystem..."></textarea>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <button class="wallet-btn" style="background: var(--accent-gold); color:#000;" onclick="executeOnChainProposal()">SUBMIT MOTION TO LEDGER (1,000 $SKATE)</button>
-            <a href="https://wax.bloks.io/account/skatecoinwax" target="_blank" class="treasury-link-btn">
-                🔗 VIEW TREASURY LEDGER
-            </a>
+        <div class="dao-hud-card" style="display: flex; flex-direction: column; justify-content: center; padding: 15px;">
+            <button onclick="document.getElementById('propose-modal').style.display='flex';" class="wallet-btn" style="background: var(--accent-gold); color: #000; width: 100%; height: 100%; font-size: 1.2rem; border-radius: 8px;">DRAFT NEW MOTION</button>
         </div>
     </div>
 
@@ -803,7 +761,6 @@
     <div id="active-motions-list">
         <div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>
     </div>
-
 </div>
 
 <footer>
@@ -995,6 +952,10 @@
                                         itemType = "LEGISLATION";
                                         labelColor = "var(--accent-pink)";
                                         displayMemo = `Drafted Bill: ${pMemo.title}`;
+                                    } else if(pMemo.action === "delete") {
+                                        itemType = "VETO";
+                                        labelColor = "var(--accent-red)";
+                                        displayMemo = `Removed Motion`;
                                     }
                                 } catch(e) {}
                             }
@@ -1022,7 +983,7 @@
                 });
             }
 
-            // Extract Logged-In User's Power
+            // Extract Logged-In User's Power and Set UI
             if (currentSession) {
                 const myAcc = currentSession.actor.toString();
                 if (sponsors[myAcc]) currentUserUsdTotal = sponsors[myAcc].powerValueUsd;
@@ -1036,7 +997,10 @@
                 if(rankDOM) {
                     rankDOM.innerText = myRankInfo.rank;
                     rankDOM.style.color = myRankInfo.color;
-                    weightDOM.innerHTML = `${myRankInfo.votes.toLocaleString()} <span style="font-size:1.2rem; color:var(--accent-cyan); font-weight: 900;">VOTES</span>`;
+                    
+                    // Show actual $SKATE balance + base rank votes
+                    const userSkate = sponsors[myAcc] ? sponsors[myAcc].skateTotal : 0;
+                    weightDOM.innerHTML = `${(userSkate + myRankInfo.votes).toLocaleString(undefined, {maximumFractionDigits: 0})} <span style="font-size:1.2rem; color:var(--accent-cyan); font-weight: 900;">VOTES</span>`;
                     badgeDOM.innerHTML = `<span class="micro-badge-pill ${myRankInfo.badge}">${myRankInfo.rank}</span>`;
                 }
             }
@@ -1096,7 +1060,7 @@
         }
     }
 
-    // --- NEW DAO V2 SCRAPING ENGINE (WITH RETRACT SUPPORT) ---
+    // --- NEW DAO V2 SCRAPING ENGINE (WITH TRUE DELETE SUPPORT) ---
     let activeProposals = [];
     let closedProposals = [];
 
@@ -1106,6 +1070,7 @@
 
         let proposals = {};
         let rawVotes = [];
+        let deletedProposals = [];
         const DAO_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 Days in milliseconds
 
         try {
@@ -1135,7 +1100,8 @@
                                     yesWeight: 0, 
                                     noWeight: 0, 
                                     time: blockTime, 
-                                    voterStates: {} // Track voter states
+                                    voterStates: {},
+                                    isDeleted: false
                                 };
                             } else if (parsedMemo.action === "vote" && parsedMemo.id) {
                                 rawVotes.push({ 
@@ -1144,6 +1110,8 @@
                                     sender: sender, 
                                     weight: weight 
                                 });
+                            } else if (parsedMemo.action === "delete" && parsedMemo.id) {
+                                deletedProposals.push({ id: parsedMemo.id, sender: sender });
                             }
                         } catch(e) {}
                     }
@@ -1151,9 +1119,18 @@
             }
         } catch(e) { console.error("Hyperion scrape failed:", e); }
 
-        // --- RETRACT LOGIC: Read newest-first to get the final vote state ---
+        // Apply Deletions (Only the original proposer or admin can validate a delete)
+        deletedProposals.forEach(del => {
+            if (proposals[del.id]) {
+                if (proposals[del.id].proposer === del.sender || del.sender === ADMIN_WALLET) {
+                    proposals[del.id].isDeleted = true;
+                }
+            }
+        });
+
+        // Tally Votes (Read newest-first to get the final vote state per wallet)
         rawVotes.forEach(v => {
-            if (proposals[v.id]) {
+            if (proposals[v.id] && !proposals[v.id].isDeleted) {
                 if (!proposals[v.id].voterStates) proposals[v.id].voterStates = {};
                 
                 // If we haven't seen this wallet yet for this proposal, this is their latest action
@@ -1166,13 +1143,12 @@
             }
         });
 
-        // Tally up the final locked-in states
+        // Add up the final locked-in states
         Object.values(proposals).forEach(p => {
-            if (p.voterStates) {
+            if (p.voterStates && !p.isDeleted) {
                 Object.values(p.voterStates).forEach(vState => {
                     if (vState.vote === "YES") p.yesWeight += vState.weight;
                     if (vState.vote === "NO") p.noWeight += vState.weight;
-                    // If vote === "RETRACT", we intentionally do not add weight
                 });
             }
         });
@@ -1182,6 +1158,8 @@
         const now = Date.now();
 
         Object.values(proposals).forEach(p => {
+            if (p.isDeleted) return; // Skip rendering deleted proposals
+
             const expiresAt = p.time + DAO_TTL_MS;
             if (now > expiresAt) {
                 p.status = 'closed';
@@ -1206,6 +1184,8 @@
             return;
         }
 
+        const currentUser = currentSession ? currentSession.actor.toString() : "";
+
         activeProposals.forEach((p, index) => {
             const totalWeight = p.yesWeight + p.noWeight;
             const yesPct = totalWeight > 0 ? ((p.yesWeight / totalWeight) * 100).toFixed(0) : 0;
@@ -1215,6 +1195,15 @@
             const d = Math.floor(diffMs / 86400000);
             const h = Math.floor((diffMs % 86400000) / 3600000);
             const timeLeft = `${d}d ${h}h`;
+
+            // Only show delete button if the logged in user is the creator or the admin
+            let deleteBtnHtml = "";
+            if (currentUser === p.proposer || currentUser === ADMIN_WALLET) {
+                deleteBtnHtml = `
+                <button onclick="executeOnChainDelete('${p.id}')" style="width: 100%; background: transparent; color: var(--accent-pink); border: 1px dashed var(--accent-pink); padding: 10px; margin-top: 15px; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; transition: 0.3s; border-radius: 6px; font-size: 0.75rem; text-transform: uppercase;" onmouseover="this.style.background='var(--accent-pink)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent-pink)';">
+                    🗑️ DELETE MOTION
+                </button>`;
+            }
 
             html += `
             <div class="motion-card">
@@ -1246,9 +1235,7 @@
                     <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE NO</button>
                 </div>
                 
-                <button onclick="executeOnChainVote('${p.id}', 'RETRACT', 0.0001)" style="width: 100%; background: transparent; color: #888; border: 1px dashed #555; padding: 10px; margin-top: 10px; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; border-radius: 6px; font-size: 0.7rem;" onmouseover="this.style.color='#fff'; this.style.borderColor='#fff';" onmouseout="this.style.color='#888'; this.style.borderColor='#555';">
-                    [ RETRACT VOTE ]
-                </button>
+                ${deleteBtnHtml}
             </div>`;
         });
 
@@ -1403,6 +1390,7 @@
             showSuccessModal("📜 PROPOSAL INITIATED 📜", "Your 1,000 $SKATE draft fee has been processed.");
             document.getElementById('bill-proposal-title').value = ''; 
             document.getElementById('bill-proposal-desc').value = '';
+            document.getElementById('propose-modal').style.display = 'none';
             refreshDAODashboard();
             updateBalances(sender);
             fetchTreasuryData();
@@ -1434,16 +1422,44 @@
             }];
             await currentSession.transact({ actions });
             
-            if (stance.toUpperCase() === "RETRACT") {
-                showSuccessModal("🗳️ VOTE RETRACTED 🗳️", `Your vote on motion ${motionId} has been withdrawn.`);
-            } else {
-                showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}.`);
-            }
+            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}.`);
+            
             refreshDAODashboard();
             updateBalances(sender);
             fetchTreasuryData();
         } catch(e) { 
             console.error(e); showErrorModal("Voting transaction aborted."); 
+        }
+    };
+
+    // Allows the original proposer (or an admin) to permanently delete the motion from the floor
+    window.executeOnChainDelete = async (motionId) => {
+        if (!currentSession) return toggleAuthModal();
+        if (!confirm("Are you sure you want to permanently delete this motion from the floor?")) return;
+        
+        // Very small dust fee required to push memo to chain
+        const feeAmount = (0.0001).toFixed(4) + " SKATE"; 
+        const sender = currentSession.actor.toString();
+        
+        const memoData = JSON.stringify({ 
+            sk8dao: "v1", 
+            action: "delete", 
+            id: motionId
+        });
+        
+        try {
+            const actions = [{ 
+                account: 'skatecoinwax', 
+                name: 'transfer', 
+                authorization: [currentSession.permissionLevel], 
+                data: { from: sender, to: 'skatecoinwax', quantity: feeAmount, memo: memoData } 
+            }];
+            await currentSession.transact({ actions });
+            showSuccessModal("🗑️ MOTION DELETED 🗑️", "The motion has been permanently removed from the DAO floor.");
+            refreshDAODashboard();
+            fetchTreasuryData();
+        } catch(e) { 
+            console.error(e); showErrorModal("Deletion transaction aborted or rejected."); 
         }
     };
 
@@ -1739,5 +1755,7 @@
 </script>
 </body>
 </html>
+
+    
 
     
