@@ -34,15 +34,14 @@
             /* --- BASE RARITIES --- */
             --rarity-common: #94a3b8; 
             --rarity-uncommon: #00ffaa; 
-            --rarity-rare: #2196f3;
+            --rarity-rare: #00bfff;;
             --rarity-epic: #d946ef; 
             
             /* --- GOD TIER BASE COLORS --- */
             --rarity-legendary: #ffd700; 
-            --rarity-mythic: #ff00ff; /* Fallback, handled by rainbow animation */
-            --rarity-insane: #ff0033; /* Deep Intense Red */
-            --rarity-ridiculous: #00ffff; /* Ice Diamond Cyan */
-        }
+            --rarity-mythic: #ff00ff; 
+            --rarity-insane: #ff0033; 
+            --rarity-ridiculous: #ff007f; 
 
         /* --- EXTREME GOD TIER GLOW CLASSES --- */
         .card-glow-legendary { box-shadow: inset 0 0 50px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.4) !important; border-color: var(--rarity-legendary) !important; }
@@ -59,25 +58,11 @@
         .card-glow-mythic .rarity-header { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important; background-size: 200% !important; color: #fff !important; text-shadow: 1px 1px 2px #000; box-shadow: 0 0 40px rgba(255, 0, 255, 0.7) !important; animation: mythicRainbow 3s linear infinite; }
         .card-glow-mythic .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8)); }      
         
-        /* High-Speed RGB-Gold Loop for Ridiculous (No Glow) */
-        @keyframes ridiculousStrobeBorder {
-            0%, 100% { border-color: #ff0000; }
-            25%  { border-color: #00ff00; }
-            50%  { border-color: #0000ff; }
-            75%  { border-color: #ffd700; }
-        }
-        @keyframes ridiculousStrobeBg {
-            0%, 100% { background: #ff0000; color: #fff; }
-            25%  { background: #00ff00; color: #000; }
-            50%  { background: #0000ff; color: #fff; }
-            75%  { background: #ffd700; color: #000; }
-        }
-        @keyframes ridiculousStrobeText {
-            0%, 100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-            25%  { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-            50%  { color: #0000ff; text-shadow: 0 0 10px #0000ff; }
-            75%  { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
-        }
+       /* --- DARK PINK RIDICULOUS GLOW --- */
+        .card-glow-ridiculous { box-shadow: inset 0 0 60px rgba(255, 0, 127, 0.3), 0 0 25px rgba(255, 0, 127, 0.5) !important; border-color: var(--rarity-ridiculous) !important; }
+        .card-glow-ridiculous .rarity-header { background: var(--rarity-ridiculous) !important; color: #fff !important; box-shadow: 0 0 40px rgba(255, 0, 127, 0.9) !important; }
+        .card-glow-ridiculous .skate-img { filter: drop-shadow(0 0 20px rgba(255, 0, 127, 1)); }
+        
 
         .card-glow-ridiculous { 
             box-shadow: inset 0 0 60px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.5) !important; 
