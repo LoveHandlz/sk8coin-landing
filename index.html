@@ -957,10 +957,11 @@
     </div>
 </footer>
 
-    <script type="module">
-    import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
+import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
     import { WebRenderer } from 'https://esm.sh/@wharfkit/web-renderer?bundle';
     import { WalletPluginCloudWallet } from 'https://esm.sh/@wharfkit/wallet-plugin-cloudwallet?bundle';
+    import { WalletPluginAnchor } from 'https://esm.sh/@wharfkit/wallet-plugin-anchor?bundle';
+    import { WalletPluginWombat } from 'https://esm.sh/@wharfkit/wallet-plugin-wombat?bundle';
 
     const ATOMIC_API = "https://wax.api.atomicassets.io/atomicassets/v1";
     const COLLECTION = "skatecoinwax";
@@ -987,7 +988,11 @@
         appName: 'sk8dao',
         chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: WAX_RPC }],
         ui: new WebRenderer(),
-        walletPlugins: [ new WalletPluginCloudWallet() ]
+        walletPlugins: [ 
+            new WalletPluginCloudWallet(),
+            new WalletPluginAnchor(),
+            new WalletPluginWombat()
+        ]
     });
     
     let currentSession = null, currentSchema = null, currentInventoryPage = 1;
