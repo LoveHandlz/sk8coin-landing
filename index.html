@@ -181,8 +181,6 @@
         .m-badge-pro { background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #ffd700; }
         .m-badge-elite { background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; color: #2196f3; }
         .m-badge-legendary { background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; color: #fff; text-shadow: 0 0 5px #fff; box-shadow: 0 0 10px rgba(168, 85, 247, 0.8); }
-        .m-badge-lawmaker { background: rgba(255, 234, 0, 0.1); border: 1px dashed var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); }
-        .m-badge-veto { background: rgba(255, 51, 102, 0.2); border: 1px solid #ff3366; color: #ff3366; }
 
         /* --- SENATE UI CLASSES (DAO V3 MATRIX) --- */
         .senate-jumbotron { width: 100%; border: 2px solid var(--accent-cyber-yellow); border-radius: 8px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 0 30px rgba(255, 234, 0, 0.2); background: #000; }
@@ -193,6 +191,9 @@
         .dao-hud-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
         .dao-hud-card.active-rank { border-color: var(--accent-cyber-yellow); box-shadow: inset 0 0 40px rgba(255, 234, 0, 0.1); }
         .dao-hud-card.active-rank::before { background: linear-gradient(90deg, transparent, var(--accent-cyber-yellow), transparent); }
+
+        /* --- NEW: 6-BUTTON DAO CONTROL GRID --- */
+        .dao-controls-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         
         .motion-card { background: linear-gradient(180deg, #111, #000); border: 2px solid #333; border-radius: 12px; padding: 30px; position: relative; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .motion-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 5px; background: repeating-linear-gradient(90deg, #333, #333 10px, transparent 10px, transparent 20px); }
@@ -265,7 +266,7 @@
         .footer-logos img:hover { opacity: 1; filter: grayscale(0%); transform: scale(1.05); }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--bg-panel); padding: 40px; border-radius: 15px; border: 2px solid var(--accent-cyber-yellow); text-align: center; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); }
+        .modal-content { background: var(--bg-panel); padding: 40px; border-radius: 15px; border: 2px solid var(--accent-cyber-yellow); text-align: center; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); max-height: 90vh; overflow-y: auto; }
         
         .master-dash-btn { background: rgba(0, 0, 0, 0.6); color: #fff; border: 1px solid var(--accent-cyber-yellow); padding: 15px 25px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
         .master-dash-btn:hover { background: var(--accent-cyber-yellow); color: #000; box-shadow: 0 0 15px var(--accent-cyber-yellow); }
@@ -276,7 +277,7 @@
         #dapp-back-btn:hover { background: var(--accent-cyber-yellow); color: #000; box-shadow: 0 0 25px var(--accent-cyber-yellow); }
 
         @media (max-width: 900px) {
-            .dao-hud-grid { grid-template-columns: 1fr; }
+            .dao-hud-grid, .dao-controls-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
@@ -319,9 +320,9 @@
     </div>
 </header>
 
-    <button id="dapp-back-btn" onclick="goBack()">[ &lt; BACK ]</button>
+<button id="dapp-back-btn" onclick="goBack()">[ &lt; BACK ]</button>
 
-<div id="trunk-modal" class="modal-overlay">
+ <div id="trunk-modal" class="modal-overlay">
     <div class="modal-content cyber-yellow-frame" style="max-width: 450px; width: 90%;">
         <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 10px; font-size: 2rem; letter-spacing: 2px;">THE TRUNK</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Access your raw components, complete setups, or head to the bench to craft a new deck.</p>
@@ -371,6 +372,51 @@
         <a href="https://wax.bloks.io/account/skatecoinwax" target="_blank" class="treasury-link-btn" style="display: block; text-align: center; margin-bottom: 15px;">🔗 VIEW TREASURY LEDGER</a>
         
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:10px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ BAIL. ]</button>
+    </div>
+</div>
+
+<div id="active-motions-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; width: 95%; height: 85vh; border-color: var(--accent-cyan); background: #050a1a; display: flex; flex-direction: column; overflow: hidden; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-cyan); padding-bottom: 15px; margin-bottom: 20px;">
+            <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin: 0; font-size: 1.8rem; letter-spacing: 1px;">THE SUPREME COURT FLOOR</h2>
+            <button onclick="closeModals()" style="background:transparent; color:var(--accent-pink); border: 1px solid var(--accent-pink); padding: 5px 15px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.85rem; transition: 0.2s;">CLOSE</button>
+        </div>
+        
+        <div id="active-motions-list" style="flex: 1; overflow-y: auto; padding-right: 10px; text-align: left;">
+            <div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>
+        </div>
+    </div>
+</div>
+
+<div id="dao-skater-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--rarity-epic); max-width: 450px; background: #050a1a;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--rarity-epic); margin-bottom: 15px; font-size: 1.8rem;">SKATER MATRIX</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Sponsor direct allocations and skater tier upgrades are managed here. Await protocol sync.</p>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
+    </div>
+</div>
+
+<div id="dao-footy-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--accent-cyan); max-width: 450px; background: #050a1a;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin-bottom: 15px; font-size: 1.8rem;">FOOTY PIPELINE</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Review and authenticate raw video submissions for decentralized rewards. Await protocol sync.</p>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
+    </div>
+</div>
+
+<div id="dao-treasury-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--accent-gold); max-width: 450px; background: #050a1a;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 15px; font-size: 1.8rem;">TREASURY ROUTING</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Propose direct liquidity transfers from the central vault to verified street projects.</p>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
+    </div>
+</div>
+
+<div id="dao-veto-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px; background: #050a1a;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: 1.8rem;">VETO TERMINAL</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Emergency powers terminal for ELITE and LEGENDARY rank holders to stall malicious motions.</p>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
     </div>
 </div>
 
@@ -471,7 +517,7 @@
     </div>
 
     <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 50px; flex-wrap: wrap;">
-        <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px;">🧰 OPEN TRUNK</button>
+        <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px;">🚗 OPEN TRUNK</button>
     </div>
 
     <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 40px; max-width: 900px; margin: 0 auto; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.5);">
@@ -560,7 +606,7 @@
                 The traditional skate industry is gatekept by corporate sponsors. The <strong>CRYPTO CLIPS</strong> feed is being engineered to shatter that model. We are building the first true peer-to-peer decentralized sponsorship network. 
             </p>
             <p style="color: #ccc; font-size: 1rem; line-height: 1.8; text-align: left; margin-bottom: 30px;">
-                Soon, you will be able to scout raw, tokenized clips from global skaters and back them directly. Skaters earn for their bangers, and sponsors earn yield by discovering and fueling the culture. No middlemen. Just the community funding the community.
+                Soon, you will be scouting raw, tokenized clips from global skaters and backing them directly. Skaters earn for their bangers, and sponsors earn yield by discovering and fueling the culture. No middlemen. Just the community funding the community.
             </p>
 
             <div style="margin: 0 auto 30px auto; max-width: 100%; text-align: center;">
@@ -616,7 +662,7 @@
         <div class="swap-input-group">
             <input type="text" id="swap-out" placeholder="0.00" readonly style="color: var(--accent-cyan);">
             <div class="token-selector" id="swap-label-out" onclick="showErrorModal('Token list import expanding in next update.')" style="color: var(--accent-cyan);">
-                $SKATE <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" style="height: 20px;"> ▼
+                $SKATE <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" style="height: 20px;"> ▼
             </div>
         </div>
 
@@ -695,9 +741,12 @@
                 Local shops are the beating heart of the culture. The SK8SHOP protocol acts as the stabilizer for the ecosystem. We integrate <strong>USDC Stablecoin</strong> alongside <strong>WAX</strong> and <strong>$SKATE</strong> to bridge the physical and digital worlds without the volatility of the crypto markets.
             </p>
             <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 30px;">
+                
                 <button class="wallet-btn" style="background: #ff0055; color: #fff; border: 1px solid #ff0055; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);">
-                    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafkreibt6xhskvd65qaj6jbttwlj4wgxiigmoaxvxljw4zu2solxnnyvgm" alt="USDC" style="height: 18px; width: auto; vertical-align: middle;"> 
-                    PAY WITH USDC
+    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeib3be32lezp2dmmnadjwzl2ieodfmwfmwlszo7cqgtzfqbv7jyvpa" alt="USDC" style="height: 18px; width: auto; vertical-align: middle;"> 
+    PAY WITH USDC
+</button>
+                    
                 </button>
                 <button class="wallet-btn" style="background: #ffffff; color: #000; border: 1px solid #ffffff; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);">
                     <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafkreibszclntw7ha7wfdoawdgcjwjnu7zdtmtns3si6jaonxlube3pv2e" alt="WAX" style="height: 18px; width: auto; vertical-align: middle;"> 
@@ -848,11 +897,7 @@
     <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
     
     <div class="senate-jumbotron">
-        <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeiai4xzevwt3ohhqp6basluug5yu3hlqy6a2zeggyalinxj2k7v7ce" alt="Senate Chamber Header">
-    </div>
-
-    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-        <button class="wallet-btn" onclick="document.getElementById('draft-motion-modal').style.display='flex'" style="background: var(--accent-gold); color: #000; padding: 15px 40px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">📝 DRAFT LEGISLATION</button>
+       <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeiavwnryfv6r6m5ghzyn3z6r3hzb6zwq3m7ep3mmxwuzydohamkyiy" alt="Senate Chamber Header">
     </div>
 
     <div class="dao-hud-grid">
@@ -873,11 +918,26 @@
         </div>
     </div>
 
-    <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">ACTIVE MOTIONS // THE FLOOR</h3>
-    <div id="active-motions-list">
-        <div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>
+    <div class="dao-controls-grid">
+        <button class="wallet-btn" onclick="document.getElementById('draft-motion-modal').style.display='flex'" style="background: var(--accent-cyber-yellow); color: #000; padding: 20px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(255, 234, 0, 0.4);">
+            📝 DRAFT LEGISLATION
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('active-motions-modal').style.display='flex'" style="background: var(--accent-cyan); color: #000; padding: 20px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);">
+            ⚖️ VIEW ACTIVE MOTIONS
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('dao-skater-modal').style.display='flex'" style="background: transparent; color: var(--rarity-epic); border: 2px solid var(--rarity-epic); padding: 20px; font-size: 1.1rem;">
+            🛹 SKATER MATRIX
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('dao-footy-modal').style.display='flex'" style="background: transparent; color: var(--accent-cyan); border: 2px solid var(--accent-cyan); padding: 20px; font-size: 1.1rem;">
+            📹 FOOTY PIPELINE
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('dao-treasury-modal').style.display='flex'" style="background: transparent; color: var(--accent-gold); border: 2px solid var(--accent-gold); padding: 20px; font-size: 1.1rem;">
+            🏦 TREASURY ROUTING
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('dao-veto-modal').style.display='flex'" style="background: rgba(255, 0, 85, 0.1); color: var(--accent-pink); border: 2px solid var(--accent-pink); padding: 20px; font-size: 1.1rem;">
+            🛑 VETO TERMINAL
+        </button>
     </div>
-
 </div>
 
 <footer>
@@ -890,7 +950,7 @@
     </div>
 </footer>
 
-<script type="module">
+    <script type="module">
     import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
     import { WebRenderer } from 'https://esm.sh/@wharfkit/web-renderer?bundle';
     import { WalletPluginCloudWallet } from 'https://esm.sh/@wharfkit/wallet-plugin-cloudwallet?bundle';
@@ -935,6 +995,9 @@
     let waxUsdPrice = 0.045; 
     let skatePerWax = 7.6897; 
     let sWax = 1 / skatePerWax;
+    
+    // NEW: Global Max Votes assigned directly by Rank
+    window.currentUserMaxVotes = 0; 
 
     // --- GLOBAL MODAL ROUTERS ---
     window.showErrorModal = (msg) => {
@@ -953,7 +1016,6 @@
     window.closeModals = () => { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); };
     window.toggleAuthModal = () => { if(!currentSession) document.getElementById('vip-ticket-modal').style.display = 'flex'; else document.getElementById('disconnect-modal').style.display = 'flex'; };
 
-    // --- NEW BRAND DIRECTORY MODALS ---
     window.openBrandModal = (brandName) => {
         closeModals();
         document.getElementById('brand-modal-title').innerText = brandName;
@@ -985,18 +1047,18 @@
         }
     }
 
-    // --- SENATE RANKING LOGIC (Proof of Bleeding) ---
+    // --- SENATE RANKING LOGIC (Determines true voting weight) ---
     function calculateDaoRank(cumulativeUsd) {
-        if (cumulativeUsd >= 50000) return { rank: "LEGENDARY", votes: 2000, color: "#a855f7", badge: "m-badge-legendary" };
-        if (cumulativeUsd >= 10000) return { rank: "ELITE", votes: 1000, color: "#2196f3", badge: "m-badge-elite" };
-        if (cumulativeUsd >= 1000)  return { rank: "PRO", votes: 100, color: "#ffd700", badge: "m-badge-pro" };
-        if (cumulativeUsd >= 250)   return { rank: "AMATEUR", votes: 10, color: "#c0c0c0", badge: "m-badge-amateur" };
-        if (cumulativeUsd >= 50)    return { rank: "FLOW", votes: 5, color: "#cd7f32", badge: "m-badge-flow" };
+        if (cumulativeUsd >= 50000) return { rank: "LEGENDARY", votes: 100, color: "#a855f7", badge: "m-badge-legendary" };
+        if (cumulativeUsd >= 10000) return { rank: "ELITE", votes: 20, color: "#2196f3", badge: "m-badge-elite" };
+        if (cumulativeUsd >= 1000)  return { rank: "PRO", votes: 4, color: "#ffd700", badge: "m-badge-pro" };
+        if (cumulativeUsd >= 250)   return { rank: "AMATEUR", votes: 2, color: "#c0c0c0", badge: "m-badge-amateur" };
+        if (cumulativeUsd >= 50)    return { rank: "FLOW", votes: 3, color: "#cd7f32", badge: "m-badge-flow" };
         if (cumulativeUsd >= 1)     return { rank: "GROMMET", votes: 1, color: "#00ffaa", badge: "m-badge-grom" };
         return { rank: "POSER", votes: 0, color: "#94a3b8", badge: "m-badge-poser" };
     }
 
-   // --- ON-CHAIN SCRAPER (Treasury & Blessings) ---
+   // --- ON-CHAIN SCRAPER (Treasury & Rank Sync) ---
     async function fetchTreasuryData() {
         await syncPrices();
         
@@ -1026,7 +1088,6 @@
 
             const skatePriceUSD = sWax * waxUsdPrice;
             
-            // True Mathematical Aggregations
             const circulating_supply = 1000000;
             const total_supply = 1000000000; 
             const circMcapUsd = circulating_supply * skatePriceUSD;
@@ -1039,7 +1100,7 @@
             if(skateResDOM) skateResDOM.innerText = skateBal.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) + ' SKATE';
             if(skateUsdDOM) skateUsdDOM.innerText = `≈ $${(skateBal * skatePriceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
 
-            // Hyperion Historical Scraper Logic (100 LIMIT)
+            // Hyperion Historical Scraper Logic
             const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=100`;
             const hRes = await fetch(historyUrl);
             const hJson = await hRes.json();
@@ -1065,7 +1126,6 @@
                             const valueInWax = symbol === 'WAX' ? amount : amount * sWax;
                             const valueInUsd = valueInWax * waxUsdPrice;
 
-                            // --- MEMO SENSING ENGINE ---
                             let itemType = "BLESSING";
                             let labelColor = "var(--accent-gold)";
                             let displayMemo = memo || "Direct Support";
@@ -1073,68 +1133,50 @@
                             if (memo.includes('"sk8dao":"v1"')) {
                                 try {
                                     const pMemo = JSON.parse(memo);
-                                    if(pMemo.action === "vote") {
-                                        itemType = "GOVERNANCE";
-                                        labelColor = "var(--accent-cyan)";
-                                        displayMemo = `Voted ${pMemo.vote} on Motion`;
-                                    } else if(pMemo.action === "propose") {
-                                        itemType = "LEGISLATION";
-                                        labelColor = "var(--accent-pink)";
-                                        displayMemo = `Drafted Bill: ${pMemo.title}`;
-                                    } else if(pMemo.action === "withdraw") {
-                                        itemType = "REVOCATION";
-                                        labelColor = "var(--accent-pink)";
-                                        displayMemo = `Withdrew Motion: ${pMemo.id}`;
-                                    }
+                                    if(pMemo.action === "vote") { itemType = "GOVERNANCE"; labelColor = "var(--accent-cyan)"; displayMemo = `Voted ${pMemo.vote} on Motion`; } 
+                                    else if(pMemo.action === "propose") { itemType = "LEGISLATION"; labelColor = "var(--accent-pink)"; displayMemo = `Drafted Bill: ${pMemo.title}`; } 
+                                    else if(pMemo.action === "withdraw") { itemType = "REVOCATION"; labelColor = "var(--accent-pink)"; displayMemo = `Withdrew Motion: ${pMemo.id}`; }
                                 } catch(e) {}
                             }
 
-                            // Update Leaderboard Power
-                            if (!sponsors[fromAcc]) {
-                                sponsors[fromAcc] = { waxTotal: 0, skateTotal: 0, powerValueUsd: 0 };
-                            }
+                            if (!sponsors[fromAcc]) { sponsors[fromAcc] = { waxTotal: 0, skateTotal: 0, powerValueUsd: 0 }; }
                             if (symbol === 'WAX') sponsors[fromAcc].waxTotal += amount;
                             else sponsors[fromAcc].skateTotal += amount;
                             sponsors[fromAcc].powerValueUsd += valueInUsd;
 
-                            // Add to Live Feed
                             pulseItems.push({
-                                account: fromAcc,
-                                amountStr: `${amount.toLocaleString()} ${symbol}`,
-                                displayMemo: displayMemo,
-                                itemType: itemType,
-                                labelColor: labelColor,
-                                time: blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                timestamp: blockTime.getTime()
+                                account: fromAcc, amountStr: `${amount.toLocaleString()} ${symbol}`, displayMemo: displayMemo,
+                                itemType: itemType, labelColor: labelColor, time: blockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), timestamp: blockTime.getTime()
                             });
                         }
                     }
                 });
             }
 
-            // Extract Logged-In User's Power & Rank Seats Proper
+            // --- EXTRACT RANK & SET VOTING WEIGHT ---
             if (currentSession) {
                 const myAcc = currentSession.actor.toString();
                 if (sponsors[myAcc]) currentUserUsdTotal = sponsors[myAcc].powerValueUsd;
                 if (myAcc === ADMIN_WALLET) currentUserUsdTotal = 100000; 
                 
                 const myRankInfo = calculateDaoRank(currentUserUsdTotal);
+                window.currentUserMaxVotes = myRankInfo.votes; // Bind to slider limits
+
                 const rankDOM = document.getElementById('user-dao-rank');
                 const badgeDOM = document.getElementById('user-badges-container');
+                const weightDOM = document.getElementById('user-vote-weight');
 
                 if(rankDOM) {
                     rankDOM.innerText = myRankInfo.rank;
                     rankDOM.style.color = myRankInfo.color;
                     badgeDOM.innerHTML = `<span class="micro-badge-pill ${myRankInfo.badge}">${myRankInfo.rank}</span>`;
+                    if(weightDOM) weightDOM.innerText = window.currentUserMaxVotes.toLocaleString();
                 }
             }
 
             // Render Leaderboard
             if(whaleList) {
-                const sortedSponsors = Object.keys(sponsors).map(acc => ({
-                    account: acc, ...sponsors[acc]
-                })).sort((a, b) => b.powerValueUsd - a.powerValueUsd).slice(0, 100);
-
+                const sortedSponsors = Object.keys(sponsors).map(acc => ({ account: acc, ...sponsors[acc] })).sort((a, b) => b.powerValueUsd - a.powerValueUsd).slice(0, 100);
                 if (sortedSponsors.length === 0) {
                     whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">THE WHALE BOARD IS OPEN</div>`;
                 } else {
@@ -1158,7 +1200,6 @@
             if(pulseList) {
                 pulseItems.sort((a, b) => b.timestamp - a.timestamp);
                 const activePulse = pulseItems.slice(0, 50);
-
                 if (activePulse.length === 0) {
                     pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
                 } else {
@@ -1180,7 +1221,7 @@
         } catch (e) { console.error(e); }
     }
 
-    // --- ADVANCED DAO SCRAPING ENGINE (WITH ACCURATE VOTE TOTALS & REVOCATIONS) ---
+    // --- 51% MAJORITY & LEDGER SCRUBBING ENGINE ---
     let activeProposals = [];
     async function refreshDAODashboard() {
         const list = document.getElementById("active-motions-list");
@@ -1196,7 +1237,6 @@
             const json = await res.json();
 
             if (json && json.actions) {
-                // First pass: extract all elements chronologically
                 json.actions.forEach(action => {
                     const data = action.act.data;
                     const memo = data.memo || "";
@@ -1206,8 +1246,8 @@
                         try {
                             const parsedMemo = JSON.parse(memo);
                             const sender = data.from;
-                            const amountStr = data.quantity;
-                            const weight = parseFloat(amountStr.split(' ')[0]);
+                            // Uses parsed rank weight mapped via token memo formatting
+                            const weight = parseFloat(data.quantity.split(' ')[0]);
 
                             if (parsedMemo.action === "propose") {
                                 proposals[action.trx_id] = { 
@@ -1233,7 +1273,6 @@
 
         Object.values(proposals).forEach(p => {
             const expiresAt = p.time + DAO_TTL_MS;
-            // Filter out expired or withdrawn motions completely
             if (now <= expiresAt && !withdrawnIds.has(p.id)) {
                 p.expiresAt = expiresAt;
                 activeProposals.push(p);
@@ -1261,20 +1300,22 @@
 
         activeProposals.forEach((p, index) => {
             const totalWeight = p.yesWeight + p.noWeight;
-            const yesPct = totalWeight > 0 ? ((p.yesWeight / totalWeight) * 100).toFixed(0) : 0;
-            const noPct = totalWeight > 0 ? ((p.noWeight / totalWeight) * 100).toFixed(0) : 0;
+            const yesPctRaw = totalWeight > 0 ? (p.yesWeight / totalWeight) * 100 : 0;
+            const noPctRaw = totalWeight > 0 ? (p.noWeight / totalWeight) * 100 : 0;
+            
+            const isPassing = yesPctRaw >= 51;
+            const statusColor = isPassing ? "#00ffaa" : "var(--accent-pink)";
+            const statusText = isPassing ? `PASSING (${yesPctRaw.toFixed(0)}%)` : `FAILING (<51%)`;
             
             const diffMs = p.expiresAt - Date.now();
             const d = Math.floor(diffMs / 86400000);
             const h = Math.floor((diffMs % 86400000) / 3600000);
             const timeLeft = `${d}d ${h}h`;
 
-            // Dynamic Data HUD metrics placeholders
-            const placeholderImpact = Math.min(Math.floor((totalWeight / 500) + 10), 99);
-            const placeholderDraw = (1000 + (index * 500)).toLocaleString();
-            const quorumMet = totalWeight >= 5000 ? "SECURED" : "PENDING";
+            // Max Voting slider bound to specific User Rank Profile
+            const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0;
+            const disabledState = sliderMax === 0 ? "disabled" : "";
 
-            // Withdraw display access sensing
             let actionHtml = "";
             if (currentActor === p.proposer || currentActor === ADMIN_WALLET) {
                 actionHtml = `
@@ -1286,46 +1327,35 @@
             html += `
             <div class="motion-card">
                 <div class="motion-timer ${d < 1 ? 'danger' : 'safe'}">⏳ ${timeLeft}</div>
-                <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan); margin-bottom: 10px; padding-right: 80px;">${p.title}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-right:80px; margin-bottom: 10px;">
+                    <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan);">${p.title}</div>
+                </div>
+                
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px;">
                     <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">${p.proposer}</span></span>
+                    <span style="font-family:'Orbitron'; font-size:0.65rem; color:${statusColor}; background:rgba(0,0,0,0.8); border:1px solid ${statusColor}; padding: 3px 8px; border-radius: 4px;">STATUS: ${statusText}</span>
                 </div>
                 <p style="font-size:0.95rem; color:#ccc; line-height:1.8; margin-bottom: 20px;">${p.desc}</p>
-                
-                <div class="motion-data-hud">
-                    <div class="motion-data-stat">
-                        <div class="motion-data-label">IMPACT SCORE</div>
-                        <div class="motion-data-val">${placeholderImpact}%</div>
-                    </div>
-                    <div class="motion-data-stat">
-                        <div class="motion-data-label">TREASURY DRAW</div>
-                        <div class="motion-data-val">${placeholderDraw} $SKATE</div>
-                    </div>
-                    <div class="motion-data-stat">
-                        <div class="motion-data-label">QUORUM STATUS</div>
-                        <div class="motion-data-val" style="color: ${quorumMet === 'SECURED' ? '#00ffaa' : 'var(--accent-gold)'};">${quorumMet}</div>
-                    </div>
-                </div>
 
                 <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:15px; margin-bottom:15px; border: 1px solid #222;">
                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:'Orbitron'; font-weight:bold; margin-bottom:8px;">
-                        <span style="color:#00ffaa;">YES: ${p.yesWeight.toFixed(0)} SKATE (${yesPct}%)</span>
-                        <span style="color:var(--accent-pink);">NO: ${p.noWeight.toFixed(0)} SKATE (${noPct}%)</span>
+                        <span style="color:#00ffaa;">YES: ${p.yesWeight.toFixed(0)} VTS (${yesPctRaw.toFixed(0)}%)</span>
+                        <span style="color:var(--accent-pink);">NO: ${p.noWeight.toFixed(0)} VTS (${noPctRaw.toFixed(0)}%)</span>
                     </div>
                     <div class="vote-bar-bg">
-                        <div class="vote-bar-yes" style="width:${yesPct}%;"></div>
+                        <div class="vote-bar-yes" style="width:${yesPctRaw}%;"></div>
                     </div>
                 </div>
 
                 <div class="slider-box">
                     <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
-                    <input type="range" id="vote-slider-${index}" class="weight-slider" min="1" max="1000" value="1" oninput="document.getElementById('weight-display-${index}').innerText = this.value">
-                    <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">1</span> SKATE</span>
+                    <input type="range" id="vote-slider-${index}" class="weight-slider" min="1" max="${sliderMax}" value="${sliderMax > 0 ? 1 : 0}" ${disabledState} oninput="document.getElementById('weight-display-${index}').innerText = this.value">
+                    <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">${sliderMax > 0 ? 1 : 0}</span> VTS</span>
                 </div>
 
                 <div style="display:flex; gap:15px;">
-                    <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE YES</button>
-                    <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;">VOTE NO</button>
+                    <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE YES</button>
+                    <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE NO</button>
                 </div>
                 ${actionHtml}
             </div>`;
@@ -1388,11 +1418,11 @@
         const labelOut = document.getElementById('swap-label-out');
         
         if (isWaxToSkate) {
-            labelIn.innerHTML = 'WAX <img src="https://cryptologos.cc/logos/wax-waxp-logo.png" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-gold)";
+            labelIn.innerHTML = 'WAX <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-gold)";
             labelOut.innerHTML = '$SKATE <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" style="height: 20px;"> ▼'; labelOut.style.color = "var(--accent-cyan)";
             document.getElementById('swap-out').style.color = "var(--accent-cyan)";
         } else {
-            labelIn.innerHTML = '$SKATE <img src="https://i.postimg.cc/VSvxfXsr/sk8coin-logo-biig.png" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-cyan)";
+            labelIn.innerHTML = '$SKATE <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-cyan)";
             labelOut.innerHTML = 'WAX <img src="https://cryptologos.cc/logos/wax-waxp-logo.png" style="height: 20px;"> ▼'; labelOut.style.color = "var(--accent-gold)";
             document.getElementById('swap-out').style.color = "var(--accent-gold)";
         }
@@ -1487,7 +1517,8 @@
 
     window.executeOnChainVote = async (motionId, stance, weight) => {
         if (!currentSession) return toggleAuthModal();
-        if (weight <= 0 || isNaN(weight)) return showErrorModal("Select a valid voting weight.");
+        if (weight <= 0 || isNaN(weight)) return showErrorModal("Rank is too low to possess voting weight.");
+        if (weight > window.currentUserMaxVotes) return showErrorModal(`Your rank restricts you to ${window.currentUserMaxVotes} votes max.`);
         
         const voteCost = parseFloat(weight).toFixed(4) + " SKATE";
         const sender = currentSession.actor.toString();
@@ -1509,7 +1540,6 @@
         } catch(e) { console.error(e); showErrorModal("Voting transaction aborted."); }
     };
 
-    // --- NEW REVOLUTIONARY WITHDRAWAL ENGINE ---
     window.executeOnChainWithdrawal = async (motionId) => {
         if (!currentSession) return toggleAuthModal();
         const confirmWithdraw = confirm("⚠️ CRITICAL ACTION: Are you sure you want to permanently withdraw this motion? This cannot be undone.");
@@ -1518,9 +1548,7 @@
         const dynamicBurnAmt = (0.0001).toFixed(4) + " SKATE";
         const sender = currentSession.actor.toString();
 
-        const withdrawMemo = JSON.stringify({
-            sk8dao: "v1", action: "withdraw", id: motionId
-        });
+        const withdrawMemo = JSON.stringify({ sk8dao: "v1", action: "withdraw", id: motionId });
 
         try {
             const actions = [{
@@ -1803,10 +1831,8 @@
     }
 
     window.loadMoreInventory = () => { if (!currentSession) return; currentInventoryPage++; fetchInventory(currentSession.actor.toString(), true); };
-
     document.getElementById('login-trigger-vip').addEventListener('click', async () => { const { session } = await sessionKit.login(); location.reload(); });
     document.getElementById('logout-trigger').addEventListener('click', async () => { await sessionKit.logout(); location.reload(); });
-
     window.openCraftConfirmModal = () => { document.getElementById('modal-wax-fee').innerText = `${calculatedWaxFee.toLocaleString()} WAX`; document.getElementById('craft-confirm-modal').style.display = 'flex'; };
 
     window.executeBlend = async () => {
@@ -1825,3 +1851,8 @@
 </script>
 </body>
 </html>
+
+    
+
+    
+    
