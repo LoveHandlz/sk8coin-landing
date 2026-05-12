@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>sk8dao | THE SENATE CHAMBER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
@@ -28,6 +29,9 @@
             --rarity-insane: #ff0033; 
             --rarity-ridiculous: #ff007f; 
         }
+
+        /* Prevent horizontal scroll on mobile */
+        html, body { overflow-x: hidden; width: 100%; }
 
         /* --- CYBER-YELLOW FRAME PROTOCOL --- */
         .cyber-yellow-frame {
@@ -113,39 +117,43 @@
             flex-direction: column; 
         }
 
-      /* --- HEADER & NAV --- */
+        /* --- HEADER & NAV --- */
         header { 
             background: rgba(0, 0, 0, 0.9);
-            padding: 15px 40px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-cyber-yellow);
+            padding: 15px 20px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-cyber-yellow);
             box-shadow: 0 5px 20px rgba(255, 234, 0, 0.1);
         }
-        .header-inner { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; }
-        .senate-logo { margin: 0; font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; cursor: pointer; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent-cyber-yellow), 0 0 20px var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); text-transform: lowercase; }
+        .header-inner { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .senate-logo { margin: 0; font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.4rem, 4vw, 1.8rem); cursor: pointer; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent-cyber-yellow), 0 0 20px var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); text-transform: lowercase; }
         .senate-logo span { color: var(--accent-pink); text-shadow: 0 0 10px var(--accent-pink), 0 0 20px var(--accent-pink); }
+
+        /* HAMBURGER ICON */
+        .hamburger { display: none; font-size: 2rem; color: var(--accent-cyber-yellow); cursor: pointer; user-select: none; }
 
         nav ul { display: flex; list-style: none; gap: 18px; margin: 0; padding: 0; }
         nav a { color: #888; text-decoration: none; font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; letter-spacing: 2px; padding-bottom: 5px; transition: 0.2s; }
         nav a.active, nav a:hover { color: var(--accent-cyber-yellow); text-shadow: 0 0 8px var(--accent-cyber-yellow); border-bottom: 2px solid var(--accent-cyber-yellow); }
         
+        .header-controls { display: flex; align-items: center; gap: 10px; }
         .balance-pill { background: rgba(255, 234, 0, 0.05); border: 1px solid var(--accent-cyber-yellow); padding: 6px 15px; border-radius: 50px; font-family: 'Orbitron'; font-size: 0.65rem; display: flex; gap: 15px; }
         .balance-pill span { color: var(--accent-gold); font-weight: 900; }
-        .wallet-btn { background: var(--accent-cyber-yellow); color: #000; border: none; padding: 10px 20px; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); transition: 0.2s; }
+        .wallet-btn { background: var(--accent-cyber-yellow); color: #000; border: none; padding: 10px 20px; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); transition: 0.2s; white-space: nowrap;}
         .wallet-btn:hover { background: #fff; }
         .wallet-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
 
         /* --- LAYOUT WRAPPERS --- */
-        .dashboard-wrapper { padding: 40px; max-width: 1400px; margin: auto; flex: 1; width: 100%; box-sizing: border-box; position: relative; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .dashboard-wrapper { padding: clamp(15px, 4vw, 40px); max-width: 1400px; margin: auto; flex: 1; width: 100%; box-sizing: border-box; position: relative; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(15px, 3vw, 30px); }
         
         /* --- INVENTORY CARDS --- */
-        .skate-card { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .skate-card { background: var(--bg-panel); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; width: 100%; box-sizing: border-box;}
         .skate-card:hover { transform: translateY(-5px); border-color: var(--accent-gold); box-shadow: 0 5px 20px rgba(255,215,0,0.15); }
         .rarity-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; border-bottom: 2px solid rgba(255,255,255,0.4); }
         .rarity-header-text { font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-top: 2px; line-height: 1; text-transform: uppercase; }
         .mint-badge { background: #000; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: 900; border: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 0 5px rgba(255,255,255,0.2); }
         .img-wrap { width: 100%; height: 200px; display: flex; justify-content: center; align-items: center; background: #000; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .skate-img { max-height: 85%; max-width: 85%; object-fit: contain; }
-        .card-body { padding: 20px; flex: 1; }
+        .card-body { padding: 20px; flex: 1; box-sizing: border-box; }
         .board-name { font-family: 'Orbitron'; font-weight: 900; font-size: 1.4rem; margin: 0 0 15px 0; text-transform: uppercase; line-height: 1.1; color: var(--accent-cyber-yellow); }
         .meta-title { font-family: 'Orbitron'; font-weight: 400; font-size: 0.6rem; color: #888; letter-spacing: 2px; margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px; text-transform: uppercase; }
         .stat-bar-container { width: 100%; height: 6px; background: #111; border: 1px solid #333; border-radius: 3px; margin-top: 3px; overflow: hidden; }
@@ -154,17 +162,17 @@
         .stat-balance { background: linear-gradient(90deg, #aa00ff, #e066ff); }
         .stat-speed { background: linear-gradient(90deg, #00aaff, #00ffff); }
         .stat-total { background: linear-gradient(90deg, #ffaa00, #ffff00); }
-        .claim-zone { padding: 15px 20px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--accent-gold); display: flex; justify-content: space-between; align-items: center; }
+        .claim-zone { padding: 15px 20px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--accent-gold); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .reward-skate { font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; color: #fff; line-height: 1; margin-bottom: 4px; }
         .reward-wax { font-family: 'Inter'; font-size: 0.75rem; color: var(--accent-gold); font-weight: 900; }
         .skate-icon { width: 26px; height: 26px; vertical-align: middle; margin-right: 8px; }
 
         /* --- CRAFTING --- */
-        .crafting-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px; border: 1px solid var(--accent-cyber-yellow); }
+        .crafting-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); gap: clamp(15px, 3vw, 30px); background: rgba(0,0,0,0.5); padding: clamp(15px, 4vw, 30px); border-radius: 12px; border: 1px solid var(--accent-cyber-yellow); box-sizing: border-box; }
         .craft-slot { background: rgba(255, 234, 0, 0.05); border: 1px solid var(--card-border); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
         .craft-slot h4 { margin: 0 0 10px 0; color: var(--accent-cyber-yellow); font-family: 'Orbitron'; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; }
-        .craft-slot select { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #333; font-size: 0.8rem; margin-bottom: 5px; outline: none; }
-        .projected-stats { background: #000; padding: 25px; border-radius: 8px; border: 1px solid var(--accent-gold); display: flex; flex-direction: column; justify-content: space-between; }
+        .craft-slot select { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #333; font-size: 0.8rem; margin-bottom: 5px; outline: none; box-sizing: border-box;}
+        .projected-stats { background: #000; padding: clamp(15px, 4vw, 25px); border-radius: 8px; border: 1px solid var(--accent-gold); display: flex; flex-direction: column; justify-content: space-between; }
         .nft-visual-thumbnail { width: 45px; height: 45px; object-fit: contain; background: #111; border: 1px solid var(--accent-cyber-yellow); border-radius: 4px; padding: 3px; }
 
         /* --- LEADERBOARDS & TREASURY --- */
@@ -186,23 +194,20 @@
         .senate-jumbotron { width: 100%; border: 2px solid var(--accent-cyber-yellow); border-radius: 8px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 0 30px rgba(255, 234, 0, 0.2); background: #000; }
         .senate-jumbotron img { width: 100%; display: block; max-height: 400px; object-fit: cover; opacity: 0.9; }
         
-        .dao-hud-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .dao-hud-grid, .dao-controls-grid, .motion-data-hud { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(10px, 2vw, 20px); margin-bottom: 40px; }
         .dao-hud-card { background: linear-gradient(180deg, rgba(15,26,71,0.9), rgba(5,10,26,0.9)); border: 2px solid #333; border-radius: 8px; padding: 15px; text-align: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
         .dao-hud-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
         .dao-hud-card.active-rank { border-color: var(--accent-cyber-yellow); box-shadow: inset 0 0 40px rgba(255, 234, 0, 0.1); }
         .dao-hud-card.active-rank::before { background: linear-gradient(90deg, transparent, var(--accent-cyber-yellow), transparent); }
-
-        /* --- NEW: 6-BUTTON DAO CONTROL GRID --- */
-        .dao-controls-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         
-        .motion-card { background: linear-gradient(180deg, #111, #000); border: 2px solid #333; border-radius: 12px; padding: 30px; position: relative; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .motion-card { background: linear-gradient(180deg, #111, #000); border: 2px solid #333; border-radius: 12px; padding: clamp(15px, 4vw, 30px); position: relative; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box;}
         .motion-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 5px; background: repeating-linear-gradient(90deg, #333, #333 10px, transparent 10px, transparent 20px); }
         .motion-card.tipped { border-color: var(--accent-gold); box-shadow: 0 0 25px rgba(255,215,0,0.15); }
-        .motion-timer { font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; position: absolute; top: 25px; right: 25px; display: flex; align-items: center; gap: 5px; background: #000; padding: 5px 10px; border-radius: 4px; border: 1px solid #333;}
+        .motion-timer { font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; position: absolute; top: 15px; right: 15px; display: flex; align-items: center; gap: 5px; background: #000; padding: 5px 10px; border-radius: 4px; border: 1px solid #333;}
         .motion-timer.safe { color: #00ffaa; border-color: rgba(0,255,170,0.3); }
         .motion-timer.danger { color: var(--accent-pink); animation: pulse 1.5s infinite; border-color: rgba(255,0,85,0.3); }
         
-        .motion-data-hud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: rgba(0,0,0,0.5); border: 1px solid #222; border-radius: 6px; padding: 15px; margin: 20px 0; }
+        .motion-data-hud { background: rgba(0,0,0,0.5); border: 1px solid #222; border-radius: 6px; padding: 15px; margin: 20px 0; }
         .motion-data-stat { text-align: center; border-right: 1px dashed #333; }
         .motion-data-stat:last-child { border-right: none; }
         .motion-data-label { font-family: 'Orbitron'; font-size: 0.6rem; color: #888; margin-bottom: 5px; letter-spacing: 1px; }
@@ -211,7 +216,7 @@
         .vote-bar-bg { width: 100%; height: 12px; background: rgba(255, 0, 85, 0.2); border-radius: 6px; margin: 20px 0; display: flex; overflow: hidden; border: 1px solid #333; }
         .vote-bar-yes { height: 100%; background: linear-gradient(90deg, #00aa77, #00ffaa); transition: width 0.5s; box-shadow: 0 0 10px rgba(0,255,170,0.5); }
         
-        .dao-action-btn { background: #000; border: 2px solid #555; color: #fff; font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; padding: 10px 20px; cursor: pointer; transition: 0.2s; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .dao-action-btn { background: #000; border: 2px solid #555; color: #fff; font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; padding: 10px 20px; cursor: pointer; transition: 0.2s; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; width: 100%; box-sizing: border-box; }
         .dao-action-btn:hover { transform: translateY(-2px); }
         .btn-yes { border-color: #00ffaa; color: #00ffaa; box-shadow: inset 0 0 10px rgba(0,255,170,0.1); } 
         .btn-yes:hover { background: #00ffaa; color: #000; box-shadow: 0 0 15px rgba(0,255,170,0.4); }
@@ -221,14 +226,14 @@
         /* --- LEGISLATIVE DRAFT & SLIDER INTERFACES --- */
         .proposal-input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px; box-sizing: border-box; margin-bottom: 15px; outline: none; }
         .proposal-input:focus { border-color: var(--accent-cyber-yellow); }
-        .slider-box { background: rgba(0,0,0,0.5); border: 1px solid #222; padding: 15px; border-radius: 6px; margin: 20px 0; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
-        .weight-slider { -webkit-appearance: none; appearance: none; flex: 1; height: 8px; border-radius: 4px; background: #111; outline: none; border: 1px solid #333; }
+        .slider-box { background: rgba(0,0,0,0.5); border: 1px solid #222; padding: 15px; border-radius: 6px; margin: 20px 0; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; }
+        .weight-slider { -webkit-appearance: none; appearance: none; flex: 1; min-width: 150px; height: 8px; border-radius: 4px; background: #111; outline: none; border: 1px solid #333; }
         .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-cyber-yellow); border: 2px solid #000; cursor: pointer; box-shadow: 0 0 10px var(--accent-cyber-yellow); }
-        .treasury-link-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; padding: 10px 18px; border-radius: 4px; cursor: pointer; text-decoration: none; transition: 0.2s; margin-top: 10px; }
+        .treasury-link-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; gap: 8px; background: transparent; border: 1px solid var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; padding: 10px 18px; border-radius: 4px; cursor: pointer; text-decoration: none; transition: 0.2s; margin-top: 10px; }
         .treasury-link-btn:hover { background: var(--accent-cyber-yellow); color: #000; box-shadow: 0 0 15px var(--accent-cyber-yellow); }
 
         /* --- BRAND DASHBOARD HUD --- */
-        .brand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .brand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 20px; margin-bottom: 40px; }
         .brand-card { background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
         .brand-card:hover { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,240,255,0.2); transform: translateY(-3px); }
         .brand-name { font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; color: #fff; margin-bottom: 5px; text-transform: uppercase; }
@@ -237,9 +242,9 @@
         @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 5px rgba(255,0,85,0); } 50% { opacity: 0.7; box-shadow: 0 0 15px rgba(255,0,85,0.5); } 100% { opacity: 1; box-shadow: 0 0 5px rgba(255,0,85,0); } }
 
         /* --- SK8SWAP & COMPONENTS --- */
-        .sk8swap-terminal { background: rgba(0, 0, 0, 0.8); border: 2px solid var(--accent-cyber-yellow); border-radius: 12px; padding: 40px; max-width: 600px; margin: 0 auto 50px auto; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); position: relative; }
-        .swap-input-group { background: #050a1a; border: 1px solid #333; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .swap-input-group input { background: transparent; border: none; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; width: 50%; outline: none; }
+        .sk8swap-terminal { background: rgba(0, 0, 0, 0.8); border: 2px solid var(--accent-cyber-yellow); border-radius: 12px; padding: clamp(20px, 4vw, 40px); max-width: 600px; margin: 0 auto 50px auto; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); position: relative; width: 100%; box-sizing: border-box; }
+        .swap-input-group { background: #050a1a; border: 1px solid #333; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .swap-input-group input { background: transparent; border: none; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.4rem, 4vw, 1.8rem); width: 100%; max-width: 50%; outline: none; }
         .token-selector { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 8px 15px; border-radius: 50px; cursor: pointer; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem; transition: 0.2s; }
         .token-selector:hover { border-color: var(--accent-cyber-yellow); }
         .swap-toggle-wrap { text-align: center; margin: 10px 0; position: relative; z-index: 10; }
@@ -257,18 +262,24 @@
         .video-embed-wrapper:hover { border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
 
         /* --- FOOTER & MODALS --- */
-        footer { background: rgba(0, 0, 0, 0.95); padding: 40px 40px; margin-top: auto; border-top: 2px solid var(--accent-cyber-yellow); display: flex; justify-content: center; backdrop-filter: blur(10px); }
+        footer { background: rgba(0, 0, 0, 0.95); padding: clamp(20px, 4vw, 40px); margin-top: auto; border-top: 2px solid var(--accent-cyber-yellow); display: flex; justify-content: center; backdrop-filter: blur(10px); }
         .footer-inner { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .footer-brand { font-family: 'Orbitron'; font-size: 0.65rem; color: #888; letter-spacing: 2px; line-height: 1.8; }
+        .footer-brand { font-family: 'Orbitron'; font-size: 0.65rem; color: #888; letter-spacing: 2px; line-height: 1.8; text-align: center; flex: 1 1 100%;}
         .footer-brand span { color: var(--accent-gold); font-weight: 900; }
-        .footer-logos { display: flex; gap: 25px; align-items: center; }
+        .footer-logos { display: flex; gap: 25px; align-items: center; justify-content: center; flex: 1 1 100%; }
         .footer-logos img { height: 28px; opacity: 0.5; filter: grayscale(100%); transition: all 0.3s ease; }
         .footer-logos img:hover { opacity: 1; filter: grayscale(0%); transform: scale(1.05); }
 
+        @media (min-width: 768px) {
+            .footer-brand { flex: 1; text-align: left;}
+            .footer-logos { flex: 0; justify-content: flex-end;}
+        }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--bg-panel); padding: 40px; border-radius: 15px; border: 2px solid var(--accent-cyber-yellow); text-align: center; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--bg-panel); padding: clamp(20px, 4vw, 40px); border-radius: 15px; border: 2px solid var(--accent-cyber-yellow); text-align: center; box-shadow: 0 0 30px rgba(255, 234, 0, 0.15); max-height: 90vh; overflow-y: auto; width: 95%; box-sizing: border-box; }
         
-        .master-dash-btn { background: rgba(0, 0, 0, 0.6); color: #fff; border: 1px solid var(--accent-cyber-yellow); padding: 15px 25px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+        .master-dash-btn { background: rgba(0, 0, 0, 0.6); color: #fff; border: 1px solid var(--accent-cyber-yellow); padding: 15px 25px; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); width: 100%; box-sizing: border-box; }
+        @media (min-width: 768px) { .master-dash-btn { width: auto; } }
         .master-dash-btn:hover { background: var(--accent-cyber-yellow); color: #000; box-shadow: 0 0 15px var(--accent-cyber-yellow); }
         .master-dash-btn.gold { border-color: var(--accent-gold); color: var(--accent-gold); }
         .master-dash-btn.gold:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-gold); }
@@ -276,22 +287,17 @@
         #dapp-back-btn { display: none; position: fixed; top: 120px; left: 40px; z-index: 999; background: rgba(0,0,0,0.85); color: var(--accent-cyber-yellow); border: 2px solid var(--accent-cyber-yellow); padding: 12px 25px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: 900; cursor: pointer; backdrop-filter: blur(8px); clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: 0.2s; }
         #dapp-back-btn:hover { background: var(--accent-cyber-yellow); color: #000; box-shadow: 0 0 25px var(--accent-cyber-yellow); }
 
-        @media (max-width: 900px) {
-            .dao-hud-grid, .dao-controls-grid { grid-template-columns: 1fr; }
-        }
-
+        /* Mobile specific overrides */
         @media (max-width: 768px) {
-            .header-inner { flex-direction: column; gap: 15px; }
-            nav ul { flex-wrap: wrap; justify-content: center; gap: 10px; }
-            .dashboard-wrapper { padding: 20px 15px; }
-            .master-dash-btn { width: 100%; margin-bottom: 5px; }
-            .dashboard-grid { grid-template-columns: 1fr; }
+            .hamburger { display: block; }
+            nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(5, 10, 26, 0.98); padding: 20px 0; border-bottom: 2px solid var(--accent-cyber-yellow); }
+            nav.nav-active { display: block; }
+            nav ul { flex-direction: column; align-items: center; gap: 20px; }
+            .header-inner { flex-wrap: wrap; }
+            .header-controls { flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 15px; }
             #dapp-back-btn { top: auto; bottom: 20px; left: 20px; z-index: 2000; }
-            .sk8swap-terminal { padding: 20px; }
-            .swap-input-group input { font-size: 1.4rem; }
-            .brand-grid { grid-template-columns: 1fr 1fr; }
-            .motion-data-hud { grid-template-columns: 1fr; }
             .motion-data-stat { border-right: none; border-bottom: 1px dashed #333; padding-bottom: 10px; margin-bottom: 10px; }
+            .motion-data-stat:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         }
     </style>
 </head>
@@ -299,8 +305,11 @@
 
 <header>
     <div class="header-inner">
-        <h1 class="senate-logo" onclick="switchCategory('home'); window.scrollTo(0,0);">sk8dao</h1>
-        <nav>
+        <h1 class="senate-logo" onclick="switchCategory('home'); window.scrollTo(0,0);">sk8dao<span>.</span></h1>
+        
+        <div class="hamburger" id="mobile-menu-btn">☰</div>
+        
+        <nav id="main-nav">
             <ul>
                 <li><a href="#home" onclick="switchCategory('home'); return false;" id="nav-home" class="active">HOME</a></li>
                 <li><a href="#videos" onclick="switchCategory('clips'); return false;" id="nav-clips">VIDEOS</a></li>
@@ -310,6 +319,7 @@
                 <li><a href="#sk8shop" onclick="switchCategory('sk8shop'); return false;" id="nav-sk8shop">SK8SHOP</a></li>
             </ul>
         </nav>
+        
         <div class="header-controls">
             <div id="wallet-balances" class="balance-pill" style="display: none;">
                 <div>WAX: <span id="wax-bal">0.00</span></div>
@@ -323,16 +333,16 @@
 <button id="dapp-back-btn" onclick="goBack()">[ &lt; BACK ]</button>
 
  <div id="trunk-modal" class="modal-overlay">
-    <div class="modal-content cyber-yellow-frame" style="max-width: 450px; width: 90%;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 10px; font-size: 2rem; letter-spacing: 2px;">THE TRUNK</h2>
+    <div class="modal-content cyber-yellow-frame" style="max-width: 450px;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 10px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px;">THE TRUNK</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Access your raw components, complete setups, or head to the bench to craft a new deck.</p>
         
         <div style="display: flex; flex-direction: column; gap: 12px;">
-            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('skateboards'); return false;" style="width: 100%; text-align: center;">SKATEBOARDS</button>
-            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('decks'); return false;" style="width: 100%; text-align: center;">DECKS</button>
-            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('wheels'); return false;" style="width: 100%; text-align: center;">WHEELS</button>
-            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('trucks'); return false;" style="width: 100%; text-align: center;">TRUCKS</button>
-            <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('builder'); return false;" style="width: 100%; text-align: center; margin-top: 10px;">⚙️ SKATEBOARD BUILDER</button>
+            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('skateboards'); return false;" style="text-align: center;">SKATEBOARDS</button>
+            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('decks'); return false;" style="text-align: center;">DECKS</button>
+            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('wheels'); return false;" style="text-align: center;">WHEELS</button>
+            <button class="master-dash-btn" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('trucks'); return false;" style="text-align: center;">TRUCKS</button>
+            <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='none'; switchCategory('builder'); return false;" style="text-align: center; margin-top: 10px;">⚙️ SKATEBOARD BUILDER</button>
         </div>
         
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:20px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ CLOSE TRUNK ]</button>
@@ -341,7 +351,7 @@
 
 <div id="brand-detail-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-cyan); max-width: 450px;">
-        <h2 id="brand-modal-title" style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin-bottom: 5px; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px;">BRAND</h2>
+        <h2 id="brand-modal-title" style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin-bottom: 5px; font-size: clamp(1.5rem, 5vw, 2rem); text-transform: uppercase; letter-spacing: 2px;">BRAND</h2>
         <div style="font-family:'Orbitron'; font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 20px; letter-spacing: 2px; font-weight: 900;">OFFICIAL PROTOCOL SPONSOR</div>
         <p id="brand-modal-desc" style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px; text-align: left;">Brand transmission locked. Decrypting protocol data...</p>
         <button class="wallet-btn" onclick="openStoreComingSoon()" style="width: 100%; background: var(--accent-cyan); color: #000; padding: 15px; font-size: 1.1rem; margin-bottom: 15px;">ENTER STORE</button>
@@ -352,15 +362,15 @@
 <div id="store-coming-soon-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-gold); max-width: 450px; background-image: radial-gradient(circle at 50% 0%, #3a3200 0%, var(--bg-panel) 60%); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);">
         <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafkreifjmf42ydwes6dyvcgeuuib4vkyesktt5fmd3i4gk7lcq6lmywbeu" alt="SK8COIN LOGO" style="height: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 10px; font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,215,0,0.4);">COMING SOON</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 10px; font-size: clamp(1.8rem, 5vw, 2.2rem); text-shadow: 0 0 15px rgba(255,215,0,0.4);">COMING SOON</h2>
         <p style="color: #fff; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 3px; font-size: 1.1rem; margin-bottom: 30px;">JOIN THE REVOLUTION</p>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ BAIL. ]</button>
     </div>
 </div>
 
 <div id="draft-motion-modal" class="modal-overlay">
-    <div class="modal-content cyber-yellow-frame" style="max-width: 500px; width: 90%; background: #050a1a;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 15px; font-size: 1.8rem; letter-spacing: 1px;">📝 DRAFT LEGISLATION</h2>
+    <div class="modal-content cyber-yellow-frame" style="max-width: 500px; background: #050a1a;">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 15px; font-size: clamp(1.4rem, 5vw, 1.8rem); letter-spacing: 1px;">📝 DRAFT LEGISLATION</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px; text-align: left;">A filing fee of <strong>1,000 $SKATE</strong> will be charged to register your motion on the ledger and initiate a vote.</p>
         
         <div style="text-align: left;">
@@ -368,7 +378,7 @@
             <textarea id="bill-proposal-desc" class="proposal-input" rows="4" placeholder="Explain the details, the requirements, and how this expands the ecosystem..."></textarea>
         </div>
         
-        <button class="wallet-btn" onclick="executeOnChainProposal()" style="width: 100%; background: var(--accent-cyber-yellow); color:#000; padding: 15px; font-size: 1.1rem; margin-bottom: 15px;">SUBMIT MOTION TO LEDGER (1,000 $SKATE)</button>
+        <button class="wallet-btn" onclick="executeOnChainProposal()" style="width: 100%; background: var(--accent-cyber-yellow); color:#000; padding: 15px; font-size: 1.1rem; margin-bottom: 15px;">SUBMIT MOTION (1,000 $SKATE)</button>
         <a href="https://wax.bloks.io/account/skatecoinwax" target="_blank" class="treasury-link-btn" style="display: block; text-align: center; margin-bottom: 15px;">🔗 VIEW TREASURY LEDGER</a>
         
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:10px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ BAIL. ]</button>
@@ -376,9 +386,9 @@
 </div>
 
 <div id="active-motions-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 800px; width: 95%; height: 85vh; border-color: var(--accent-cyan); background: #050a1a; display: flex; flex-direction: column; overflow: hidden; padding: 20px;">
+    <div class="modal-content" style="max-width: 800px; height: 85vh; border-color: var(--accent-cyan); background: #050a1a; display: flex; flex-direction: column; overflow: hidden; padding: clamp(15px, 3vw, 20px);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-cyan); padding-bottom: 15px; margin-bottom: 20px;">
-            <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin: 0; font-size: 1.8rem; letter-spacing: 1px;">THE SUPREME COURT FLOOR</h2>
+            <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin: 0; font-size: clamp(1.2rem, 4vw, 1.8rem); letter-spacing: 1px;">THE SUPREME COURT FLOOR</h2>
             <button onclick="closeModals()" style="background:transparent; color:var(--accent-pink); border: 1px solid var(--accent-pink); padding: 5px 15px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.85rem; transition: 0.2s;">CLOSE</button>
         </div>
         
@@ -390,7 +400,7 @@
 
 <div id="dao-skater-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--rarity-epic); max-width: 450px; background: #050a1a;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--rarity-epic); margin-bottom: 15px; font-size: 1.8rem;">SKATER MATRIX</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--rarity-epic); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.8rem);">SKATER MATRIX</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Sponsor direct allocations and skater tier upgrades are managed here. Await protocol sync.</p>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
     </div>
@@ -398,7 +408,7 @@
 
 <div id="dao-footy-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-cyan); max-width: 450px; background: #050a1a;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin-bottom: 15px; font-size: 1.8rem;">FOOTY PIPELINE</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyan); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.8rem);">FOOTY PIPELINE</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Review and authenticate raw video submissions for decentralized rewards. Await protocol sync.</p>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
     </div>
@@ -406,7 +416,7 @@
 
 <div id="dao-treasury-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-gold); max-width: 450px; background: #050a1a;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 15px; font-size: 1.8rem;">TREASURY ROUTING</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.8rem);">TREASURY ROUTING</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Propose direct liquidity transfers from the central vault to verified street projects.</p>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
     </div>
@@ -414,15 +424,15 @@
 
 <div id="dao-veto-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px; background: #050a1a;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: 1.8rem;">VETO TERMINAL</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.8rem);">VETO TERMINAL</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Emergency powers terminal for ELITE and LEGENDARY rank holders to stall malicious motions.</p>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ CLOSE ]</button>
     </div>
 </div>
 
 <div id="vip-ticket-modal" class="modal-overlay">
-    <div class="modal-content cyber-yellow-frame" style="width: 90%; max-width: 350px; padding: 30px; background: #050a1a; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 234, 0, 0.03) 10px, rgba(255, 234, 0, 0.03) 20px);">
-        <h2 style="font-family:'Orbitron'; color:var(--accent-cyber-yellow); margin: 0 0 15px 0; font-size: 1.4rem; text-shadow: 0 0 10px var(--accent-cyber-yellow); letter-spacing: 1px; font-weight: 900;">🎟️ CLOSED BETA VIP ACCESS</h2>
+    <div class="modal-content cyber-yellow-frame" style="max-width: 350px; padding: 30px; background: #050a1a; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 234, 0, 0.03) 10px, rgba(255, 234, 0, 0.03) 20px);">
+        <h2 style="font-family:'Orbitron'; color:var(--accent-cyber-yellow); margin: 0 0 15px 0; font-size: clamp(1.2rem, 4vw, 1.4rem); text-shadow: 0 0 10px var(--accent-cyber-yellow); letter-spacing: 1px; font-weight: 900;">🎟️ CLOSED BETA VIP ACCESS</h2>
         <div style="text-align: left;">
             <p style="color: #ccc; font-size: 0.75rem; line-height: 1.5; margin-top: 0; margin-bottom: 15px;">There are 85 million skaters worldwide driving an $8 billion industry, all chasing one thing: Glory on the streets and resources to keep skating. The street credit, The personal satisfaction. But the corporate suits at the top extract all the financial value. <a href="https://www.sk8coin.com" target="_blank" style="color: var(--accent-cyber-yellow); text-decoration: underline; font-weight: 900;">sk8coin</a> is rewriting the protocol. This is a decentralized peer-to-peer sponsorship network. We merge the raw adrenaline of progression with the high-stakes yield of Web3 GamFi.</p>
             
@@ -435,14 +445,14 @@
             <input type="checkbox" id="vip-agree-checkbox" onchange="document.getElementById('login-trigger-vip').disabled = !this.checked" style="margin-top: 2px; transform: scale(1.2); cursor: pointer; accent-color: var(--accent-cyber-yellow);">
             <label for="vip-agree-checkbox" style="color: #fff; font-size: 0.75rem; font-family: 'Inter'; font-weight: 900; cursor: pointer; line-height: 1.4; text-transform: uppercase;">I UNDERSTAND THE RISKS.<br>I AM READY TO PLAY.</label>
         </div>
-        <button class="wallet-btn" id="login-trigger-vip" disabled style="width: 100%; font-size: 0.95rem; padding: 15px; margin-bottom: 10px;">ENTER THE PROTOCOL (CONNECT WALLET)</button>
+        <button class="wallet-btn" id="login-trigger-vip" disabled style="width: 100%; font-size: 0.95rem; padding: 15px; margin-bottom: 10px;">ENTER THE PROTOCOL</button>
         <button onclick="continueAsGuest()" style="background:transparent; color:#888; border:none; margin-top:10px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ LURK IN THE SHADOWS ]</button>
     </div>
 </div>
 
 <div id="defi-warning-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: #ffaa00; box-shadow: 0 0 30px rgba(255, 170, 0, 0.2); max-width: 450px;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:#ffaa00; margin-bottom: 15px; font-size: 1.5rem;">💵 ENTERING THE DEGEN ZONE</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:#ffaa00; margin-bottom: 15px; font-size: clamp(1.2rem, 4vw, 1.5rem);">💵 ENTERING THE DEGEN ZONE</h2>
         <div style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px; text-align: left;">
             <p>You are crossing into the decentralized world. There is no customer support desk to save you if you lose your private keys.</p>
             <p><strong>THE SYMBIOTIC TOKENOMICS:</strong> By providing liquidity and sponsoring skaters, you generate protocol yield and level up your profile with unlockable NFT badges. Earn higher rank and reap locked rewards. But if you sit on the sidelines hoarding assets without contributing to the culture, Poser status will remain. Skaters need funding to progress; sponsors need skaters to earn yield. Play the game, respect the chain, and support the streets.</p>
@@ -453,11 +463,11 @@
 
 <div id="craft-confirm-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-gold); max-width: 450px;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 15px;">🛠️ CRAFT COMPLETE SKATEBOARD</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 15px; font-size: clamp(1.2rem, 4vw, 1.8rem);">🛠️ CRAFT COMPLETE SKATEBOARD</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px; text-align: left;">You are about to craft 7 distinct components into a 1-of-1 on-chain skateboard. This cryptographic action is immutable. The performance stats on this resulting board will dictate your staking multiplier and your skateboard's rarity and overall power in the ecosystem. A strategic build maximizes your return. A weak build yields less $SKATE. Double-check your setup before committing.</p>
         <div style="background: rgba(0,0,0,0.6); padding: 15px; border: 1px solid var(--accent-gold); border-radius: 6px; margin-bottom: 25px;">
             <div style="font-family:'Orbitron'; font-size: 0.65rem; color: #888; margin-bottom: 5px;">REQUIRED NETWORK GAS</div>
-            <div id="modal-wax-fee" style="font-family:'Orbitron'; font-weight: 900; font-size: 2rem; color: #fff;">0 WAX</div>
+            <div id="modal-wax-fee" style="font-family:'Orbitron'; font-weight: 900; font-size: clamp(1.5rem, 5vw, 2rem); color: #fff;">0 WAX</div>
         </div>
         <button class="wallet-btn" onclick="executeBlend()" style="width: 100%; background: var(--accent-gold); color: #000;">CRAFT ASSET</button>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:20px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem;">[ BAIL. ]</button>
@@ -466,7 +476,7 @@
 
 <div id="disconnect-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px;">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: 1.6rem;">🐔 LOGGING OUT?</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.6rem);">🐔 LOGGING OUT?</h2>
         <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px; text-align: left;">Bailing so soon? Hit the streets and be safe. We'll hold the line against the mega-corps until you return.</p>
         <button class="wallet-btn" id="logout-trigger" style="width: 100%; background: rgba(255,0,85,0.1); border: 1px solid var(--accent-pink); color: var(--accent-pink); margin-bottom: 15px;">DISCONNECT WALLET</button>
         <button onclick="closeModals()" style="background:transparent; color:var(--accent-cyber-yellow); border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.85rem;">[ KEEP SKATING. ]</button>
@@ -475,16 +485,16 @@
 
 <div id="donation-tier-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-gold); max-width: 450px; background-image: radial-gradient(circle at 50% 0%, #3a3200 0%, var(--bg-panel) 60%);">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 10px; font-size: 1.6rem; text-shadow: 0 0 15px rgba(255,215,0,0.4);">🙏 BLESS THE HOMIES</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 10px; font-size: clamp(1.4rem, 4vw, 1.6rem); text-shadow: 0 0 15px rgba(255,215,0,0.4);">🙏 BLESS THE HOMIES</h2>
         <p style="color: #ccc; font-size: 0.85rem; margin-bottom: 25px; text-align: left;">Micro-donations are the lifeblood of this network. Skaters shred for the love of the game and continuous progression. Your role as a sponsor is to reward that progression. $SKATE is the utility driving this economy. Bless raw talent to push them forward, keep them skating, elevate your own sponsor profile, and earn your yield.<br><br>Select your blessing tier for <span id="donation-currency-label" style="color:var(--accent-gold); font-weight:900;">WAX</span>.</p>
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
             <button id="tier-btn-flow" class="wallet-btn" style="background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.5); color: var(--accent-gold); padding: 15px; font-size: 1rem;">[ FLOW TIER ]</button>
             <button id="tier-btn-amateur" class="wallet-btn" style="background: rgba(255,215,0,0.2); border: 1px solid var(--accent-gold); color: #fff; padding: 15px; font-size: 1rem;">[ AMATEUR TIER ]</button>
             <button id="tier-btn-pro" class="wallet-btn" style="background: var(--accent-gold); color: #000; padding: 15px; font-size: 1rem;">[ PRO TIER ]</button>
         </div>
-        <div style="display: flex; gap: 10px; align-items: stretch; margin-bottom: 25px;">
-            <input type="number" id="custom-donate-amt" placeholder="CUSTOM AMOUNT" style="flex: 1; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #333; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem; outline: none; border-radius: 4px;">
-            <button class="wallet-btn" onclick="executeCustomDonation()" style="background: var(--accent-cyber-yellow); color: #000; border-radius: 4px;">DEPLOY LIQUIDITY</button>
+        <div style="display: flex; gap: 10px; align-items: stretch; margin-bottom: 25px; flex-wrap: wrap;">
+            <input type="number" id="custom-donate-amt" placeholder="CUSTOM AMOUNT" style="flex: 1; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #333; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem; outline: none; border-radius: 4px; min-width: 150px;">
+            <button class="wallet-btn" onclick="executeCustomDonation()" style="background: var(--accent-cyber-yellow); color: #000; border-radius: 4px; flex: 1;">DEPLOY LIQUIDITY</button>
         </div>
         <button onclick="closeModals()" style="background:transparent; color:#888; border:none; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ EXIT ]</button>
     </div>
@@ -492,7 +502,7 @@
 
 <div id="success-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: #00ffaa; max-width: 450px; box-shadow: 0 0 40px rgba(0, 255, 170, 0.2);">
-        <h2 id="success-modal-title" style="font-family:'Orbitron'; font-weight: 900; color:#00ffaa; margin-bottom: 15px; font-size: 1.6rem;">🤜🤛 ON-CHAIN GLORY</h2>
+        <h2 id="success-modal-title" style="font-family:'Orbitron'; font-weight: 900; color:#00ffaa; margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.6rem);">🤜🤛 ON-CHAIN GLORY</h2>
         <p id="success-modal-msg" style="color: #fff; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">You just helped power the revolution. You have successfully fueled the decentralized skate economy. Check your profile for updated stats and badges.</p>
         <button class="wallet-btn" onclick="closeModals()" style="width: 100%; background: #00ffaa; color: #000; padding: 15px; font-size: 1.1rem;">KEEP RIPPING</button>
     </div>
@@ -500,7 +510,7 @@
 
 <div id="error-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px; box-shadow: 0 0 40px rgba(255, 0, 85, 0.2);">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: 1.5rem;">💀 SYSTEM ERROR. TRANSACTION FAILED.</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.5rem);">💀 SYSTEM ERROR. TRANSACTION FAILED.</h2>
         <p id="error-modal-msg" style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.6;"></p>
         <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">The chain rejected your request. Check your liquidity, adjust your slippage, and try again.</p>
         <button class="wallet-btn" onclick="closeModals()" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px; font-size: 1.1rem;">TRY AGAIN</button>
@@ -508,7 +518,7 @@
 </div>
 
     <div class="dashboard-wrapper" id="home-wrapper">
-    <h2 style="text-align: center; color: var(--accent-cyber-yellow); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(255,234,0,0.3);">SKATE PARK</h2>
+    <h2 style="text-align: center; color: var(--accent-cyber-yellow); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(255,234,0,0.3);">SKATE PARK</h2>
     
     <div style="text-align: center; margin-bottom: 40px;">
         <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigll5nocglo3aq6vrlreqitwwgd2dns5kmvylsz3r3rx5ufkbp45y" 
@@ -517,10 +527,10 @@
     </div>
 
     <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 50px; flex-wrap: wrap;">
-        <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px;">🚗 OPEN TRUNK</button>
+        <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto;">🚗 OPEN TRUNK</button>
     </div>
 
-    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 40px; max-width: 900px; margin: 0 auto; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.5);">
+    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-gold); border-radius: 8px; padding: clamp(20px, 4vw, 40px); max-width: 900px; margin: 0 auto; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.5);">
         <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 2px; margin-top: 0;">WELCOME TO THE PARK</h3>
         <p style="color: #ccc; line-height: 1.8; font-size: 0.95rem; margin-bottom: 0;">
             The central hub for the decentralized skate movement. From here, you can access your equipment in the Trunk or head to the drafting rooms for the next motion.
@@ -540,11 +550,11 @@
 </div>
 
 <div id="leaderboard-container" class="dashboard-wrapper" style="display: none;">
-    <h3 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 2rem; letter-spacing: 2px; margin-top: 0;">TOP 100 RIPPERS</h3>
-    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-cyan); border-radius: 8px; overflow: hidden; max-width: 900px; margin: 0 auto;">
+    <h3 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px; margin-top: 0;">TOP 100 RIPPERS</h3>
+    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-cyan); border-radius: 8px; overflow: hidden; max-width: 900px; margin: 0 auto; overflow-x: auto;">
         <div class="lb-row lb-header">
             <div style="width: 80px;">RANK</div>
-            <div style="flex: 1;">SENATOR ADDRESS</div>
+            <div style="flex: 1; min-width: 150px;">SENATOR ADDRESS</div>
             <div style="width: 150px; text-align: right;">SKATEBOARDS</div>
         </div>
         <div id="leaderboard-list">
@@ -576,7 +586,7 @@
         
         <div class="projected-stats">
             <div>
-                <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; margin: 0 0 20px 0; letter-spacing: 2px;">INTEGRATED BUILD</h3>
+                <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.4rem, 4vw, 1.8rem); margin: 0 0 20px 0; letter-spacing: 2px;">INTEGRATED BUILD</h3>
                 <div id="craft-stats-hud">
                     <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL POP <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-pop" style="width: 0%"></div></div></div>
                     <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 0.55rem; color: #888;">TOTAL BALANCE <span style="color: #fff;">0/20</span></div><div class="stat-bar-container"><div class="stat-bar stat-balance" style="width: 0%"></div></div></div>
@@ -590,18 +600,18 @@
                     </div>
                 </div>
             </div>
-            <button id="initiate-blend-btn" class="wallet-btn" style="width: 100%; padding: 20px; background: var(--accent-gold);" disabled onclick="openCraftConfirmModal()">CRAFT SHIPPABLE ASSET</button>
+            <button id="initiate-blend-btn" class="wallet-btn" style="width: 100%; padding: 20px; background: var(--accent-gold); margin-top: 15px;" disabled onclick="openCraftConfirmModal()">CRAFT SHIPPABLE ASSET</button>
         </div>
     </div>
 </div>
 
     <div class="dashboard-wrapper" id="clips-wrapper" style="display: none;">
-    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">CRYPTO CLIPS <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// RAW FOOTY</span></h2>
+    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.2rem, 5vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">CRYPTO CLIPS <span style="font-size: clamp(1rem, 3vw, 1.5rem); font-family:'Orbitron'; color:var(--accent-gold);">// RAW FOOTY</span></h2>
     <div style="background: rgba(0,0,0,0.7); border: 2px solid var(--accent-gold); border-radius: 8px; position: relative; overflow: hidden; max-width: 900px; margin: 30px auto 0 auto; box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
         <div class="caution-tape"></div>
-        <div style="padding: 50px 40px; text-align: center;">
-            <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 2.2rem; letter-spacing: 2px; margin-top: 0;">🚧 UNDER CONSTRUCTION 🚧</h3>
-            <h4 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; margin-bottom: 25px; font-size: 1.2rem;">THE FUTURE OF TOKENIZED SKATEBOARDING</h4>
+        <div style="padding: clamp(25px, 5vw, 50px) clamp(20px, 4vw, 40px); text-align: center;">
+            <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: 2px; margin-top: 0;">🚧 UNDER CONSTRUCTION 🚧</h3>
+            <h4 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; margin-bottom: 25px; font-size: clamp(1rem, 3vw, 1.2rem);">THE FUTURE OF TOKENIZED SKATEBOARDING</h4>
             <p style="color: #ccc; font-size: 1rem; line-height: 1.8; text-align: left; margin-bottom: 20px;">
                 The traditional skate industry is gatekept by corporate sponsors. The <strong>CRYPTO CLIPS</strong> feed is being engineered to shatter that model. We are building the first true peer-to-peer decentralized sponsorship network. 
             </p>
@@ -630,8 +640,8 @@
 </div>
 
 <div class="dashboard-wrapper" id="defi-wrapper" style="display: none;">
-    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">DEFI <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// THE REBEL BASE</span></h2>
-    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-pink); border-radius: 8px; padding: 40px; max-width: 900px; margin: 0 auto 50px auto; text-align: center; box-shadow: 0 5px 25px rgba(255,0,85,0.15);">
+    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">DEFI <span style="font-size: clamp(1rem, 3vw, 1.5rem); font-family:'Orbitron'; color:var(--accent-gold);">// THE REBEL BASE</span></h2>
+    <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-pink); border-radius: 8px; padding: clamp(20px, 4vw, 40px); max-width: 900px; margin: 0 auto 50px auto; text-align: center; box-shadow: 0 5px 25px rgba(255,0,85,0.15);">
         <h3 style="color: var(--accent-pink); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 2px; margin-top: 0;">SMASH THE MEGA-CORPS</h3>
         <p style="color: #ccc; line-height: 1.8; font-size: 0.95rem; margin-bottom: 0;">
             The streets have been gentrified. The game has been sterilized. The corporate suits took the soul out of skateboarding and packaged it for profit. 
@@ -641,7 +651,7 @@
     </div>
 
     <div class="sk8swap-terminal cyber-yellow-frame" style="border-width: 1px !important;">
-        <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 2px; margin-top: 0; text-align: center; font-size: 1.8rem; text-shadow: 0 0 10px var(--accent-cyan);">SK8SWAP // ALCOR TERMINAL</h3>
+        <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 2px; margin-top: 0; text-align: center; font-size: clamp(1.4rem, 4vw, 1.8rem); text-shadow: 0 0 10px var(--accent-cyan);">SK8SWAP // ALCOR TERMINAL</h3>
         <div style="text-align: center; margin-bottom: 25px;">
             <div style="display: inline-block; padding: 10px 15px; background: rgba(0,0,0,0.5); border: 1px dashed var(--accent-gold); border-radius: 4px; font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">
                 LIVE ORACLE ESTIMATE: <span style="color: #fff; font-weight: 900;" id="oracle-price">CONNECTING ORACLE...</span>
@@ -666,7 +676,7 @@
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; padding: 0 10px; gap: 10px;">
             <div style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">
                 MIN RETURN: <span id="swap-min-out" style="color: #fff; font-weight: 900;">0.00</span>
                 <span id="swap-usd-value" style="color: #00ffaa; margin-left: 8px; font-weight: 900;">(≈ $0.00 USD)</span>
@@ -727,7 +737,7 @@
 </div>
 
 <div class="dashboard-wrapper" id="sk8shop-wrapper" style="display: none;">
-    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">SK8SHOP <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// THE STABILIZER</span></h2>
+    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">SK8SHOP <span style="font-size: clamp(1rem, 3vw, 1.5rem); font-family:'Orbitron'; color:var(--accent-gold);">// THE STABILIZER</span></h2>
     
     <div style="width: 100%; max-width: 1100px; margin: 0 auto 30px auto; overflow: hidden; border: 2px solid var(--accent-cyan); border-radius: 8px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); background: #000; position: relative;">
         <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeihss3vuvt3d5xl3g3ifnlfkvrcgnqmug7hguctmf2sknrl4fauufi" alt="Skateshop Interior" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 450px;">
@@ -735,18 +745,15 @@
 
     <div style="background: rgba(0,0,0,0.7); border: 2px solid var(--accent-cyan); border-radius: 8px; position: relative; overflow: hidden; max-width: 1100px; margin: 0 auto 40px auto; box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);">
         <div class="caution-tape" style="background: repeating-linear-gradient(45deg, #000, #000 15px, var(--accent-cyan) 15px, var(--accent-cyan) 30px);"></div>
-        <div style="padding: 40px; text-align: left;">
-            <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 2rem; letter-spacing: 2px; margin-top: 0; border-bottom: 1px dashed rgba(0,240,255,0.3); padding-bottom: 10px;">SUPPORT YOUR LOCAL SKATESHOP</h3>
+        <div style="padding: clamp(20px, 4vw, 40px); text-align: left;">
+            <h3 style="color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.4rem, 4vw, 2rem); letter-spacing: 2px; margin-top: 0; border-bottom: 1px dashed rgba(0,240,255,0.3); padding-bottom: 10px;">SUPPORT YOUR LOCAL SKATESHOP</h3>
             <p style="color: #ccc; font-size: 1rem; line-height: 1.8; margin-bottom: 20px;">
                 Local shops are the beating heart of the culture. The SK8SHOP protocol acts as the stabilizer for the ecosystem. We integrate <strong>USDC Stablecoin</strong> alongside <strong>WAX</strong> and <strong>$SKATE</strong> to bridge the physical and digital worlds without the volatility of the crypto markets.
             </p>
             <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 30px;">
-                
                 <button class="wallet-btn" style="background: #ff0055; color: #fff; border: 1px solid #ff0055; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);">
-    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeib3be32lezp2dmmnadjwzl2ieodfmwfmwlszo7cqgtzfqbv7jyvpa" alt="USDC" style="height: 18px; width: auto; vertical-align: middle;"> 
-    PAY WITH USDC
-</button>
-                    
+                    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeib3be32lezp2dmmnadjwzl2ieodfmwfmwlszo7cqgtzfqbv7jyvpa" alt="USDC" style="height: 18px; width: auto; vertical-align: middle;"> 
+                    PAY WITH USDC
                 </button>
                 <button class="wallet-btn" style="background: #ffffff; color: #000; border: 1px solid #ffffff; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);">
                     <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafkreibszclntw7ha7wfdoawdgcjwjnu7zdtmtns3si6jaonxlube3pv2e" alt="WAX" style="height: 18px; width: auto; vertical-align: middle;"> 
@@ -856,11 +863,11 @@
     </div>
 </div>
 
-    <div class="dashboard-wrapper" id="treasury-wrapper" style="display: none;">
-    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">COMMUNITY TREASURY <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">// THE LIFEBLOOD</span></h2>
+<div class="dashboard-wrapper" id="treasury-wrapper" style="display: none;">
+    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.2rem, 5vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">COMMUNITY TREASURY <span style="font-size: clamp(1rem, 3vw, 1.5rem); font-family:'Orbitron'; color:var(--accent-gold);">// THE LIFEBLOOD</span></h2>
     <div style="background: rgba(0,0,0,0.7); border: 2px solid var(--accent-gold); border-radius: 8px; position: relative; overflow: hidden; max-width: 1100px; margin: 0 auto; box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
         <div class="caution-tape"></div>
-        <div style="padding: 50px 40px;">
+        <div style="padding: clamp(20px, 4vw, 50px) clamp(15px, 4vw, 40px);">
             <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 20px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 8px; padding: 20px;">
                 <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">CIRCULATING SUPPLY</div><div style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
                 <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">MAX SUPPLY</div><div style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
@@ -874,11 +881,11 @@
             </div>
             
             <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px dashed rgba(255,255,255,0.2);">
-                <button class="wallet-btn" onclick="openDonationModal('WAX')" style="background: var(--accent-gold); color: #000; font-size: 0.9rem; padding: 12px 25px;">🙏 BLESS WITH WAX</button>
-                <button class="wallet-btn" onclick="openDonationModal('SKATE')" style="background: var(--accent-cyan); color: #000; font-size: 0.9rem; padding: 12px 25px;">🙏 BLESS WITH $SKATE</button>
+                <button class="wallet-btn" onclick="openDonationModal('WAX')" style="background: var(--accent-gold); color: #000; font-size: 0.9rem; padding: 12px 25px; width: 100%; max-width: 300px;">🙏 BLESS WITH WAX</button>
+                <button class="wallet-btn" onclick="openDonationModal('SKATE')" style="background: var(--accent-cyan); color: #000; font-size: 0.9rem; padding: 12px 25px; width: 100%; max-width: 300px;">🙏 BLESS WITH $SKATE</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 30px;">
                 <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 25px; box-shadow: inset 0 0 20px rgba(255,215,0,0.05);">
                     <h4 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; margin-top: 0; text-align: center; border-bottom: 2px solid var(--accent-gold); padding-bottom: 15px; letter-spacing: 1px;">🏆 THE WHALE BOARD</h4>
                     <div id="treasury-whales-list" style="max-height: 400px; overflow-y: auto; padding-right: 10px;"></div>
@@ -894,7 +901,7 @@
 </div>
 
 <div class="dashboard-wrapper" id="dao-wrapper" style="display: none;">
-    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 3.5rem; letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: 1.5rem; font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
+    <h2 style="text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,240,255,0.3);">sk8dao <span style="font-size: clamp(1rem, 3vw, 1.5rem); font-family:'Orbitron'; color:var(--accent-gold);">/ supreme court</span></h2>
     
     <div class="senate-jumbotron">
        <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeiavwnryfv6r6m5ghzyn3z6r3hzb6zwq3m7ep3mmxwuzydohamkyiy" alt="Senate Chamber Header">
@@ -996,7 +1003,7 @@
     let skatePerWax = 7.6897; 
     let sWax = 1 / skatePerWax;
     
-    // NEW: Global Max Votes assigned directly by Rank
+    // Global Max Votes assigned directly by Rank
     window.currentUserMaxVotes = 0; 
 
     // --- GLOBAL MODAL ROUTERS ---
@@ -1246,7 +1253,6 @@
                         try {
                             const parsedMemo = JSON.parse(memo);
                             const sender = data.from;
-                            // Uses parsed rank weight mapped via token memo formatting
                             const weight = parseFloat(data.quantity.split(' ')[0]);
 
                             if (parsedMemo.action === "propose") {
@@ -1312,7 +1318,6 @@
             const h = Math.floor((diffMs % 86400000) / 3600000);
             const timeLeft = `${d}d ${h}h`;
 
-            // Max Voting slider bound to specific User Rank Profile
             const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0;
             const disabledState = sliderMax === 0 ? "disabled" : "";
 
@@ -1331,7 +1336,7 @@
                     <div style="font-family:'Orbitron'; font-weight:900; font-size:1.5rem; color:var(--accent-cyan);">${p.title}</div>
                 </div>
                 
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px; flex-wrap: wrap;">
                     <span style="font-size:0.8rem; color:#888; font-family:'Inter';">Proposed by: <span style="color:#fff; font-family:'Orbitron'; font-weight:900;">${p.proposer}</span></span>
                     <span style="font-family:'Orbitron'; font-size:0.65rem; color:${statusColor}; background:rgba(0,0,0,0.8); border:1px solid ${statusColor}; padding: 3px 8px; border-radius: 4px;">STATUS: ${statusText}</span>
                 </div>
@@ -1562,6 +1567,28 @@
             fetchTreasuryData();
         } catch(e) { console.error(e); showErrorModal("Revocation transaction failed."); }
     };
+
+    // --- MOBILE NAV INTERACTION LOGIC ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mainNav = document.getElementById('main-nav');
+    const navLinks = document.querySelectorAll('nav a');
+
+    if (mobileMenuBtn && mainNav) {
+        // Toggle menu open/close
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('nav-active');
+            // Switch icon from hamburger to X when open
+            mobileMenuBtn.innerText = mainNav.classList.contains('nav-active') ? '✕' : '☰';
+        });
+
+        // Auto-close menu when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mainNav.classList.remove('nav-active');
+                mobileMenuBtn.innerText = '☰';
+            });
+        });
+    }
 
     // --- INITIALIZATION & STATE RECOVERY ---
     sessionKit.restore().then(s => { 
@@ -1851,8 +1878,3 @@
 </script>
 </body>
 </html>
-
-    
-
-    
-    
