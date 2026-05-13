@@ -869,8 +869,8 @@
         <div class="caution-tape"></div>
         <div style="padding: clamp(20px, 4vw, 50px) clamp(15px, 4vw, 40px);">
             <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 20px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 8px; padding: 20px;">
-                <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">CIRCULATING SUPPLY</div><div style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
-                <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">MAX SUPPLY</div><div style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
+                <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">CIRCULATING SUPPLY</div><div id="cg-circ-supply" style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
+                <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">MAX SUPPLY</div><div id="cg-max-supply" style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#fff;">1,000,000,000</div><div style="font-size:0.6rem; color:var(--accent-cyan);">$SKATE</div></div>
                 <div style="flex: 1; min-width: 150px; text-align: center; border-right: 1px dashed #333; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">CIRCULATING M-CAP</div><div id="cg-circ-mcap" style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:#00ffaa;">$0.00</div><div style="font-size:0.6rem; color:#888;">USD</div></div>
                 <div style="flex: 1; min-width: 150px; text-align: center; padding: 10px;"><div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom: 5px;">FULLY DILUTED VALUATION (FDV)</div><div id="cg-fdv" style="font-family:'Orbitron'; font-weight:900; font-size:1.2rem; color:var(--accent-gold);">$0.00</div><div style="font-size:0.6rem; color:#888;">USD</div></div>
             </div>
@@ -1101,11 +1101,37 @@
 
             const skatePriceUSD = sWax * waxUsdPrice;
             
-            const circulating_supply = 1000000;
-            const total_supply = 1000000000; 
+          // 1. Look inside the smart contract's database (the 'stat' table)
+            const statRes = await fetch(`${WAX_RPC}/v1/chain/get_table_rows`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    json: true,
+                    code: 'skatecoinwax',
+                    scope: 'SKATE',
+                    table: 'stat',
+                    limit: 1
+                })
+            });
+            const statData = await statRes.json();
+
+            let circulating_supply = 0;
+            let total_supply = 0;
+
+            // 2. If the blockchain answers us, grab the numbers!
+            if (statData && statData.rows && statData.rows.length > 0) {
+                // The blockchain replies with words like "1500.0000 SKATE"
+                // .split(' ')[0] chops off the word "SKATE" so we can do math with the number.
+                circulating_supply = parseFloat(statData.rows[0].supply.split(' ')[0]);
+                total_supply = parseFloat(statData.rows[0].max_supply.split(' ')[0]);
+            }
+
+            // 3. Do the live Market Cap Math (Supply x Oracle Price)
             const circMcapUsd = circulating_supply * skatePriceUSD;
             const fdvUsd = total_supply * skatePriceUSD; 
-            
+
+            // 4. Push the new, real numbers onto your screen!
+            if(document.getElementById('cg-circ-supply')) document.getElementById('cg-circ-supply').innerText = circulating_supply.toLocaleString(undefined, {maximumFractionDigits: 0});
+            if(document.getElementById('cg-max-supply')) document.getElementById('cg-max-supply').innerText = total_supply.toLocaleString(undefined, {maximumFractionDigits: 0});
             if(circMcapDOM) circMcapDOM.innerText = `$${circMcapUsd.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             if(fdvDOM) fdvDOM.innerText = `$${fdvUsd.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             if(waxResDOM) waxResDOM.innerText = waxBal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' WAX';
