@@ -1319,7 +1319,11 @@
             const yesPctRaw = totalWeight > 0 ? (p.yesWeight / totalWeight) * 100 : 0; const noPctRaw = totalWeight > 0 ? (p.noWeight / totalWeight) * 100 : 0;
             const isPassing = yesPctRaw >= 51; const statusColor = isPassing ? "#00ffaa" : "var(--accent-pink)"; const statusText = isPassing ? `PASSING (${yesPctRaw.toFixed(0)}%)` : `FAILING (<51%)`;
             const diffMs = p.expiresAt - Date.now(); const d = Math.floor(diffMs / 86400000); const h = Math.floor((diffMs % 86400000) / 3600000); const timeLeft = `${d}d ${h}h`;
-            const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0; const disabledState = sliderMax === 0 ? "disabled" : "";
+            
+           // Dynamically set the minimum to prevent browser locking when max is 0
+           const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0; 
+           const sliderMin = sliderMax > 0 ? 1 : 0; 
+           const disabledState = sliderMax === 0 ? "disabled" : "";
 
             let actionHtml = "";
             if (currentActor === p.proposer || currentActor === ADMIN_WALLET) {
@@ -1335,16 +1339,16 @@
                 <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:15px; margin-bottom:15px; border: 1px solid #222;">
                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:'Orbitron'; font-weight:bold; margin-bottom:8px;"><span style="color:#00ffaa;">YES: ${p.yesWeight.toFixed(0)} VTS (${yesPctRaw.toFixed(0)}%)</span><span style="color:var(--accent-pink);">NO: ${p.noWeight.toFixed(0)} VTS (${noPctRaw.toFixed(0)}%)</span></div>
                     <div class="vote-bar-bg"><div class="vote-bar-yes" style="width:${yesPctRaw}%;"></div></div>
-                </div>
-                <div class="slider-box">
-                    <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
-                    <input type="range" id="vote-slider-${index}" class="weight-slider" min="1" max="${sliderMax}" value="${sliderMax > 0 ? 1 : 0}" ${disabledState} oninput="document.getElementById('weight-display-${index}').innerText = this.value">
-                    <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">${sliderMax > 0 ? 1 : 0}</span> VTS</span>
-                </div>
-                <div style="display:flex; gap:15px;">
-                    <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE YES</button>
-                    <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE NO</button>
-                </div>
+           </div>
+               <div class="slider-box">
+               <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
+               <input type="range" id="vote-slider-${index}" class="weight-slider" min="${sliderMin}" max="${sliderMax}" value="${sliderMin}" ${disabledState} oninput="document.getElementById('weight-display-${index}').innerText = this.value">
+               <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">${sliderMin}</span> VTS</span>
+           </div>
+               <div style="display:flex; gap:15px;">
+               <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE YES</button>
+              <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE NO</button>
+            </div>
                 ${actionHtml}
             </div>`;
         });
