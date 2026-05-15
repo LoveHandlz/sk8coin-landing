@@ -314,8 +314,7 @@
     </style>
 </head>
 <body>
-
-<header>
+    <header>
     <div class="header-inner">
         <h1 class="senate-logo" onclick="switchCategory('home'); window.scrollTo(0,0);">sk8dao<span>.</span></h1>
         
@@ -329,6 +328,7 @@
                 <li><a href="#treasury" onclick="switchCategory('treasury'); return false;" id="nav-treasury">TREASURY</a></li>
                 <li><a href="#dao" onclick="switchCategory('dao'); return false;" id="nav-dao">DAO</a></li>
                 <li><a href="#sk8shop" onclick="switchCategory('sk8shop'); return false;" id="nav-sk8shop">SK8SHOP</a></li>
+                <li><a href="#leaderboard" onclick="switchCategory('leaderboard'); return false;" id="nav-leaderboard">LEADERBOARD</a></li>
             </ul>
         </nav>
         
@@ -499,9 +499,9 @@
         <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); margin-bottom: 10px; font-size: clamp(1.4rem, 4vw, 1.6rem); text-shadow: 0 0 15px rgba(255,215,0,0.4);">🙏 BLESS THE HOMIES</h2>
         <p style="color: #ccc; font-size: 0.85rem; margin-bottom: 25px; text-align: left;">Micro-donations are the lifeblood of this network. Skaters shred for the love of the game and continuous progression. Your role as a sponsor is to reward that progression. $SKATE is the utility driving this economy. Bless raw talent to push them forward, keep them skating, elevate your own sponsor profile, and earn your yield.<br><br>Select your blessing tier for <span id="donation-currency-label" style="color:var(--accent-gold); font-weight:900;">WAX</span>.</p>
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
-            <button id="tier-btn-flow" class="wallet-btn" style="background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.5); color: var(--accent-gold); padding: 15px; font-size: 1rem;">[ FLOW TIER ]</button>
-            <button id="tier-btn-amateur" class="wallet-btn" style="background: rgba(255,215,0,0.2); border: 1px solid var(--accent-gold); color: #fff; padding: 15px; font-size: 1rem;">[ AMATEUR TIER ]</button>
-            <button id="tier-btn-pro" class="wallet-btn" style="background: var(--accent-gold); color: #000; padding: 15px; font-size: 1rem;">[ PRO TIER ]</button>
+            <button id="tier-btn-flow" class="wallet-btn" style="background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.5); color: var(--accent-gold); padding: 15px; font-size: 1.2rem;">FLOW DONATION 0.01</button>
+            <button id="tier-btn-amateur" class="wallet-btn" style="background: rgba(255,215,0,0.2); border: 1px solid var(--accent-gold); color: #fff; padding: 15px; font-size: 1.2rem;">AMATEUR DONATION 0.05</button>
+            <button id="tier-btn-pro" class="wallet-btn" style="background: var(--accent-gold); color: #000; padding: 15px; font-size: 1.2rem;">PRO DONATION 0.1</button>
         </div>
         <div style="display: flex; gap: 10px; align-items: stretch; margin-bottom: 25px; flex-wrap: wrap;">
             <input type="number" id="custom-donate-amt" placeholder="CUSTOM AMOUNT" style="flex: 1; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #333; color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem; outline: none; border-radius: 4px; min-width: 150px;">
@@ -521,7 +521,7 @@
 
 <div id="error-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px; box-shadow: 0 0 40px rgba(255, 0, 85, 0.2);">
-        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.5rem);">💀 SYSTEM ERROR. TRANSACTION FAILED.</h2>
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.5rem);"> SYSTEM ERROR. TRANSACTION FAILED.</h2>
         <p id="error-modal-msg" style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.6;"></p>
         <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">The chain rejected your request. Check your liquidity, adjust your slippage, and try again.</p>
         <button class="wallet-btn" onclick="closeModals()" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px; font-size: 1.1rem;">TRY AGAIN</button>
@@ -623,7 +623,7 @@
                     </div>
                     <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                         <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
-                        <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;"><img src="https://ipfs.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> 0 $SKATE</div>
+                        <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;">0 $SKATE</div>
                     </div>
                 </div>
             </div>
@@ -783,7 +783,6 @@
             <div id="burn-action-panel" style="display: none; background: rgba(0,0,0,0.9); border-top: 2px solid var(--accent-pink); padding: 25px; margin-top: 30px; text-align: center; position: sticky; bottom: 0; box-shadow: 0 -10px 30px rgba(255,0,85,0.2); z-index: 100; margin-left: -40px; margin-right: -40px; margin-bottom: -50px;">
                 <div style="font-family: 'Orbitron'; font-size: 0.85rem; color: #888; margin-bottom: 5px;">TOTAL EXTRACTABLE YIELD</div>
                 <div style="font-family: 'Orbitron'; font-weight: 900; font-size: 2.5rem; color: #fff; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" class="skate-icon" style="width: 35px; height: 35px; filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));"> 
                     <span id="total-burn-yield">0</span> <span style="font-size: 1.2rem; color: var(--accent-cyan);">$SKATE</span>
                 </div>
                 <button id="execute-burn-btn" class="wallet-btn" onclick="window.prepareBatchBurn()" style="background: var(--accent-pink); color: #000; font-size: 1.2rem; padding: 15px 40px; width: 100%; max-width: 400px; box-shadow: 0 0 20px rgba(255,0,85,0.4);">🔥 INITIATE BATCH BURN 🔥</button>
@@ -816,7 +815,6 @@
                     PAY WITH WAX
                 </button>
                 <button class="wallet-btn" style="background: #00f0ff; color: #000; border: 1px solid #00f0ff; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);">
-                    <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" alt="$SKATE" style="height: 18px; width: auto; vertical-align: middle;"> 
                     PAY WITH $SKATE
                 </button>
             </div>
@@ -989,7 +987,7 @@
             ⚖️ VIEW ACTIVE MOTIONS
         </button>
         <button class="wallet-btn" onclick="document.getElementById('dao-skater-modal').style.display='flex'" style="background: transparent; color: var(--rarity-epic); border: 2px solid var(--rarity-epic); padding: 20px; font-size: 1.1rem;">
-            🛹 SKATER MATRIX
+            SKATER MATRIX
         </button>
         <button class="wallet-btn" onclick="document.getElementById('dao-footy-modal').style.display='flex'" style="background: transparent; color: var(--accent-cyan); border: 2px solid var(--accent-cyan); padding: 20px; font-size: 1.1rem;">
             📹 FOOTY PIPELINE
@@ -1012,7 +1010,6 @@
         </div>
     </div>
 </footer>
-
 <script type="module">
     import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
     import { WebRenderer } from 'https://esm.sh/@wharfkit/web-renderer?bundle';
@@ -1026,15 +1023,14 @@
     const HISTORY_RPC = "https://api.waxsweden.org"; 
     const ADMIN_WALLET = "ufuau.wam";
 
-    // --- NEW: BURN TEMPLATE MAPPING ---
     const BURN_YIELD_MAP = {
         '120614': 1,      // Red Bearing
         '120626': 10,     // Green Bearing
-        '120638': 25,     // Blue Bearing (FIXED TO 25)
+        '120638': 25,     // Blue Bearing
         '176507': 100,    // RGB Bearing
         '22571': 1000     // Street.gem
     };
-    window.selectedBurnAssets = new Map(); // Tracks selected asset_id -> yield
+    window.selectedBurnAssets = new Map();
 
     class MetaParser {
         static getRaw(nft, key) {
@@ -1123,13 +1119,13 @@
     }
 
     function calculateDaoRank(cumulativeUsd) {
-        if (cumulativeUsd >= 50000) return { rank: "LEGENDARY", votes: 100, color: "#a855f7", badge: "m-badge-legendary" };
-        if (cumulativeUsd >= 10000) return { rank: "ELITE", votes: 20, color: "#2196f3", badge: "m-badge-elite" };
-        if (cumulativeUsd >= 1000)  return { rank: "PRO", votes: 4, color: "#ffd700", badge: "m-badge-pro" };
-        if (cumulativeUsd >= 250)   return { rank: "AMATEUR", votes: 2, color: "#c0c0c0", badge: "m-badge-amateur" };
-        if (cumulativeUsd >= 50)    return { rank: "FLOW", votes: 3, color: "#cd7f32", badge: "m-badge-flow" };
-        if (cumulativeUsd >= 1)     return { rank: "GROMMET", votes: 1, color: "#00ffaa", badge: "m-badge-grom" };
-        return { rank: "POSER", votes: 0, color: "#94a3b8", badge: "m-badge-poser" };
+        if (cumulativeUsd >= 50000) return { rank: "LEGENDARY", color: "#a855f7", badge: "m-badge-legendary" };
+        if (cumulativeUsd >= 10000) return { rank: "ELITE", color: "#2196f3", badge: "m-badge-elite" };
+        if (cumulativeUsd >= 1000)  return { rank: "PRO", color: "#ffd700", badge: "m-badge-pro" };
+        if (cumulativeUsd >= 250)   return { rank: "AMATEUR", color: "#c0c0c0", badge: "m-badge-amateur" };
+        if (cumulativeUsd >= 50)    return { rank: "FLOW", color: "#cd7f32", badge: "m-badge-flow" };
+        if (cumulativeUsd >= 1)     return { rank: "GROMMET", color: "#00ffaa", badge: "m-badge-grom" };
+        return { rank: "POSER", color: "#94a3b8", badge: "m-badge-poser" };
     }
 
     async function fetchTreasuryData() {
@@ -1179,7 +1175,7 @@
             if(skateResDOM) skateResDOM.innerText = skateBal.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) + ' SKATE';
             if(skateUsdDOM) skateUsdDOM.innerText = `≈ $${(skateBal * skatePriceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
 
-            const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=100`;
+            const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=200`;
             const hRes = await fetch(historyUrl);
             const hJson = await hRes.json();
 
@@ -1219,11 +1215,19 @@
 
             if (currentSession) {
                 const myAcc = currentSession.actor.toString();
+                
+                // Get User SKATE Balance for strict 1-1 Voting Ratio
+                const mySkateRes = await fetch(`${WAX_RPC}/v1/chain/get_currency_balance`, { method: 'POST', body: JSON.stringify({ code: "skatecoinwax", account: myAcc, symbol: "SKATE" }) });
+                const mySkateBalArr = await mySkateRes.json();
+                const mySkateBal = mySkateBalArr[0] ? parseFloat(mySkateBalArr[0].split(' ')[0]) : 0;
+                
                 if (sponsors[myAcc]) currentUserUsdTotal = sponsors[myAcc].powerValueUsd;
                 if (myAcc === ADMIN_WALLET) currentUserUsdTotal = 100000; 
                 
                 const myRankInfo = calculateDaoRank(currentUserUsdTotal);
-                window.currentUserMaxVotes = myRankInfo.votes;
+                
+                // Enforce exactly 1-1 Vote Weight Ratio as requested
+                window.currentUserMaxVotes = Math.floor(mySkateBal);
 
                 const rankDOM = document.getElementById('user-dao-rank');
                 const badgeDOM = document.getElementById('user-badges-container');
@@ -1237,7 +1241,8 @@
             }
 
             if(whaleList) {
-                const sortedSponsors = Object.keys(sponsors).map(acc => ({ account: acc, ...sponsors[acc] })).sort((a, b) => b.powerValueUsd - a.powerValueUsd).slice(0, 100);
+                // Apply strict feed limit of 12
+                const sortedSponsors = Object.keys(sponsors).map(acc => ({ account: acc, ...sponsors[acc] })).sort((a, b) => b.powerValueUsd - a.powerValueUsd).slice(0, 12);
                 if (sortedSponsors.length === 0) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">THE WHALE BOARD IS OPEN</div>`;
                 else {
                     whaleList.innerHTML = sortedSponsors.map((sp, idx) => {
@@ -1251,7 +1256,8 @@
             }
 
             if(pulseList) {
-                pulseItems.sort((a, b) => b.timestamp - a.timestamp); const activePulse = pulseItems.slice(0, 50);
+                // Apply strict feed limit of 12
+                pulseItems.sort((a, b) => b.timestamp - a.timestamp); const activePulse = pulseItems.slice(0, 12);
                 if (activePulse.length === 0) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
                 else {
                     pulseList.innerHTML = activePulse.map(item => `
@@ -1320,7 +1326,7 @@
             const isPassing = yesPctRaw >= 51; const statusColor = isPassing ? "#00ffaa" : "var(--accent-pink)"; const statusText = isPassing ? `PASSING (${yesPctRaw.toFixed(0)}%)` : `FAILING (<51%)`;
             const diffMs = p.expiresAt - Date.now(); const d = Math.floor(diffMs / 86400000); const h = Math.floor((diffMs % 86400000) / 3600000); const timeLeft = `${d}d ${h}h`;
             
-           // Dynamically set the minimum to prevent browser locking when max is 0
+           // Strictly enforce the 1-1 vote weight from the updated max logic
            const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0; 
            const sliderMin = sliderMax > 0 ? 1 : 0; 
            const disabledState = sliderMax === 0 ? "disabled" : "";
@@ -1364,13 +1370,14 @@
         const btnFlow = document.getElementById('tier-btn-flow'); const btnAmateur = document.getElementById('tier-btn-amateur'); const btnPro = document.getElementById('tier-btn-pro');
         
         if (currency === 'SKATE') {
-            btnFlow.innerText = '[ FLOW ] - 1,000'; btnFlow.onclick = () => selectTier(1000);
-            btnAmateur.innerText = '[ AMATEUR ] - 10,000'; btnAmateur.onclick = () => selectTier(10000);
-            btnPro.innerText = '[ PRO ] - 100,000'; btnPro.onclick = () => selectTier(100000);
+            btnFlow.innerText = 'FLOW DONATION 1000'; btnFlow.onclick = () => selectTier(1000);
+            btnAmateur.innerText = 'AMATEUR DONATION 10000'; btnAmateur.onclick = () => selectTier(10000);
+            btnPro.innerText = 'PRO DONATION 100000'; btnPro.onclick = () => selectTier(100000);
         } else {
-            btnFlow.innerText = '[ FLOW ] - 100'; btnFlow.onclick = () => selectTier(100);
-            btnAmateur.innerText = '[ AMATEUR ] - 1,000'; btnAmateur.onclick = () => selectTier(1000);
-            btnPro.innerText = '[ PRO ] - 10,000'; btnPro.onclick = () => selectTier(10000);
+            // Apply strict exact tiers requested for WAX
+            btnFlow.innerText = 'FLOW DONATION 0.01'; btnFlow.onclick = () => selectTier(0.01);
+            btnAmateur.innerText = 'AMATEUR DONATION 0.05'; btnAmateur.onclick = () => selectTier(0.05);
+            btnPro.innerText = 'PRO DONATION 0.1'; btnPro.onclick = () => selectTier(0.1);
         }
         document.getElementById('donation-tier-modal').style.display = 'flex';
         document.getElementById('custom-donate-amt').value = '';
@@ -1504,7 +1511,6 @@
             refreshDAODashboard(); updateBalances(sender); fetchTreasuryData();
         } catch(e) { console.error(e); showErrorModal("Revocation transaction failed."); }
     };
-
     // --- MOBILE NAV INTERACTION ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mainNav = document.getElementById('main-nav');
@@ -1677,6 +1683,7 @@
         if (!append) { grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: var(--accent-cyan); font-family: 'Orbitron'; font-weight: 900;">SCANNING...</h3>`; currentInventoryPage = 1; }
 
         try {
+            // Apply standard feed limit of 12 as requested
             const res = await fetch(`${ATOMIC_API}/assets?collection_name=${COLLECTION}&schema_name=${currentSchema}&owner=${user}&page=${currentInventoryPage}&limit=12`);
             const json = await res.json();
             
@@ -1908,3 +1915,4 @@
 </script>
 </body>
 </html>
+    
