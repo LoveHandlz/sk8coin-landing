@@ -1227,7 +1227,7 @@
                 const myRankInfo = calculateDaoRank(currentUserUsdTotal);
                 
                 // Enforce exactly 1-1 Vote Weight Ratio as requested
-                window.currentUserMaxVotes = Math.floor(mySkateBal);
+                window.currentUserMaxVotes = mySkateBal >= 1 ? 1 : 0;
 
                 const rankDOM = document.getElementById('user-dao-rank');
                 const badgeDOM = document.getElementById('user-badges-container');
@@ -1271,42 +1271,104 @@
 
         } catch (e) { console.error(e); }
     }
-    // --- 51% MAJORITY DAO ENGINE ---
+// --- 51% MAJORITY DAO ENGINE ---
     let activeProposals = [];
+    
     async function refreshDAODashboard() {
         const list = document.getElementById("active-motions-list");
         if(list) list.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding: 40px; font-family:'Orbitron';">INTERCEPTING SUPREME COURT LEDGER...</div>`;
 
-        let proposals = {}; let withdrawnIds = new Set(); const DAO_TTL_MS = 7 * 24 * 60 * 60 * 1000; 
+        let proposals = {}; 
+        let withdrawnIds = new Set(); 
+        const DAO_TTL_MS = 7 * 24 * 60 * 60 * 1000; 
+        const now = Date.now();
+        const cutoffTime = now - DAO_TTL_MS;
 
         try {
-            const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=skatecoinwax:transfer&limit=500`;
-            const res = await fetch(historyUrl); const json = await res.json();
-            if (json && json.actions) {
-                json.actions.forEach(action => {
-                    const data = action.act.data; const memo = data.memo || ""; const blockTime = new Date(action.timestamp).getTime();
-                    if (data.to === 'skatecoinwax' && memo.includes('"sk8dao":"v1"')) {
-                        try {
-                            const parsedMemo = JSON.parse(memo); const sender = data.from; const weight = parseFloat(data.quantity.split(' ')[0]);
-                            if (parsedMemo.action === "propose") {
-                                proposals[action.trx_id] = { id: action.trx_id, title: parsedMemo.title, desc: parsedMemo.desc, proposer: sender, yesWeight: 0, noWeight: 0, time: blockTime };
-                            } else if (parsedMemo.action === "vote" && parsedMemo.id) {
-                                if (proposals[parsedMemo.id]) {
-                                    if (parsedMemo.vote === "YES") proposals[parsedMemo.id].yesWeight += weight;
-                                    if (parsedMemo.vote === "NO") proposals[parsedMemo.id].noWeight += weight;
-                                }
-                            } else if (parsedMemo.action === "withdraw" && parsedMemo.id) { withdrawnIds.add(parsedMemo.id); }
-                        } catch(e) {}
-                    }
-                });
-            }
-        } catch(e) {}
+            let skip = 0;
+            const limit = 500;
+            let keepFetching = true;
 
-        activeProposals = []; const now = Date.now();
+            // --- THE PAGINATION LOOP ---
+            while (keepFetching) {
+                const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=skatecoinwax:transfer&limit=${limit}&skip=${skip}`;
+                const res = await fetch(historyUrl); 
+                const json = await res.json();
+                
+                if (json && json.actions && json.actions.length > 0) {
+                    let oldestInBatch = now;
+
+                    json.actions.forEach(action => {
+                        const data = action.act.data; 
+                        const memo = data.memo || ""; 
+                        const blockTime = new Date(action.timestamp).getTime();
+                        
+                        if (blockTime < oldestInBatch) oldestInBatch = blockTime;
+
+                        if (data.to === 'skatecoinwax' && memo.includes('"sk8dao":"v1"')) {
+                            try {
+                                const parsedMemo = JSON.parse(memo); 
+                                const sender = data.from; 
+                                
+                                // 1-1 Ratio Enforced: Scraper ignores whale transaction quantities entirely.
+                                const weight = 1; 
+                                
+                                if (parsedMemo.action === "propose") {
+                                    proposals[action.trx_id] = { id: action.trx_id, title: parsedMemo.title, desc: parsedMemo.desc, proposer: sender, yesWeight: 0, noWeight: 0, time: blockTime, voters: new Set() };
+                                } else if (parsedMemo.action === "vote" && parsedMemo.id) {
+                                    if (proposals[parsedMemo.id]) {
+                                        // 1-1 Ratio Enforced
+                                        if (!proposals[parsedMemo.id].voters.has(sender)) {
+                                            if (parsedMemo.vote === "YES") proposals[parsedMemo.id].yesWeight += weight;
+                                            if (parsedMemo.vote === "NO") proposals[parsedMemo.id].noWeight += weight;
+                                            proposals[parsedMemo.id].voters.add(sender);
+                                        }
+                                    }
+                                } else if (parsedMemo.action === "withdraw" && parsedMemo.id) { 
+                                    withdrawnIds.add(parsedMemo.id); 
+                                }
+                            } catch(e) {}
+                        }
+                    });
+
+                    // If we received fewer than the limit, or the oldest action is past 7 days, stop looping.
+                    if (json.actions.length < limit || oldestInBatch < cutoffTime) {
+                        keepFetching = false;
+                    } else {
+                        skip += limit;
+                    }
+                } else {
+                    keepFetching = false;
+                }
+            }
+        } catch(e) {
+            console.error("Ledger Intercept Error:", e);
+        }
+
+        activeProposals = []; 
+        const currentActor = currentSession ? currentSession.actor.toString() : "";
+
         Object.values(proposals).forEach(p => {
             const expiresAt = p.time + DAO_TTL_MS;
-            if (now <= expiresAt && !withdrawnIds.has(p.id)) { p.expiresAt = expiresAt; activeProposals.push(p); }
+            if (now <= expiresAt && !withdrawnIds.has(p.id)) { 
+                p.expiresAt = expiresAt; 
+                
+                // --- THE LOCALSTORAGE BRIDGE ---
+                // If the user voted, but the blockchain indexer hasn't caught it yet (30s lag),
+                // we pull the truth directly from the browser's local memory to prevent the vote from vanishing.
+                if (currentActor) {
+                    const localVote = localStorage.getItem(`sk8vote_${currentActor}_${p.id}`);
+                    if (localVote && !p.voters.has(currentActor)) {
+                        if (localVote === "YES") p.yesWeight += 1;
+                        if (localVote === "NO") p.noWeight += 1;
+                        p.voters.add(currentActor);
+                    }
+                }
+
+                activeProposals.push(p); 
+            }
         });
+
         activeProposals.sort((a, b) => b.time - a.time);
         
         const countDOM = document.getElementById("dao-active-motions-count");
@@ -1326,10 +1388,12 @@
             const isPassing = yesPctRaw >= 51; const statusColor = isPassing ? "#00ffaa" : "var(--accent-pink)"; const statusText = isPassing ? `PASSING (${yesPctRaw.toFixed(0)}%)` : `FAILING (<51%)`;
             const diffMs = p.expiresAt - Date.now(); const d = Math.floor(diffMs / 86400000); const h = Math.floor((diffMs % 86400000) / 3600000); const timeLeft = `${d}d ${h}h`;
             
-           // Strictly enforce the 1-1 vote weight from the updated max logic
-           const sliderMax = window.currentUserMaxVotes > 0 ? window.currentUserMaxVotes : 0; 
-           const sliderMin = sliderMax > 0 ? 1 : 0; 
-           const disabledState = sliderMax === 0 ? "disabled" : "";
+           // 1-1 Ratio Enforced: Slider is stripped, button states are locked to boolean token check.
+           const hasRequiredToken = window.currentUserMaxVotes >= 1;
+           const disabledState = !hasRequiredToken ? "disabled" : "";
+           const hasVoted = p.voters.has(currentActor);
+           const finalDisabledState = (disabledState || hasVoted) ? "disabled" : "";
+           const voteStatusMsg = hasVoted ? "VOTE ALREADY CAST" : (hasRequiredToken ? "1 VOTE = 1 $SKATE" : "INSUFFICIENT $SKATE");
 
             let actionHtml = "";
             if (currentActor === p.proposer || currentActor === ADMIN_WALLET) {
@@ -1345,16 +1409,14 @@
                 <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:15px; margin-bottom:15px; border: 1px solid #222;">
                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:'Orbitron'; font-weight:bold; margin-bottom:8px;"><span style="color:#00ffaa;">YES: ${p.yesWeight.toFixed(0)} VTS (${yesPctRaw.toFixed(0)}%)</span><span style="color:var(--accent-pink);">NO: ${p.noWeight.toFixed(0)} VTS (${noPctRaw.toFixed(0)}%)</span></div>
                     <div class="vote-bar-bg"><div class="vote-bar-yes" style="width:${yesPctRaw}%;"></div></div>
-           </div>
-               <div class="slider-box">
-               <span style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">ALLOCATE WEIGHT:</span>
-               <input type="range" id="vote-slider-${index}" class="weight-slider" min="${sliderMin}" max="${sliderMax}" value="${sliderMin}" ${disabledState} oninput="document.getElementById('weight-display-${index}').innerText = this.value">
-               <span style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--accent-cyan); font-weight: 900; min-width: 80px; text-align: right;"><span id="weight-display-${index}">${sliderMin}</span> VTS</span>
-           </div>
-               <div style="display:flex; gap:15px;">
-               <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE YES</button>
-              <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', parseInt(document.getElementById('vote-slider-${index}').value))" style="flex:1;" ${disabledState}>VOTE NO</button>
-            </div>
+                </div>
+                <div class="slider-box" style="justify-content: center; background: rgba(0,240,255,0.05); border-color: var(--accent-cyan);">
+                    <span style="font-family: 'Orbitron'; font-size: 0.9rem; color: var(--accent-cyan); font-weight: 900;">${voteStatusMsg}</span>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <button class="dao-action-btn btn-yes" onclick="executeOnChainVote('${p.id}', 'YES', 1)" style="flex:1;" ${finalDisabledState}>VOTE YES</button>
+                    <button class="dao-action-btn btn-no" onclick="executeOnChainVote('${p.id}', 'NO', 1)" style="flex:1;" ${finalDisabledState}>VOTE NO</button>
+                </div>
                 ${actionHtml}
             </div>`;
         });
@@ -1374,7 +1436,6 @@
             btnAmateur.innerText = 'AMATEUR DONATION 10000'; btnAmateur.onclick = () => selectTier(10000);
             btnPro.innerText = 'PRO DONATION 100000'; btnPro.onclick = () => selectTier(100000);
         } else {
-            // Apply strict exact tiers requested for WAX
             btnFlow.innerText = 'FLOW DONATION 0.01'; btnFlow.onclick = () => selectTier(0.01);
             btnAmateur.innerText = 'AMATEUR DONATION 0.05'; btnAmateur.onclick = () => selectTier(0.05);
             btnPro.innerText = 'PRO DONATION 0.1'; btnPro.onclick = () => selectTier(0.1);
@@ -1480,20 +1541,48 @@
         } catch(e) { console.error(e); showErrorModal("Transaction aborted or rejected."); }
     };
 
-    window.executeOnChainVote = async (motionId, stance, weight) => {
+window.executeOnChainVote = async (motionId, stance, weight) => {
         if (!currentSession) return toggleAuthModal();
-        if (weight <= 0 || isNaN(weight)) return showErrorModal("Rank is too low to possess voting weight.");
-        if (weight > window.currentUserMaxVotes) return showErrorModal(`Your rank restricts you to ${window.currentUserMaxVotes} votes max.`);
         
-        const voteCost = parseFloat(weight).toFixed(4) + " SKATE"; const sender = currentSession.actor.toString();
+        // 1-1 Ratio Enforced: The contract strictly deducts 1 SKATE for 1 Vote.
+        const fixedWeight = 1;
+        const sender = currentSession.actor.toString();
+        
+        if (window.currentUserMaxVotes < 1) return showErrorModal("Insufficient $SKATE to cast a vote.");
+        
+        const voteCost = fixedWeight.toFixed(4) + " SKATE"; 
         const voteMemo = JSON.stringify({ sk8dao: "v1", action: "vote", id: motionId, vote: stance.toUpperCase() });
         
         try {
             const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: voteCost, memo: voteMemo } }];
             await currentSession.transact({ actions });
-            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged ${weight} vote(s) of ${stance}. Votes are completely final.`);
-            refreshDAODashboard(); updateBalances(sender); fetchTreasuryData();
-        } catch(e) { console.error(e); showErrorModal("Voting transaction aborted."); }
+            
+            // --- OPTIMISTIC UI & LOCALSTORAGE WRITE ---
+            
+            // 1. Permanently record the vote in the browser's local cache
+            localStorage.setItem(`sk8vote_${sender}_${motionId}`, stance.toUpperCase());
+
+            // 2. Find the specific motion in the frontend's local memory
+            const motion = activeProposals.find(p => p.id === motionId);
+            if (motion) {
+                // Instantly inject the 1 vote into the local tally
+                if (stance.toUpperCase() === 'YES') motion.yesWeight += 1;
+                if (stance.toUpperCase() === 'NO') motion.noWeight += 1;
+                // Locally mark this wallet address as having voted
+                motion.voters.add(sender); 
+            }
+            
+            // 3. Instantly redraw the voting floor using the local data. 
+            renderDAOList(); 
+            
+            updateBalances(sender); 
+            fetchTreasuryData();
+            
+            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged 1 vote for ${stance}. The network is syncing your vote in the background.`);
+        } catch(e) { 
+            console.error(e); 
+            showErrorModal("Voting transaction aborted."); 
+        }
     };
 
     window.executeOnChainWithdrawal = async (motionId) => {
@@ -1551,7 +1640,14 @@
         } else if (schema === 'clips') { document.getElementById('clips-wrapper').style.display = 'block';
         } else if (schema === 'defi') { document.getElementById('defi-wrapper').style.display = 'block'; syncPrices(); if(!defiWarningShown) { document.getElementById('defi-warning-modal').style.display = 'flex'; defiWarningShown = true; }
         } else if (schema === 'treasury') { document.getElementById('treasury-wrapper').style.display = 'block'; fetchTreasuryData();
-        } else if (schema === 'dao') { document.getElementById('dao-wrapper').style.display = 'block'; fetchTreasuryData(); refreshDAODashboard();
+      } else if (schema === 'dao') { 
+    document.getElementById('dao-wrapper').style.display = 'block'; 
+    
+    // THE FIX: Force the UI to wait for the blockchain to return your true $SKATE balance 
+    // BEFORE it draws the voting buttons.
+    fetchTreasuryData().then(() => {
+        refreshDAODashboard();
+    });
         } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
         } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
         } else { document.getElementById('inventory-wrapper').style.display = 'block'; if (currentSession) fetchInventory(currentSession.actor.toString()); }
@@ -1912,6 +2008,30 @@
             loadCraftingData(currentSession.actor.toString()); updateBalances(currentSession.actor.toString());
         } catch (e) { console.error(e); showErrorModal("Transaction Cancelled or Failed."); }
     };
+    // --- GLOBAL UI HOVER SOUNDS ---
+    // 1. Define the audio source using your specific Pinata IPFS link
+    const hoverSound = new Audio('https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafkreienqhf75gqfwmg2m4ypapazo3szcq6lijpy7jgz4qjj35xwkzb3pi'); 
+    hoverSound.volume = 0.3; // Volume set to 30% to keep it clean and subtle
+
+    function attachHoverSounds() {
+        // Select every button in the dApp
+        const allButtons = document.querySelectorAll('button');
+        
+        allButtons.forEach(btn => {
+            // Prevent attaching the same listener twice if the DOM updates
+            if (!btn.dataset.soundAttached) {
+                btn.addEventListener('mouseenter', () => {
+                    hoverSound.currentTime = 0; // Rewind for rapid-fire hovering
+                    // The .catch prevents console errors if the browser's autoplay policy blocks it before the user's first click
+                    hoverSound.play().catch(e => {}); 
+                });
+                btn.dataset.soundAttached = "true"; // Mark it as attached
+            }
+        });
+    }
+
+    // Run the function after a slight delay to ensure all DOM elements are fully loaded
+    setTimeout(attachHoverSounds, 1000);
 </script>
 </body>
 </html>
