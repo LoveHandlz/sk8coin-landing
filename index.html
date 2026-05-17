@@ -1102,24 +1102,37 @@
         document.getElementById('store-coming-soon-modal').style.display = 'flex';
     };
 
-   async function syncPrices() {
+  async function syncPrices() {
+        // Fetch WAX -> USD from CoinGecko Oracle
         try {
-            // Added 'wax.' subdomain
-            const usdRes = await fetch('https://wax.alcor.exchange/api/v2/tokens/wax-eosio.token');
-            const usdData = await usdRes.json();
-            if(usdData && usdData.usd_price) waxUsdPrice = usdData.usd_price;
-
-            // Added 'wax.' subdomain
-            const tickerRes = await fetch('https://wax.alcor.exchange/api/v2/tickers/skate-skatecoinwax_wax-eosio.token');
-            const tickerData = await tickerRes.json();
-            if(tickerData && tickerData.last_price) {
-                sWax = tickerData.last_price;
-                skatePerWax = 1 / sWax;
+            const cgRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=wax&vs_currencies=usd');
+            if (cgRes.ok) {
+                const cgData = await cgRes.json();
+                if (cgData && cgData.wax && cgData.wax.usd) {
+                    waxUsdPrice = cgData.wax.usd;
+                }
             }
         } catch(e) {
-            console.error("Oracle fetch failed: ", e);
+            console.error("CoinGecko WAX USD fetch failed: ", e);
         }
-        if(document.getElementById('oracle-price')) document.getElementById('oracle-price').innerText = `1 WAX ≈ ${skatePerWax.toFixed(4)} $SKATE  |  WAX: $${waxUsdPrice.toFixed(4)}`;
+
+        // Fetch SKATE -> WAX from Alcor DEX
+        try {
+            const tickerRes = await fetch('https://wax.alcor.exchange/api/v2/tickers/skate-skatecoinwax_wax-eosio.token');
+            if (tickerRes.ok) {
+                const tickerData = await tickerRes.json();
+                if (tickerData && tickerData.last_price) {
+                    sWax = tickerData.last_price;
+                    skatePerWax = 1 / sWax;
+                }
+            }
+        } catch(e) {
+            console.error("Alcor SKATE WAX fetch failed: ", e);
+        }
+
+        if(document.getElementById('oracle-price')) {
+            document.getElementById('oracle-price').innerText = `1 WAX ≈ ${skatePerWax.toFixed(4)} $SKATE  |  WAX: $${waxUsdPrice.toFixed(4)}`;
+        }
     }
 
     function calculateDaoRank(cumulativeUsd) {
