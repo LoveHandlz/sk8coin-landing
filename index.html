@@ -1102,7 +1102,7 @@
         document.getElementById('store-coming-soon-modal').style.display = 'flex';
     };
 
-  async function syncPrices() {
+ async function syncPrices() {
         // Fetch WAX -> USD from CoinGecko Oracle
         try {
             const cgRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=wax&vs_currencies=usd');
@@ -1116,18 +1116,19 @@
             console.error("CoinGecko WAX USD fetch failed: ", e);
         }
 
-        // Fetch SKATE -> WAX from Alcor DEX
+        // Fetch exact spot price using Alcor Swap Router (Matches UI perfectly)
         try {
-            const tickerRes = await fetch('https://wax.alcor.exchange/api/v2/tickers/skate-skatecoinwax_wax-eosio.token');
-            if (tickerRes.ok) {
-                const tickerData = await tickerRes.json();
-                if (tickerData && tickerData.last_price) {
-                    sWax = tickerData.last_price;
-                    skatePerWax = 1 / sWax;
+            const routeUrl = 'https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=wax-eosio.token&output=skate-skatecoinwax&amount=1&slippage=0&maxHops=2';
+            const routeRes = await fetch(routeUrl);
+            if (routeRes.ok) {
+                const routeData = await routeRes.json();
+                if (routeData && routeData.outputAmount) {
+                    skatePerWax = parseFloat(routeData.outputAmount);
+                    sWax = 1 / skatePerWax;
                 }
             }
         } catch(e) {
-            console.error("Alcor SKATE WAX fetch failed: ", e);
+            console.error("Alcor router spot fetch failed: ", e);
         }
 
         if(document.getElementById('oracle-price')) {
