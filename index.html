@@ -703,10 +703,10 @@
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; padding: 0 10px; gap: 10px;">
-            <div style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888;">
-                MIN RETURN: <span id="swap-min-out" style="color: #fff; font-weight: 900;">0.00</span>
-                <span id="swap-usd-value" style="color: #00ffaa; margin-left: 8px; font-weight: 900;">(≈ $0.00 USD)</span>
+       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; padding: 0 10px; gap: 10px;">
+            <div style="font-family: 'Orbitron'; font-size: 0.75rem; color: #888; display: flex; flex-direction: column; gap: 6px;">
+                <div>MIN RETURN: <span id="swap-min-out" style="color: #fff; font-weight: 900;">0.00</span> <span id="swap-usd-value" style="color: #00ffaa; margin-left: 8px; font-weight: 900;">(≈ $0.00 USD)</span></div>
+                <div>PRICE IMPACT: <span id="swap-price-impact" style="color: #00ffaa; font-weight: 900; letter-spacing: 1px;">0.00%</span></div>
             </div>
             <div style="display: flex; gap: 5px; align-items: center;">
                 <span style="font-family: 'Orbitron'; font-size: 0.65rem; color: #888; margin-right: 5px;">SLIPPAGE:</span>
@@ -1503,16 +1503,69 @@
         calcNativeSwap();
     };
 
+    let swapDebounceTimer;
+
     window.calcNativeSwap = () => {
-        const amtIn = parseFloat(document.getElementById('swap-in').value);
-        const outField = document.getElementById('swap-out'); const minOutDisplay = document.getElementById('swap-min-out'); const usdDisplay = document.getElementById('swap-usd-value');
-        if (!amtIn || isNaN(amtIn)) { outField.value = ""; minOutDisplay.innerText = "0.00"; usdDisplay.innerText = "(≈ $0.00 USD)"; return; }
+        clearTimeout(swapDebounceTimer);
         
-        let estOut = 0; let usdVal = 0;
-        if (isWaxToSkate) { estOut = (amtIn * skatePerWax) * 0.997; usdVal = amtIn * waxUsdPrice; } else { estOut = (amtIn * sWax) * 0.997; usdVal = estOut * waxUsdPrice; }
-        outField.value = estOut.toFixed(4); usdDisplay.innerText = `(≈ $${usdVal.toFixed(2)} USD)`;
-        const minOut = estOut * (1 - currentSlippage);
-        if (isWaxToSkate) minOutDisplay.innerText = minOut.toFixed(4) + " SKATE"; else minOutDisplay.innerText = minOut.toFixed(8) + " WAX";
+        // Wait 500ms after the user stops typing to ping the oracle
+        swapDebounceTimer = setTimeout(async () => {
+            const amtIn = parseFloat(document.getElementById('swap-in').value);
+            const outField = document.getElementById('swap-out'); 
+            const minOutDisplay = document.getElementById('swap-min-out'); 
+            const usdDisplay = document.getElementById('swap-usd-value');
+            const impactDisplay = document.getElementById('swap-price-impact');
+
+            if (!amtIn || isNaN(amtIn) || amtIn <= 0) { 
+                outField.value = ""; minOutDisplay.innerText = "0.00"; 
+                usdDisplay.innerText = "(≈ $0.00 USD)"; 
+                impactDisplay.innerText = "0.00%"; impactDisplay.style.color = "#00ffaa";
+                return; 
+            }
+
+            outField.value = "ROUTING...";
+            impactDisplay.innerText = "CALCULATING..."; impactDisplay.style.color = "#888";
+
+            const tokenIn = isWaxToSkate ? 'wax-eosio.token' : 'skate-skatecoinwax'; 
+            const tokenOut = isWaxToSkate ? 'skate-skatecoinwax' : 'wax-eosio.token';
+            const formattedAmtIn = isWaxToSkate ? amtIn.toFixed(8) : amtIn.toFixed(4);
+
+            try {
+                const routeUrl = `https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=${tokenIn}&output=${tokenOut}&amount=${formattedAmtIn}&slippage=${currentSlippage}&maxHops=2`;
+                const res = await fetch(routeUrl);
+                const routeData = await res.json();
+
+                if (routeData && routeData.outputAmount) {
+                    const outAmt = parseFloat(routeData.outputAmount);
+                    outField.value = outAmt.toFixed(4);
+                    
+                    // USD Math
+                    let usdVal = 0;
+                    if (isWaxToSkate) usdVal = amtIn * waxUsdPrice; 
+                    else usdVal = outAmt * waxUsdPrice;
+                    usdDisplay.innerText = `(≈ $${usdVal.toFixed(2)} USD)`;
+
+                    // Min Return
+                    const minOut = outAmt * (1 - currentSlippage);
+                    minOutDisplay.innerText = minOut.toFixed(4) + (isWaxToSkate ? " SKATE" : " WAX");
+
+                    // Price Impact (with warning colors)
+                    const impact = parseFloat(routeData.priceImpact || 0).toFixed(2);
+                    impactDisplay.innerText = `${impact}%`;
+                    
+                    if (impact > 5) impactDisplay.style.color = "var(--accent-pink)"; // High Danger
+                    else if (impact > 2) impactDisplay.style.color = "var(--accent-gold)"; // Warning
+                    else impactDisplay.style.color = "#00ffaa"; // Safe
+
+                } else {
+                    outField.value = "LIQUIDITY TOO LOW";
+                    impactDisplay.innerText = "ERR"; impactDisplay.style.color = "var(--accent-pink)";
+                }
+            } catch(e) {
+                console.error("Swap calculation failed:", e);
+                outField.value = "NETWORK ERROR";
+            }
+        }, 500); 
     };
 
     window.executeNativeSwap = async () => {
