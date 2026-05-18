@@ -1503,35 +1503,36 @@
         calcNativeSwap();
     };
 
-    let swapDebounceTimer;
+  let swapDebounceTimer;
 
     window.calcNativeSwap = () => {
         clearTimeout(swapDebounceTimer);
         
-        // Wait 500ms after the user stops typing to ping the oracle
+        const amtIn = parseFloat(document.getElementById('swap-in').value);
+        const outField = document.getElementById('swap-out'); 
+        const minOutDisplay = document.getElementById('swap-min-out'); 
+        const usdDisplay = document.getElementById('swap-usd-value');
+        const impactDisplay = document.getElementById('swap-price-impact');
+
+        if (!amtIn || isNaN(amtIn) || amtIn <= 0) { 
+            outField.value = ""; minOutDisplay.innerText = "0.00"; 
+            usdDisplay.innerText = "(≈ $0.00 USD)"; 
+            impactDisplay.innerText = "0.00%"; impactDisplay.style.color = "#00ffaa";
+            return; 
+        }
+
+        // Engage optimistic UI
+        outField.value = "ROUTING...";
+        impactDisplay.innerText = "CALCULATING..."; impactDisplay.style.color = "#888";
+
+        // Wait 500ms after typing stops to ping the Alcor router
         swapDebounceTimer = setTimeout(async () => {
-            const amtIn = parseFloat(document.getElementById('swap-in').value);
-            const outField = document.getElementById('swap-out'); 
-            const minOutDisplay = document.getElementById('swap-min-out'); 
-            const usdDisplay = document.getElementById('swap-usd-value');
-            const impactDisplay = document.getElementById('swap-price-impact');
-
-            if (!amtIn || isNaN(amtIn) || amtIn <= 0) { 
-                outField.value = ""; minOutDisplay.innerText = "0.00"; 
-                usdDisplay.innerText = "(≈ $0.00 USD)"; 
-                impactDisplay.innerText = "0.00%"; impactDisplay.style.color = "#00ffaa";
-                return; 
-            }
-
-            outField.value = "ROUTING...";
-            impactDisplay.innerText = "CALCULATING..."; impactDisplay.style.color = "#888";
-
             const tokenIn = isWaxToSkate ? 'wax-eosio.token' : 'skate-skatecoinwax'; 
             const tokenOut = isWaxToSkate ? 'skate-skatecoinwax' : 'wax-eosio.token';
-            const formattedAmtIn = isWaxToSkate ? amtIn.toFixed(8) : amtIn.toFixed(4);
 
             try {
-                const routeUrl = `https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=${tokenIn}&output=${tokenOut}&amount=${formattedAmtIn}&slippage=${currentSlippage}&maxHops=2`;
+                // Fetching raw amount to prevent strict string parsing failures
+                const routeUrl = `https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=${tokenIn}&output=${tokenOut}&amount=${amtIn}&slippage=${currentSlippage}&maxHops=2`;
                 const res = await fetch(routeUrl);
                 const routeData = await res.json();
 
@@ -1539,27 +1540,34 @@
                     const outAmt = parseFloat(routeData.outputAmount);
                     outField.value = outAmt.toFixed(4);
                     
-                    // USD Math
-                    let usdVal = 0;
-                    if (isWaxToSkate) usdVal = amtIn * waxUsdPrice; 
-                    else usdVal = outAmt * waxUsdPrice;
+                    let usdVal = isWaxToSkate ? (amtIn * waxUsdPrice) : (outAmt * waxUsdPrice);
                     usdDisplay.innerText = `(≈ $${usdVal.toFixed(2)} USD)`;
 
-                    // Min Return
                     const minOut = outAmt * (1 - currentSlippage);
                     minOutDisplay.innerText = minOut.toFixed(4) + (isWaxToSkate ? " SKATE" : " WAX");
 
-                    // Price Impact (with warning colors)
                     const impact = parseFloat(routeData.priceImpact || 0).toFixed(2);
                     impactDisplay.innerText = `${impact}%`;
                     
-                    if (impact > 5) impactDisplay.style.color = "var(--accent-pink)"; // High Danger
-                    else if (impact > 2) impactDisplay.style.color = "var(--accent-gold)"; // Warning
-                    else impactDisplay.style.color = "#00ffaa"; // Safe
+                    // Danger color warnings
+                    if (impact > 5) impactDisplay.style.color = "var(--accent-pink)"; 
+                    else if (impact > 2) impactDisplay.style.color = "var(--accent-gold)"; 
+                    else impactDisplay.style.color = "#00ffaa"; 
 
                 } else {
-                    outField.value = "LIQUIDITY TOO LOW";
-                    impactDisplay.innerText = "ERR"; impactDisplay.style.color = "var(--accent-pink)";
+                    // FALLBACK PROTOCOL: If Alcor rejects the size, seamlessly calculate via local math
+                    console.warn("Alcor Router rejected size. Engaging local fallback.", routeData);
+                    let fallbackOut = isWaxToSkate ? (amtIn * skatePerWax) * 0.997 : (amtIn * sWax) * 0.997;
+                    outField.value = fallbackOut.toFixed(4);
+                    
+                    let usdVal = isWaxToSkate ? (amtIn * waxUsdPrice) : (fallbackOut * waxUsdPrice);
+                    usdDisplay.innerText = `(≈ $${usdVal.toFixed(2)} USD)`;
+                    
+                    const minOut = fallbackOut * (1 - currentSlippage);
+                    minOutDisplay.innerText = minOut.toFixed(4) + (isWaxToSkate ? " SKATE" : " WAX");
+                    
+                    impactDisplay.innerText = "POOL TOO SMALL"; 
+                    impactDisplay.style.color = "var(--accent-pink)";
                 }
             } catch(e) {
                 console.error("Swap calculation failed:", e);
