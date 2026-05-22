@@ -343,6 +343,22 @@
 </header>
 <button id="dapp-back-btn" onclick="goBack()">[ &lt; BACK ]</button>
 
+    <div id="lunchbox-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: var(--accent-pink); max-width: 450px; box-shadow: 0 0 30px rgba(255,0,85,0.15);">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 10px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px;">THE LUNCH BOX</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">You found a stash of street food. These consumables power your grind. Keep them safe.</p>
+        <button class="wallet-btn" onclick="document.getElementById('lunchbox-modal').style.display='none'; switchCategory('lunchbox'); return false;" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px; font-size: 1.1rem;">OPEN STASH</button>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:20px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ SHUT LID ]</button>
+    </div>
+</div>
+
+<div class="dashboard-wrapper" id="lunchbox-wrapper" style="display: none;">
+    <h2 style="text-align: center; color: var(--accent-pink); font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(255,0,85,0.3);">THE LUNCH BOX</h2>
+    <div class="dashboard-grid" id="lunchbox-grid">
+        <h3 style="grid-column: 1/-1; text-align: center; color: var(--accent-pink); font-family: 'Orbitron'; font-weight: 900;">SCANNING STASH...</h3>
+    </div>
+</div>
+
  <div id="trunk-modal" class="modal-overlay">
     <div class="modal-content cyber-yellow-frame" style="max-width: 450px;">
         <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 10px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px;">THE TRUNK</h2>
@@ -554,7 +570,8 @@
     </div>
 
     <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 50px; flex-wrap: wrap;">
-        <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto;">🚗 OPEN TRUNK</button>
+       <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto;">🚗 OPEN TRUNK</button>
+        <button class="master-dash-btn" onclick="document.getElementById('lunchbox-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto; border-color: var(--accent-pink); color: var(--accent-pink); box-shadow: inset 0 0 10px rgba(255,0,85,0.2);">🍱 OPEN LUNCH BOX</button>
     </div>
 
     <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-gold); border-radius: 8px; padding: clamp(20px, 4vw, 40px); max-width: 900px; margin: 0 auto; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.5);">
@@ -1709,7 +1726,7 @@ window.executeOnChainVote = async (motionId, stance, weight) => {
         document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
         if(document.getElementById(`nav-${schema}`)) document.getElementById(`nav-${schema}`).classList.add('active');
         
-        const wrappers = ['home-wrapper', 'inventory-wrapper', 'builder-wrapper', 'leaderboard-container', 'clips-wrapper', 'defi-wrapper', 'treasury-wrapper', 'dao-wrapper', 'sk8shop-wrapper', 'incinerator-wrapper'];
+        const wrappers = ['home-wrapper', 'inventory-wrapper', 'builder-wrapper', 'leaderboard-container', 'clips-wrapper', 'defi-wrapper', 'treasury-wrapper', 'dao-wrapper', 'sk8shop-wrapper', 'incinerator-wrapper', 'lunchbox-wrapper'];
         wrappers.forEach(w => { const el = document.getElementById(w); if(el) el.style.display = 'none'; });
 
         if (schema === 'home') { document.getElementById('home-wrapper').style.display = 'block';
@@ -1726,8 +1743,8 @@ window.executeOnChainVote = async (motionId, stance, weight) => {
     fetchTreasuryData().then(() => {
         refreshDAODashboard();
     });
-        } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
-        } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
+      } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
+        } else if (schema === 'lunchbox') { document.getElementById('lunchbox-wrapper').style.display = 'block'; if (currentSession) fetchLunchbox(currentSession.actor.toString());
         } else { document.getElementById('inventory-wrapper').style.display = 'block'; if (currentSession) fetchInventory(currentSession.actor.toString()); }
     };
 
@@ -2067,6 +2084,59 @@ window.executeOnChainVote = async (motionId, stance, weight) => {
             showErrorModal("Burn Transaction Cancelled or Failed. Ensure you have enough CPU/NET.");
         }
     };
+
+    async function fetchLunchbox(user) {
+        const grid = document.getElementById('lunchbox-grid');
+        grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: var(--accent-pink); font-family: 'Orbitron'; font-weight: 900;">DIGGING THROUGH STASH...</h3>`;
+
+        try {
+            const res = await fetch(`${ATOMIC_API}/assets?collection_name=${COLLECTION}&schema_name=food.tokens&owner=${user}&limit=100`);
+            const json = await res.json();
+            
+            if (json.success) {
+                const validFood = json.data.filter(nft => !nft.template || nft.template.template_id !== '248135');
+
+                if (validFood.length === 0) { 
+                    grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #888; font-family: 'Orbitron'; font-weight: 900;">LUNCH BOX IS EMPTY</h3>`; 
+                    return; 
+                }
+
+                const htmlCards = validFood.map(n => {
+                    const name = MetaParser.getString(n, 'name', 'UNKNOWN FOOD');
+                    const rarity = MetaParser.getRarity(n);
+                    const img = MetaParser.getImg(n);
+                    const mN = n.template_mint ? n.template_mint : 'N/A';
+
+                    const cleanRar = rarity.toLowerCase().trim(); 
+                    const isGodTier = ['epic', 'legendary', 'mythic', 'insane', 'ridiculous'].includes(cleanRar);
+                    const cardClass = isGodTier ? `skate-card card-glow-${cleanRar}` : `skate-card`;
+                    const cardStyle = isGodTier ? "" : `border-color: var(--rarity-${cleanRar}); box-shadow: inset 0 0 10px rgba(255,255,255,0.02);`;
+                    const headerStyle = isGodTier ? "" : `background: var(--rarity-${cleanRar}); box-shadow: 0 0 15px var(--rarity-${cleanRar});`;
+                    
+                    let badgeStyle = "color: #ffffff; border-color: rgba(255, 255, 255, 0.4);";
+                    if (mN == 1) badgeStyle = "color: #00ffaa; border-color: #00ffaa; text-shadow: 0 0 10px #00ffaa;";
+
+                    return `<div class="${cardClass}" style="${cardStyle}">
+                                <div class="rarity-header" style="${headerStyle}">
+                                    <div class="mint-badge" style="${badgeStyle}">#${mN}</div>
+                                    <div class="rarity-header-text">${rarity}</div>
+                                </div>
+                                <div class="img-wrap" style="height: 250px; background: rgba(0,0,0,0.8);">
+                                    <img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 90%;">
+                                </div>
+                                <div class="card-body" style="text-align: center; padding: 25px 15px;">
+                                    <div class="board-name" style="margin-bottom: 5px; font-size: 1.2rem; color: var(--accent-pink);">${name}</div>
+                                    <div style="font-family:'Orbitron'; font-size:0.6rem; color:#888; letter-spacing: 2px;">CONSUMABLE TOKEN</div>
+                                </div>
+                            </div>`;
+                }).join('');
+
+                grid.innerHTML = htmlCards;
+            }
+        } catch (e) {
+            grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: var(--accent-pink); font-family: 'Orbitron'; font-weight: 900;">NETWORK ERROR</h3>`;
+        }
+    }
 
     window.loadMoreInventory = () => { if (!currentSession) return; currentInventoryPage++; fetchInventory(currentSession.actor.toString(), true); };
     document.getElementById('login-trigger-vip').addEventListener('click', async () => { const { session } = await sessionKit.login(); location.reload(); });
