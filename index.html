@@ -1743,8 +1743,9 @@ window.executeOnChainVote = async (motionId, stance, weight) => {
     fetchTreasuryData().then(() => {
         refreshDAODashboard();
     });
-      } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
+     } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
         } else if (schema === 'lunchbox') { document.getElementById('lunchbox-wrapper').style.display = 'block'; if (currentSession) fetchLunchbox(currentSession.actor.toString());
+        } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
         } else { document.getElementById('inventory-wrapper').style.display = 'block'; if (currentSession) fetchInventory(currentSession.actor.toString()); }
     };
 
