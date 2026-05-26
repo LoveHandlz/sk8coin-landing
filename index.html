@@ -1209,15 +1209,35 @@
             if(skateResDOM) skateResDOM.innerText = skateBal.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) + ' SKATE';
             if(skateUsdDOM) skateUsdDOM.innerText = `≈ $${(skateBal * skatePriceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
 
-            const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=200`;
-            const hRes = await fetch(historyUrl);
-            const hJson = await hRes.json();
-
             const blacklist = ['eosio.token', 'skatecoinwax', 'swap.alcor', 'alcorammswap'];
-            let sponsors = {}; let pulseItems = []; let currentUserUsdTotal = 0;
+let sponsors = {}; let pulseItems = []; let currentUserUsdTotal = 0;
 
-            if (hJson && hJson.actions) {
-                hJson.actions.forEach(action => {
+let skip = 0;
+const limit = 500; // 500 is generally the max safe limit per pull for Hyperion nodes
+let keepFetching = true;
+let allActions = [];
+
+// Loop to pull ALL historical data
+while (keepFetching) {
+    const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=eosio.token:transfer,skatecoinwax:transfer&limit=${limit}&skip=${skip}`;
+    const hRes = await fetch(historyUrl);
+    const hJson = await hRes.json();
+
+    if (hJson && hJson.actions && hJson.actions.length > 0) {
+        allActions = allActions.concat(hJson.actions);
+        if (hJson.actions.length < limit) {
+            keepFetching = false; // Reached the end of the chain history
+        } else {
+            skip += limit; // Advance to the next page
+        }
+    } else {
+        keepFetching = false;
+    }
+}
+
+// Now map over allActions instead of hJson.actions
+if (allActions.length > 0) {
+    allActions.forEach(action => {
                     const data = action.act.data; const fromAcc = data.from; const blockTime = new Date(action.timestamp);
                     if (data && data.to === 'skatecoinwax' && data.quantity) {
                         const quantityStr = data.quantity; const [amtVal, symbol] = quantityStr.split(' ');
@@ -1276,7 +1296,7 @@
 
             if(whaleList) {
                 // Apply strict feed limit of 12
-                const sortedSponsors = Object.keys(sponsors).map(acc => ({ account: acc, ...sponsors[acc] })).sort((a, b) => b.powerValueUsd - a.powerValueUsd).slice(0, 12);
+                const sortedSponsors = Object.keys(sponsors).map(acc => ({ account: acc, ...sponsors[acc] })).sort((a, b) => b.powerValueUsd - a.powerValueUsd);
                 if (sortedSponsors.length === 0) whaleList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">THE WHALE BOARD IS OPEN</div>`;
                 else {
                     whaleList.innerHTML = sortedSponsors.map((sp, idx) => {
@@ -1291,7 +1311,8 @@
 
             if(pulseList) {
                 // Apply strict feed limit of 12
-                pulseItems.sort((a, b) => b.timestamp - a.timestamp); const activePulse = pulseItems.slice(0, 12);
+                pulseItems.sort((a, b) => b.timestamp - a.timestamp); const activePulse = pulseItems; // Show all
+// Or use pulseItems.slice(0, 200) if you want a massive list that doesn't freeze older phones.
                 if (activePulse.length === 0) pulseList.innerHTML = `<div style="padding: 20px; text-align: center; color: #888; font-family: 'Orbitron'; font-size: 0.8rem;">INTERCEPT RECORD EMPTY</div>`;
                 else {
                     pulseList.innerHTML = activePulse.map(item => `
