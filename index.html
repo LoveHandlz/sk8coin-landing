@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> sk8coin | sk8dao v2.6.7 </title>
+    <title> sk8coin | sk8dao v2.6.8 </title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
@@ -425,6 +425,19 @@
     </div>
 </div>
 
+    <div id="dao-graveyard-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; height: 85vh; border-color: #555; background: #050a1a; display: flex; flex-direction: column; overflow: hidden; padding: clamp(15px, 3vw, 20px);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 15px; margin-bottom: 20px;">
+            <h2 style="font-family:'Orbitron'; font-weight: 900; color:#ccc; margin: 0; font-size: clamp(1.2rem, 4vw, 1.8rem); letter-spacing: 1px;">🪦 THE GRAVEYARD</h2>
+            <button onclick="closeModals()" style="background:transparent; color:#888; border: 1px solid #888; padding: 5px 15px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.85rem; transition: 0.2s;">CLOSE</button>
+        </div>
+        
+        <div id="graveyard-motions-list" style="flex: 1; overflow-y: auto; padding-right: 10px; text-align: left;">
+            <div style="text-align:center; color:#555; padding: 40px; font-family:'Orbitron';">EXHUMING DEAD MOTIONS...</div>
+        </div>
+    </div>
+</div>
+
 <div id="dao-skater-modal" class="modal-overlay">
     <div class="modal-content" style="border-color: var(--rarity-epic); max-width: 450px; background: #050a1a;">
         <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--rarity-epic); margin-bottom: 15px; font-size: clamp(1.4rem, 4vw, 1.8rem);">SKATER MATRIX</h2>
@@ -838,67 +851,67 @@
         <div class="caution-tape" style="background: repeating-linear-gradient(45deg, #000, #000 15px, var(--accent-cyan) 15px, var(--accent-cyan) 30px);"></div>
     </div>
     
-    <div id="super-sponsor-dashboard" style="max-width: 1100px; margin: 0 auto 40px auto;">
-        <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; text-align: center; letter-spacing: 2px; margin-bottom: 25px; border-bottom: 1px dashed var(--accent-gold); padding-bottom: 15px;">SUPER SPONSOR DIRECTORY</h3>
+    <div id="Industry-products-dashboard" style="max-width: 1100px; margin: 0 auto 40px auto;">
+        <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; text-align: center; letter-spacing: 2px; margin-bottom: 25px; border-bottom: 1px dashed var(--accent-gold); padding-bottom: 15px;">PHYSICAL PRODUCTS DIRECTORY</h3>
         <div class="brand-grid">
             <div class="brand-card" onclick="openBrandModal('DGK')">
                 <div class="brand-name">DGK</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('PRIMITIVE')">
                 <div class="brand-name">PRIMITIVE</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('FUCKING AWESOME')">
                 <div class="brand-name">FUCKING AWESOME</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('SANTA CRUZ')">
                 <div class="brand-name">SANTA CRUZ</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('POWELL PERALTA')">
                 <div class="brand-name">POWELL PERALTA</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('GIRL')">
                 <div class="brand-name">GIRL</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('CHOCOLATE')">
                 <div class="brand-name">CHOCOLATE</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('INDEPENDENT')">
                 <div class="brand-name">INDEPENDENT</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('SPITFIRE')">
                 <div class="brand-name">SPITFIRE</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('REAL')">
                 <div class="brand-name">REAL</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('KROOKED')">
                 <div class="brand-name">KROOKED</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
             <div class="brand-card" onclick="openBrandModal('ANTIHERO')">
                 <div class="brand-name">ANTIHERO</div>
-                <div class="brand-status">SUPER SPONSOR</div>
+                <div class="brand-status">Physical Products</div>
                 <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
             </div>
         </div>
@@ -1001,6 +1014,9 @@
         </button>
         <button class="wallet-btn" onclick="document.getElementById('active-motions-modal').style.display='flex'" style="background: var(--accent-cyan); color: #000; padding: 20px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);">
             ⚖️ VIEW ACTIVE MOTIONS
+        </button>
+        <button class="wallet-btn" onclick="document.getElementById('dao-graveyard-modal').style.display='flex'" style="background: transparent; color: #888; border: 2px solid #555; padding: 20px; font-size: 1.1rem;">
+            🪦 THE GRAVEYARD
         </button>
         <button class="wallet-btn" onclick="document.getElementById('dao-skater-modal').style.display='flex'" style="background: transparent; color: var(--rarity-epic); border: 2px solid var(--rarity-epic); padding: 20px; font-size: 1.1rem;">
             SKATER MATRIX
@@ -1337,47 +1353,49 @@ if (allActions.length > 0) {
         let withdrawnIds = new Set(); 
         const DAO_TTL_MS = 7 * 24 * 60 * 60 * 1000; 
         const now = Date.now();
-        const cutoffTime = now - DAO_TTL_MS;
+        let actualProposalsFound = 0; // THE FIX: Strictly tracks real proposals
 
         try {
             let skip = 0;
             const limit = 500;
             let keepFetching = true;
 
-            // --- THE PAGINATION LOOP ---
             while (keepFetching) {
                 const historyUrl = `${HISTORY_RPC}/v2/history/get_actions?account=skatecoinwax&filter=skatecoinwax:transfer&limit=${limit}&skip=${skip}`;
                 const res = await fetch(historyUrl); 
                 const json = await res.json();
                 
                 if (json && json.actions && json.actions.length > 0) {
-                    let oldestInBatch = now;
-
                     json.actions.forEach(action => {
                         const data = action.act.data; 
                         const memo = data.memo || ""; 
                         const blockTime = new Date(action.timestamp).getTime();
                         
-                        if (blockTime < oldestInBatch) oldestInBatch = blockTime;
-
                         if (data.to === 'skatecoinwax' && memo.includes('"sk8dao":"v1"')) {
                             try {
                                 const parsedMemo = JSON.parse(memo); 
                                 const sender = data.from; 
-                                
-                                // 1-1 Ratio Enforced: Scraper ignores whale transaction quantities entirely.
                                 const weight = 1; 
                                 
                                 if (parsedMemo.action === "propose") {
-                                    proposals[action.trx_id] = { id: action.trx_id, title: parsedMemo.title, desc: parsedMemo.desc, proposer: sender, yesWeight: 0, noWeight: 0, time: blockTime, voters: new Set() };
+                                    if (!proposals[action.trx_id]) {
+                                        proposals[action.trx_id] = { id: action.trx_id, title: parsedMemo.title, desc: parsedMemo.desc, proposer: sender, yesWeight: 0, noWeight: 0, time: blockTime, voters: new Set() };
+                                    } else {
+                                        // Inject true metadata into shell created by an earlier vote
+                                        proposals[action.trx_id].title = parsedMemo.title;
+                                        proposals[action.trx_id].desc = parsedMemo.desc;
+                                        proposals[action.trx_id].proposer = sender;
+                                        proposals[action.trx_id].time = blockTime; 
+                                    }
+                                    actualProposalsFound++; // FIX: Only increment when a real proposal is found
                                 } else if (parsedMemo.action === "vote" && parsedMemo.id) {
-                                    if (proposals[parsedMemo.id]) {
-                                        // 1-1 Ratio Enforced
-                                        if (!proposals[parsedMemo.id].voters.has(sender)) {
-                                            if (parsedMemo.vote === "YES") proposals[parsedMemo.id].yesWeight += weight;
-                                            if (parsedMemo.vote === "NO") proposals[parsedMemo.id].noWeight += weight;
-                                            proposals[parsedMemo.id].voters.add(sender);
-                                        }
+                                    if (!proposals[parsedMemo.id]) {
+                                        proposals[parsedMemo.id] = { id: parsedMemo.id, title: "SYNCING...", desc: "", proposer: "UNKNOWN", yesWeight: 0, noWeight: 0, time: 0, voters: new Set() };
+                                    }
+                                    if (!proposals[parsedMemo.id].voters.has(sender)) {
+                                        if (parsedMemo.vote === "YES") proposals[parsedMemo.id].yesWeight += weight;
+                                        if (parsedMemo.vote === "NO") proposals[parsedMemo.id].noWeight += weight;
+                                        proposals[parsedMemo.id].voters.add(sender);
                                     }
                                 } else if (parsedMemo.action === "withdraw" && parsedMemo.id) { 
                                     withdrawnIds.add(parsedMemo.id); 
@@ -1386,8 +1404,8 @@ if (allActions.length > 0) {
                         }
                     });
 
-                    // If we received fewer than the limit, or the oldest action is past 7 days, stop looping.
-                    if (json.actions.length < limit || oldestInBatch < cutoffTime) {
+                    // Exit ONLY when we found 30 REAL proposals, or run out of history bounds
+                    if (json.actions.length < limit || actualProposalsFound >= 30 || skip > 20000) {
                         keepFetching = false;
                     } else {
                         skip += limit;
@@ -1401,34 +1419,31 @@ if (allActions.length > 0) {
         }
 
         activeProposals = []; 
-        const currentActor = currentSession ? currentSession.actor.toString() : "";
+        let graveyardProposals = [];
 
         Object.values(proposals).forEach(p => {
+            if (p.time === 0) return; // Discard unfulfilled shells
             const expiresAt = p.time + DAO_TTL_MS;
+            p.expiresAt = expiresAt; 
+            
+            // Split into Active or Graveyard purely based on chain timestamp
             if (now <= expiresAt && !withdrawnIds.has(p.id)) { 
-                p.expiresAt = expiresAt; 
-                
-                // --- THE LOCALSTORAGE BRIDGE ---
-                // If the user voted, but the blockchain indexer hasn't caught it yet (30s lag),
-                // we pull the truth directly from the browser's local memory to prevent the vote from vanishing.
-                if (currentActor) {
-                    const localVote = localStorage.getItem(`sk8vote_${currentActor}_${p.id}`);
-                    if (localVote && !p.voters.has(currentActor)) {
-                        if (localVote === "YES") p.yesWeight += 1;
-                        if (localVote === "NO") p.noWeight += 1;
-                        p.voters.add(currentActor);
-                    }
-                }
-
                 activeProposals.push(p); 
+            } else {
+                p.isWithdrawn = withdrawnIds.has(p.id);
+                graveyardProposals.push(p);
             }
         });
 
+        // Sort both arrays newest to oldest
         activeProposals.sort((a, b) => b.time - a.time);
+        graveyardProposals.sort((a, b) => b.time - a.time);
         
         const countDOM = document.getElementById("dao-active-motions-count");
         if(countDOM) countDOM.innerText = activeProposals.length;
-        renderDAOList();
+        
+        renderDAOList(); 
+        renderGraveyardList(graveyardProposals.slice(0, 20)); 
     }
 
     function renderDAOList() {
@@ -1443,12 +1458,11 @@ if (allActions.length > 0) {
             const isPassing = yesPctRaw >= 51; const statusColor = isPassing ? "#00ffaa" : "var(--accent-pink)"; const statusText = isPassing ? `PASSING (${yesPctRaw.toFixed(0)}%)` : `FAILING (<51%)`;
             const diffMs = p.expiresAt - Date.now(); const d = Math.floor(diffMs / 86400000); const h = Math.floor((diffMs % 86400000) / 3600000); const timeLeft = `${d}d ${h}h`;
             
-           // 1-1 Ratio Enforced: Slider is stripped, button states are locked to boolean token check.
            const hasRequiredToken = window.currentUserMaxVotes >= 1;
            const disabledState = !hasRequiredToken ? "disabled" : "";
            const hasVoted = p.voters.has(currentActor);
            const finalDisabledState = (disabledState || hasVoted) ? "disabled" : "";
-           const voteStatusMsg = hasVoted ? "VOTE ALREADY CAST" : (hasRequiredToken ? "1 VOTE = 1 $SKATE" : "INSUFFICIENT $SKATE");
+           const voteStatusMsg = hasVoted ? "VOTE LOGGED ON-CHAIN" : (hasRequiredToken ? "1 VOTE = 1 $SKATE" : "INSUFFICIENT $SKATE");
 
             let actionHtml = "";
             if (currentActor === p.proposer || currentActor === ADMIN_WALLET) {
@@ -1478,201 +1492,47 @@ if (allActions.length > 0) {
         list.innerHTML = html;
     }
 
-    // --- BLESSING / DONATION LOGIC ---
-    let activeDonationCurrency = 'WAX';
-    window.openDonationModal = (currency) => {
-        if (!currentSession) return toggleAuthModal();
-        activeDonationCurrency = currency;
-        document.getElementById('donation-currency-label').innerText = currency;
-        const btnFlow = document.getElementById('tier-btn-flow'); const btnAmateur = document.getElementById('tier-btn-amateur'); const btnPro = document.getElementById('tier-btn-pro');
-        
-        if (currency === 'SKATE') {
-            btnFlow.innerText = 'FLOW DONATION 1000'; btnFlow.onclick = () => selectTier(1000);
-            btnAmateur.innerText = 'AMATEUR DONATION 10000'; btnAmateur.onclick = () => selectTier(10000);
-            btnPro.innerText = 'PRO DONATION 100000'; btnPro.onclick = () => selectTier(100000);
+    function renderGraveyardList(graveyard) {
+        const list = document.getElementById("graveyard-motions-list");
+        if (!list) return;
+
+        let html = "";
+        if (graveyard.length === 0) {
+            html = "<div style='color: #555; text-align: center; padding: 40px; font-family: Orbitron; border: 1px dashed #333;'>THE GRAVEYARD IS EMPTY.</div>";
         } else {
-            btnFlow.innerText = 'FLOW DONATION 0.01'; btnFlow.onclick = () => selectTier(0.01);
-            btnAmateur.innerText = 'AMATEUR DONATION 0.05'; btnAmateur.onclick = () => selectTier(0.05);
-            btnPro.innerText = 'PRO DONATION 0.1'; btnPro.onclick = () => selectTier(0.1);
-        }
-        document.getElementById('donation-tier-modal').style.display = 'flex';
-        document.getElementById('custom-donate-amt').value = '';
-    };
-
-    window.selectTier = (amount) => { executeDonationTransfer(amount); };
-    window.executeCustomDonation = () => { const amt = parseFloat(document.getElementById('custom-donate-amt').value); if (!amt || isNaN(amt) || amt <= 0) return; executeDonationTransfer(amt); };
-
-    const executeDonationTransfer = async (amount) => {
-        const isWax = activeDonationCurrency === 'WAX';
-        const formattedAmt = isWax ? amount.toFixed(8) + " WAX" : amount.toFixed(4) + " SKATE";
-        const tokenContract = isWax ? 'eosio.token' : 'skatecoinwax';
-        const recipient = currentSession.actor.toString();
-        
-        try {
-            const actions = [{ account: tokenContract, name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: recipient, to: 'skatecoinwax', quantity: formattedAmt, memo: "PROTOCOL BLESSING" } }];
-            await currentSession.transact({ actions });
-            showSuccessModal("🔥 BLESSING SECURED 🔥", "The culture thanks you. Your blessing has been recorded on-chain. Rank calculated.");
-            fetchTreasuryData(); updateBalances(recipient);
-        } catch(e) { console.error(e); showErrorModal("Transaction Cancelled or Failed."); }
-    };
-
-    // --- SWAP LOGIC ---
-    window.flipSwapDirection = () => {
-        isWaxToSkate = !isWaxToSkate;
-        const labelIn = document.getElementById('swap-label-in'); const labelOut = document.getElementById('swap-label-out');
-        if (isWaxToSkate) {
-            labelIn.innerHTML = 'WAX <img src="https://cryptologos.cc/logos/wax-waxp-logo.png" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-gold)";
-            labelOut.innerHTML = '$SKATE <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" style="height: 20px;"> ▼'; labelOut.style.color = "var(--accent-cyan)";
-            document.getElementById('swap-out').style.color = "var(--accent-cyan)";
-        } else {
-            labelIn.innerHTML = '$SKATE <img src="https://jade-rapid-flea-523.mypinata.cloud/ipfs/bafybeigxk3zg754f2tciiazwp7tgxb7snjjcgk4vxg73zjk34cuitde2yq" style="height: 20px;"> ▼'; labelIn.style.color = "var(--accent-cyan)";
-            labelOut.innerHTML = 'WAX <img src="https://cryptologos.cc/logos/wax-waxp-logo.png" style="height: 20px;"> ▼'; labelOut.style.color = "var(--accent-gold)";
-            document.getElementById('swap-out').style.color = "var(--accent-gold)";
-        }
-        document.getElementById('swap-in').value = ""; document.getElementById('swap-out').value = "";
-        document.getElementById('swap-min-out').innerText = "0.00"; document.getElementById('swap-usd-value').innerText = "(≈ $0.00 USD)";
-    };
-
-    window.setSlippage = (val) => {
-        currentSlippage = val;
-        document.querySelectorAll('.slip-btn').forEach(btn => btn.classList.remove('active-slip'));
-        document.getElementById(`slip-${val * 100}`).classList.add('active-slip');
-        calcNativeSwap();
-    };
-
-  let swapDebounceTimer;
-
-    window.calcNativeSwap = () => {
-        clearTimeout(swapDebounceTimer);
-        
-        const amtIn = parseFloat(document.getElementById('swap-in').value);
-        const outField = document.getElementById('swap-out'); 
-        const minOutDisplay = document.getElementById('swap-min-out'); 
-        const usdDisplay = document.getElementById('swap-usd-value');
-        const impactDisplay = document.getElementById('swap-price-impact');
-        const impactLabel = document.getElementById('impact-label');
-        const executeBtn = document.getElementById('execute-btn');
-
-        if (!amtIn || isNaN(amtIn) || amtIn <= 0) { 
-            outField.value = ""; minOutDisplay.innerText = "0.00"; 
-            usdDisplay.innerText = "(≈ $0.00 USD)"; 
-            if (impactLabel) impactLabel.style.display = "inline";
-            impactDisplay.innerText = "0.00%"; impactDisplay.style.color = "#00ffaa";
-            
-            // Reset Button to Default
-            executeBtn.innerText = "EXECUTE DECENTRALIZED SWAP";
-            executeBtn.disabled = false;
-            executeBtn.style.background = "var(--accent-cyan)";
-            executeBtn.style.color = "#000";
-            return; 
-        }
-
-        // Engage optimistic UI
-        outField.value = "ROUTING...";
-        if (impactLabel) impactLabel.style.display = "inline";
-        impactDisplay.innerText = "CALCULATING..."; impactDisplay.style.color = "#888";
-        
-        // Reset Button during calculation
-        executeBtn.innerText = "EXECUTE DECENTRALIZED SWAP";
-        executeBtn.disabled = false;
-        executeBtn.style.background = "var(--accent-cyan)";
-        executeBtn.style.color = "#000";
-
-        // Wait 500ms after typing stops to ping the Alcor router
-        swapDebounceTimer = setTimeout(async () => {
-            const tokenIn = isWaxToSkate ? 'wax-eosio.token' : 'skate-skatecoinwax'; 
-            const tokenOut = isWaxToSkate ? 'skate-skatecoinwax' : 'wax-eosio.token';
-
-            try {
-                // Fetching raw amount to prevent strict string parsing failures
-                const routeUrl = `https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=${tokenIn}&output=${tokenOut}&amount=${amtIn}&slippage=${currentSlippage}&maxHops=2`;
-                const res = await fetch(routeUrl);
-                const routeData = await res.json();
-
-                if (routeData && routeData.output) {
-                    const outAmt = parseFloat(routeData.output);
-                    outField.value = outAmt.toFixed(4);
-                    
-                    let usdVal = isWaxToSkate ? (amtIn * waxUsdPrice) : (outAmt * waxUsdPrice);
-                    usdDisplay.innerText = `(≈ $${usdVal.toFixed(2)} USD)`;
-
-                    const minOut = outAmt * (1 - currentSlippage);
-                    minOutDisplay.innerText = minOut.toFixed(4) + (isWaxToSkate ? " SKATE" : " WAX");
-
-                    const impact = parseFloat(routeData.priceImpact || 0).toFixed(2);
-                    impactDisplay.innerText = `${impact}%`;
-                    
-                    // Danger color warnings
-                    if (impact > 5) impactDisplay.style.color = "var(--accent-pink)"; 
-                    else if (impact > 2) impactDisplay.style.color = "var(--accent-gold)"; 
-                    else impactDisplay.style.color = "#00ffaa"; 
-
-               } else {
-                    // ALCOR STRICT SYNC: If Alcor fails to return a route, reflect zero values without disabling UI.
-                    console.warn("Alcor Router returned no numbers for this size.");
-                    outField.value = "";
-                    usdDisplay.innerText = "(≈ $0.00 USD)";
-                    minOutDisplay.innerText = "0.00";
-                    
-                    if (impactLabel) impactLabel.style.display = "inline";
-                    impactDisplay.innerText = "0.00%"; 
-                    impactDisplay.style.color = "#00ffaa";
+            graveyard.forEach(p => {
+                const totalWeight = p.yesWeight + p.noWeight;
+                const yesPctRaw = totalWeight > 0 ? (p.yesWeight / totalWeight) * 100 : 0;
+                const isPassing = yesPctRaw >= 51;
+                
+                let statusBadge = ""; let glowColor = "";
+                if (p.isWithdrawn) {
+                    statusBadge = `<span style="color: #888; border: 1px solid #555; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: 900;">WITHDRAWN</span>`; glowColor = "#111";
+                } else if (isPassing) {
+                    statusBadge = `<span style="color: #00ffaa; border: 1px solid #00ffaa; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: 900;">PASSED</span>`; glowColor = "rgba(0, 255, 170, 0.05)";
+                } else {
+                    statusBadge = `<span style="color: var(--accent-pink); border: 1px solid var(--accent-pink); padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-family: 'Orbitron'; font-weight: 900;">FAILED</span>`; glowColor = "rgba(255, 0, 85, 0.05)";
                 }
-            } catch(e) {
-                console.error("Swap calculation failed:", e);
-                outField.value = "NETWORK ERROR";
-            }
-        }, 500); 
-    };
 
-    window.executeNativeSwap = async () => {
-        if (!currentSession) return toggleAuthModal();
-        const amtIn = parseFloat(document.getElementById('swap-in').value);
-        if (!amtIn || amtIn <= 0) return showErrorModal("Please enter a valid amount to swap.");
-        
-        const btn = document.getElementById('execute-btn'); btn.innerText = "ROUTING SECURE PAYLOAD...";
-        const tokenIn = isWaxToSkate ? 'wax-eosio.token' : 'skate-skatecoinwax'; const tokenOut = isWaxToSkate ? 'skate-skatecoinwax' : 'wax-eosio.token';
-        const formattedAmtIn = isWaxToSkate ? amtIn.toFixed(8) : amtIn.toFixed(4); const recipient = currentSession.actor.toString();
+                html += `
+                <div style="background: rgba(0,0,0,0.6); border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: inset 0 0 20px ${glowColor};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; gap: 10px;">
+                        <div style="font-family:'Orbitron'; font-weight:900; font-size:1.1rem; color:#ccc; line-height: 1.4;">${p.title}</div>
+                        <div style="flex-shrink: 0;">${statusBadge}</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Inter'; font-size:0.75rem; color:#888; border-top: 1px dashed #333; padding-top: 12px;">
+                        <div>By: <span style="color:#aaa; font-family: 'Orbitron';">${p.proposer}</span></div>
+                        <div style="font-family:'Orbitron'; font-weight: 900;"><span style="color:#00ffaa;">Y: ${p.yesWeight}</span> / <span style="color:var(--accent-pink);">N: ${p.noWeight}</span></div>
+                    </div>
+                </div>`;
+            });
+        }
+        list.innerHTML = html;
+    }
 
-        try {
-            const routeUrl = `https://wax.alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&input=${tokenIn}&output=${tokenOut}&amount=${formattedAmtIn}&slippage=${currentSlippage}&receiver=${recipient}&maxHops=2`;
-            const res = await fetch(routeUrl); const routeData = await res.json();
-            
-            if (!routeData || !routeData.memo) { btn.innerText = "EXECUTE DECENTRALIZED SWAP"; return showErrorModal("Routing Error: Liquidity pool may be too shallow for this exact trade size."); }
-            if (parseFloat(routeData.priceImpact) > 5) { const proceed = confirm(`⚠️ HIGH PRICE IMPACT DETECTED (${routeData.priceImpact}%).\nThe pool liquidity is low. Proceed?`); if(!proceed) { btn.innerText = "EXECUTE DECENTRALIZED SWAP"; return; } }
-
-            const tokenContract = isWaxToSkate ? 'eosio.token' : 'skatecoinwax';
-            const quantity = isWaxToSkate ? `${formattedAmtIn} WAX` : `${formattedAmtIn} SKATE`;
-
-            const actions = [{ account: tokenContract, name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: recipient, to: 'swap.alcor', quantity: quantity, memo: routeData.memo } }];
-            await currentSession.transact({ actions });
-            showSuccessModal("🔥 DECENTRALIZED SWAP SECURED 🔥", "Your trade was executed successfully.");
-            document.getElementById('swap-in').value = ""; document.getElementById('swap-out').value = ""; document.getElementById('swap-usd-value').innerText = "(≈ $0.00 USD)"; updateBalances(recipient);
-        } catch(e) { console.error(e); showErrorModal("Swap Transaction Failed or Cancelled by User."); }
-        btn.innerText = "EXECUTE DECENTRALIZED SWAP";
-    };
-
-    window.executeOnChainProposal = async () => {
-        if (!currentSession) return toggleAuthModal();
-        const title = document.getElementById('bill-proposal-title').value.trim(); const desc = document.getElementById('bill-proposal-desc').value.trim();
-        if (!title || !desc) return showErrorModal("Error: Proposal title and description cannot be empty.");
-        
-        const feeAmount = (1000).toFixed(4) + " SKATE"; const sender = currentSession.actor.toString();
-        const memoData = JSON.stringify({ sk8dao: "v1", action: "propose", title: title.substring(0, 30), desc: desc.substring(0, 100) });
-        
-        try {
-            const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: feeAmount, memo: memoData } }];
-            await currentSession.transact({ actions });
-            showSuccessModal("📜 PROPOSAL INITIATED 📜", "Your 1,000 $SKATE draft fee has been processed.");
-            document.getElementById('bill-proposal-title').value = ''; document.getElementById('bill-proposal-desc').value = ''; document.getElementById('draft-motion-modal').style.display = 'none';
-            refreshDAODashboard(); updateBalances(sender); fetchTreasuryData();
-        } catch(e) { console.error(e); showErrorModal("Transaction aborted or rejected."); }
-    };
-
-window.executeOnChainVote = async (motionId, stance, weight) => {
+    window.executeOnChainVote = async (motionId, stance, weight) => {
         if (!currentSession) return toggleAuthModal();
         
-        // 1-1 Ratio Enforced: The contract strictly deducts 1 SKATE for 1 Vote.
         const fixedWeight = 1;
         const sender = currentSession.actor.toString();
         
@@ -1685,28 +1545,14 @@ window.executeOnChainVote = async (motionId, stance, weight) => {
             const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: voteCost, memo: voteMemo } }];
             await currentSession.transact({ actions });
             
-            // --- OPTIMISTIC UI & LOCALSTORAGE WRITE ---
+            // Poll for chain updates natively, bypassing local storage completely
+            setTimeout(() => {
+                refreshDAODashboard(); 
+                updateBalances(sender); 
+                fetchTreasuryData();
+            }, 2500); 
             
-            // 1. Permanently record the vote in the browser's local cache
-            localStorage.setItem(`sk8vote_${sender}_${motionId}`, stance.toUpperCase());
-
-            // 2. Find the specific motion in the frontend's local memory
-            const motion = activeProposals.find(p => p.id === motionId);
-            if (motion) {
-                // Instantly inject the 1 vote into the local tally
-                if (stance.toUpperCase() === 'YES') motion.yesWeight += 1;
-                if (stance.toUpperCase() === 'NO') motion.noWeight += 1;
-                // Locally mark this wallet address as having voted
-                motion.voters.add(sender); 
-            }
-            
-            // 3. Instantly redraw the voting floor using the local data. 
-            renderDAOList(); 
-            
-            updateBalances(sender); 
-            fetchTreasuryData();
-            
-            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged 1 vote for ${stance}. The network is syncing your vote in the background.`);
+            showSuccessModal("🗳️ ON-CHAIN VOTE CAST 🗳️", `Successfully logged 1 vote for ${stance}. The blockchain is indexing your vote now.`);
         } catch(e) { 
             console.error(e); 
             showErrorModal("Voting transaction aborted."); 
