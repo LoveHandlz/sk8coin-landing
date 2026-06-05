@@ -1599,12 +1599,12 @@ if (allActions.length > 0) {
             btnPro.innerText = 'PRO DONATION 100000';
             btnPro.onclick = () => selectTier(100000);
         } else {
-            btnFlow.innerText = 'FLOW DONATION 0.01';
-            btnFlow.onclick = () => selectTier(0.01);
-            btnAmateur.innerText = 'AMATEUR DONATION 0.05'; btnAmateur.onclick = () => selectTier(0.05);
-            btnPro.innerText = 'PRO DONATION 0.1';
-            btnPro.onclick = () => selectTier(0.1);
-        }
+    btnFlow.innerText = 'FLOW DONATION 100';
+    btnFlow.onclick = () => selectTier(100);
+    btnAmateur.innerText = 'AMATEUR DONATION 1000'; btnAmateur.onclick = () => selectTier(1000);
+    btnPro.innerText = 'PRO DONATION 10000';
+    btnPro.onclick = () => selectTier(10000);
+}
         document.getElementById('donation-tier-modal').style.display = 'flex';
         document.getElementById('custom-donate-amt').value = '';
     };
