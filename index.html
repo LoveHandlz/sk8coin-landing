@@ -2317,8 +2317,10 @@ if (allActions.length > 0) {
         if (!append) grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #00ffaa; font-family: 'Orbitron'; font-weight: 900;">SCANNING VAULT...</h3>`;
 
         try {
-            // Pull 12 NFTs as requested
-            const res = await fetch(`https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=skatecoinwax&schema_name=crypto.clips&owner=${user}&page=${currentTrickbagPage}&limit=12`);
+           
+            // Apply blacklist and pull exactly 12 valid NFTs
+            const blacklist = "81874,82474,109884,120569,120614,120626,120638,121256,128399,128465,128477,176471,176507,224612,225741,225742,231577,232865,391737,411514,411742,439353,443345,649641,659833,659852,3240371";
+            const res = await fetch(`https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=skatecoinwax&schema_name=crypto.clips&owner=${user}&page=${currentTrickbagPage}&limit=12&template_blacklist=${blacklist}`);
             const json = await res.json();
             
             if (json.success) {
