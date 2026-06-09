@@ -359,6 +359,39 @@
     </div>
 </div>
 
+    <!-- TRICK BAG MODAL -->
+<div id="trickbag-modal" class="modal-overlay">
+    <div class="modal-content" style="border-color: #00ffaa; max-width: 450px; box-shadow: 0 0 30px rgba(0,255,170,0.15);">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:#00ffaa; margin-bottom: 10px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px;">THE TRICK BAG</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 25px;">Your personal stash of raw footy. Enter the vault to filter and review your crypto.clips.</p>
+        <button class="wallet-btn" onclick="document.getElementById('trickbag-modal').style.display='none'; switchCategory('trickbag'); return false;" style="width: 100%; background: #00ffaa; color: #000; padding: 15px; font-size: 1.1rem;">OPEN VAULT</button>
+        <button onclick="closeModals()" style="background:transparent; color:#888; border:none; margin-top:20px; cursor:pointer; font-family:'Orbitron'; font-weight: 900; font-size: 0.75rem; transition: 0.2s;">[ ZIP IT UP ]</button>
+    </div>
+</div>
+
+<!-- TRICK BAG DASHBOARD WRAPPER -->
+<div class="dashboard-wrapper" id="trickbag-wrapper" style="display: none;">
+    <h2 style="text-align: center; color: #00ffaa; font-family: 'Orbitron'; font-weight: 900; font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 3px; margin-top: 0; text-shadow: 0 0 20px rgba(0,255,170,0.3);">THE TRICK BAG</h2>
+    
+    <!-- Filter HUD -->
+    <div style="background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 25px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+        <select id="filter-trick" onchange="renderTrickbagGrid()" style="background: #000; color: #fff; border: 1px solid #555; padding: 10px; font-family: 'Orbitron'; font-size: 0.8rem; outline: none; flex: 1; min-width: 120px;"><option value="ALL">ALL TRICKS</option></select>
+        <select id="filter-skater" onchange="renderTrickbagGrid()" style="background: #000; color: #fff; border: 1px solid #555; padding: 10px; font-family: 'Orbitron'; font-size: 0.8rem; outline: none; flex: 1; min-width: 120px;"><option value="ALL">ALL SKATERS</option></select>
+        <select id="filter-series" onchange="renderTrickbagGrid()" style="background: #000; color: #fff; border: 1px solid #555; padding: 10px; font-family: 'Orbitron'; font-size: 0.8rem; outline: none; flex: 1; min-width: 120px;"><option value="ALL">ALL SERIES</option></select>
+        <select id="filter-rarity" onchange="renderTrickbagGrid()" style="background: #000; color: #fff; border: 1px solid #555; padding: 10px; font-family: 'Orbitron'; font-size: 0.8rem; outline: none; flex: 1; min-width: 120px;"><option value="ALL">ALL RARITIES</option></select>
+    </div>
+
+    <!-- Clip Grid -->
+    <div class="dashboard-grid" id="trickbag-grid">
+        <h3 style="grid-column: 1/-1; text-align: center; color: #00ffaa; font-family: 'Orbitron'; font-weight: 900;">SCANNING VAULT...</h3>
+    </div>
+    
+    <!-- Load More -->
+    <div id="trickbag-load-more" style="display: none; text-align: center; margin-top: 40px;">
+        <button class="wallet-btn" onclick="loadMoreTrickbag()" style="background: transparent; border: 1px solid #00ffaa; color: #00ffaa;">▼ LOAD MORE CLIPS ▼</button>
+    </div>
+</div>
+
  <div id="trunk-modal" class="modal-overlay">
     <div class="modal-content cyber-yellow-frame" style="max-width: 450px;">
         <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); margin-bottom: 10px; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 2px;">THE TRUNK</h2>
@@ -583,8 +616,11 @@
     </div>
 
     <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 50px; flex-wrap: wrap;">
-       <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto;">🚗 OPEN TRUNK</button>
-        <button class="master-dash-btn" onclick="document.getElementById('lunchbox-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto; border-color: var(--accent-pink); color: var(--accent-pink); box-shadow: inset 0 0 10px rgba(255,0,85,0.2);">🍱 OPEN LUNCH BOX</button>
+     <button class="master-dash-btn gold cyber-yellow-frame" onclick="document.getElementById('trunk-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto;">🚗 OPEN TRUNK</button>
+     <button class="master-dash-btn" onclick="document.getElementById('lunchbox-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto; border-color: var(--accent-pink); color: var(--accent-pink); box-shadow: inset 0 0 10px rgba(255,0,85,0.2);">🍱 OPEN LUNCH BOX</button>
+     <button class="master-dash-btn" onclick="document.getElementById('trickbag-modal').style.display='flex';" style="font-size: 1.2rem; padding: 20px 50px; width: auto; border-color: #00ffaa; color: #00ffaa; box-shadow: inset 0 0 10px rgba(0,255,170,0.2);">🎒 TRICK BAG</button>
+        
+    
     </div>
 
     <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent-gold); border-radius: 8px; padding: clamp(20px, 4vw, 40px); max-width: 900px; margin: 0 auto; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.5);">
@@ -2251,6 +2287,149 @@ if (allActions.length > 0) {
 
     // Run the function after a slight delay to ensure all DOM elements are fully loaded
     setTimeout(attachHoverSounds, 1000);
+
+   // --- TRICK BAG SYSTEM ---
+    let currentTrickbagPage = 1;
+    let trickbagAssets = []; // Stores loaded clips for instant filtering
+
+    // Safe injection into your existing router without changing old code
+    const originalSwitchCategoryForTrickBag = window.switchCategory;
+    window.switchCategory = (schema, fromBack = false) => {
+        const tbWrapper = document.getElementById('trickbag-wrapper');
+        if(tbWrapper) tbWrapper.style.display = 'none'; // Hide it initially
+        
+        originalSwitchCategoryForTrickBag(schema, fromBack); // Run your exact original code safely
+        
+        if (schema === 'trickbag') {
+            if(tbWrapper) tbWrapper.style.display = 'block'; // Show our new dashboard
+            if(currentSession) {
+                currentTrickbagPage = 1;
+                trickbagAssets = [];
+                fetchTrickbag(currentSession.actor.toString());
+            }
+        }
+    };
+
+    // Fetch Crypto Clips from blockchain
+    window.fetchTrickbag = async (user, append = false) => {
+        const grid = document.getElementById('trickbag-grid');
+        const loadBtn = document.getElementById('trickbag-load-more');
+        if (!append) grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #00ffaa; font-family: 'Orbitron'; font-weight: 900;">SCANNING VAULT...</h3>`;
+
+        try {
+            // Pull 12 NFTs as requested
+            const res = await fetch(`https://wax.api.atomicassets.io/atomicassets/v1/assets?collection_name=skatecoinwax&schema_name=crypto.clips&owner=${user}&page=${currentTrickbagPage}&limit=12`);
+            const json = await res.json();
+            
+            if (json.success) {
+                if (!append) trickbagAssets = [];
+                
+                // Add to our local array
+                json.data.forEach(nft => trickbagAssets.push(nft));
+                
+                updateTrickbagFilters();
+                renderTrickbagGrid();
+                
+                // Show Load More if we hit exactly 12
+                if (json.data.length === 12) loadBtn.style.display = 'block';
+                else loadBtn.style.display = 'none';
+            }
+        } catch (e) {
+            if (!append) grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #ff3366; font-family: 'Orbitron'; font-weight: 900;">NETWORK ERROR</h3>`;
+        }
+    };
+
+    window.loadMoreTrickbag = () => {
+        if (!currentSession) return;
+        currentTrickbagPage++;
+        fetchTrickbag(currentSession.actor.toString(), true);
+    };
+
+    // Update the Dropdowns automatically based on what we just loaded
+    function updateTrickbagFilters() {
+        const tricks = new Set(); const skaters = new Set(); const series = new Set(); const rarities = new Set();
+        
+        trickbagAssets.forEach(n => {
+            tricks.add(MetaParser.getString(n, 'trick', 'UNKNOWN'));
+            skaters.add(MetaParser.getString(n, 'skater', 'UNKNOWN'));
+            series.add(MetaParser.getString(n, 'series', 'UNKNOWN'));
+            rarities.add(MetaParser.getString(n, 'rarity', 'SPECIAL EDITION'));
+        });
+
+        const populateSelect = (id, set, defaultText) => {
+            const sel = document.getElementById(id);
+            const currentVal = sel.value;
+            sel.innerHTML = `<option value="ALL">${defaultText}</option>` + 
+                Array.from(set).sort().map(item => `<option value="${item}">${item}</option>`).join('');
+            if(set.has(currentVal)) sel.value = currentVal; // Keep their choice if they clicked load more
+        };
+
+        populateSelect('filter-trick', tricks, 'ALL TRICKS');
+        populateSelect('filter-skater', skaters, 'ALL SKATERS');
+        populateSelect('filter-series', series, 'ALL SERIES');
+        populateSelect('filter-rarity', rarities, 'ALL RARITIES');
+    }
+
+    // Draw the Grid and apply Color logic
+    window.renderTrickbagGrid = () => {
+        const grid = document.getElementById('trickbag-grid');
+        const fTrick = document.getElementById('filter-trick').value;
+        const fSkater = document.getElementById('filter-skater').value;
+        const fSeries = document.getElementById('filter-series').value;
+        const fRarity = document.getElementById('filter-rarity').value;
+
+        // Apply chosen filters
+        const filtered = trickbagAssets.filter(n => {
+            if (fTrick !== 'ALL' && MetaParser.getString(n, 'trick', 'UNKNOWN') !== fTrick) return false;
+            if (fSkater !== 'ALL' && MetaParser.getString(n, 'skater', 'UNKNOWN') !== fSkater) return false;
+            if (fSeries !== 'ALL' && MetaParser.getString(n, 'series', 'UNKNOWN') !== fSeries) return false;
+            if (fRarity !== 'ALL' && MetaParser.getString(n, 'rarity', 'SPECIAL EDITION') !== fRarity) return false;
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #888; font-family: 'Orbitron'; font-weight: 900;">NO CLIPS MATCH THIS FILTER</h3>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(n => {
+            const name = n.name || 'RAW CLIP';
+            const trick = MetaParser.getString(n, 'trick', 'UNKNOWN');
+            const skater = MetaParser.getString(n, 'skater', 'UNKNOWN');
+            const seriesData = MetaParser.getString(n, 'series', 'UNKNOWN');
+            const rarity = MetaParser.getString(n, 'rarity', 'SPECIAL EDITION');
+            const img = MetaParser.getImg(n);
+            const mint = n.template_mint || 'N/A';
+
+            // Custom Rarity Color Logic
+            let colorHex = "#ffffff"; // Default (Special Edition / NA)
+            const rClean = rarity.toLowerCase();
+            if (rClean === 'common') colorHex = "#ff0000";         // Red
+            else if (rClean === 'sketch') colorHex = "#00ff00";    // Green
+            else if (rClean === 'cartoon') colorHex = "#00bfff";   // Blue (using a bright cyan-blue to match your site)
+            else if (rClean === 'gltch') colorHex = "#ffff00";     // Yellow
+
+            return `
+            <div class="skate-card" style="border-color: ${colorHex}; box-shadow: inset 0 0 15px ${colorHex}20;">
+                <div class="rarity-header" style="border-bottom: 1px solid ${colorHex}; background: rgba(0,0,0,0.5);">
+                    <div class="mint-badge" style="color: ${colorHex}; border-color: ${colorHex}; text-shadow: 0 0 5px ${colorHex};">#${mint}</div>
+                    <div class="rarity-header-text" style="color: ${colorHex}; text-shadow: 0 0 5px ${colorHex};">${rarity}</div>
+                </div>
+                <div class="img-wrap" style="height: 250px; background: #000; display:flex; align-items:center; justify-content:center;">
+                    <img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 95%; max-width: 95%; object-fit: contain;">
+                </div>
+                <div class="card-body" style="padding: 15px;">
+                    <div class="board-name" style="color: ${colorHex}; font-size: 1.1rem; margin-bottom: 10px;">${name}</div>
+                    <div style="background: rgba(0,0,0,0.6); padding: 10px; border: 1px dashed #444; border-radius: 4px;">
+                        <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom:6px;">TRICK <span style="color:#fff">${trick}</span></div>
+                        <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.6rem; color:#888; margin-bottom:6px;">SKATER <span style="color:#fff">${skater}</span></div>
+                        <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:0.6rem; color:#888;">SERIES <span style="color:#fff">${seriesData}</span></div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    };
+    
 </script>
 </body>
 </html>
