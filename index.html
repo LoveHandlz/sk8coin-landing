@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> sk8coin | sk8dao v2.6.9 </title>
+    <title> sk8coin | sk8dao v3.0.0 </title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
@@ -890,6 +890,13 @@
     <div id="Industry-products-dashboard" style="max-width: 1100px; margin: 0 auto 40px auto;">
         <h3 style="color: var(--accent-gold); font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; text-align: center; letter-spacing: 2px; margin-bottom: 25px; border-bottom: 1px dashed var(--accent-gold); padding-bottom: 15px;">PHYSICAL PRODUCTS DIRECTORY</h3>
         <div class="brand-grid">
+            
+            <div class="brand-card" onclick="openBrandModal('WAX ARTIST COLLABS')">
+    <div class="brand-name">WAX ARTIST COLLABS</div>
+    <div class="brand-status">Physical Products</div>
+    <div style="font-size: 0.6rem; color: #555; margin-top: 10px; font-family: 'Orbitron';">CLICK TO INSPECT</div>
+</div>
+            
             <div class="brand-card" onclick="openBrandModal('DGK')">
                 <div class="brand-name">DGK</div>
                 <div class="brand-status">Physical Products</div>
@@ -1069,6 +1076,201 @@
     </div>
 </div>
 
+        <!-- ========================================== -->
+<!-- 🛑 START OF WAX COLLAB WEB3 SHOP 🛑        -->
+<!-- ========================================== -->
+<div class="dashboard-wrapper" id="web3-shop-wrapper" style="display: none;">
+    <div style="width: 100%;">
+        
+       <div style="background: rgba(0, 0, 0, 0.9); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-cyan); border-radius: 15px 15px 0 0; flex-wrap: wrap; gap: 10px;">
+    <h1 style="margin: 0; font-family: 'Orbitron'; font-weight: 900; font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--accent-cyan); text-transform: lowercase; letter-spacing: 2px;">sk8shop<span>.</span></h1>
+    
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        
+        <!-- CART BUTTON -->
+        <button onclick="window.toggleModal('cart-modal', true)" class="wallet-btn" style="background: var(--accent-gold); color: #000;">
+            🛒 CART (<span id="cart-count">0</span>)
+        </button>
+
+       
+    </div>
+</div>
+        
+        <div style="padding: 20px;">
+           <section id="admin-panel" class="cyber-yellow-frame" style="display: none; background: var(--bg-panel); border-radius: 12px; padding: 25px; margin-bottom: 40px;">
+                <div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: clamp(20px, 4vw, 40px);">
+                    <div>
+                        <h2 style="font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; color: var(--accent-cyber-yellow); letter-spacing: 1px;">⚡ SHOP ADMIN TERMINAL</h2>
+                        <p class="text-xs text-zinc-400 mt-1 font-mono">Authenticated as: <span id="admin-wallet-display" class="text-zinc-200"></span></p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="window.exportToIPFS()" class="wallet-btn" style="background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.85rem;">
+                            💾 EXPORT JSON
+                        </button>
+                        <button onclick="window.openAddModal()" class="wallet-btn" style="background: var(--accent-cyan); color: #000; font-size: 0.85rem;">
+                            + INJECT NEW INVENTORY
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div id="category-tabs-container" style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;"></div>
+                
+                <div id="products-grid" class="dashboard-grid" style="grid-template-columns: repeat(4, 1fr);"></div>
+                
+                <div id="load-more-container" class="mt-12 flex justify-center hidden">
+                    <button onclick="window.expandFeed()" class="wallet-btn" style="background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan);">
+                        ▼ LOAD MORE COMPONENTS ▼
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<div id="product-detail-modal" class="modal-overlay" style="z-index: 2010;">
+    <div class="modal-content" style="max-width: 500px; border-color: var(--accent-cyan);">
+        <div id="detail-modal-content" class="text-left"></div>
+    </div>
+</div>
+
+<div id="cart-modal" class="modal-overlay" style="z-index: 2010;">
+    <div class="modal-content" style="max-width: 450px; border-color: var(--accent-gold);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+            <h3 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-gold); font-size: 1.5rem; letter-spacing: 2px; margin: 0;">SHOPPING CART</h3>
+            <button onclick="window.toggleModal('cart-modal', false)" style="background: transparent; border: none; color: #888; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 0;">&times;</button>
+        </div>
+        
+        <div id="cart-items-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Items injected by JS -->
+        </div>
+        
+        <div style="border-top: 1px solid #333; padding-top: 20px; text-align: left; display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem;">
+                <span style="color: #ccc;">TOTAL COST:</span>
+                <span style="color: var(--accent-cyan);"><span id="cart-total-price">0</span> SKATE</span>
+            </div>
+            <button onclick="window.openShippingModal()" id="checkout-next-btn" class="wallet-btn" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px;">
+                PROCEED TO SHIPPING
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="shipping-modal" class="modal-overlay" style="z-index: 2010;">
+    <div class="modal-content" style="max-width: 500px; border-color: var(--accent-pink);">
+        <h2 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); margin-bottom: 10px; font-size: 1.5rem; letter-spacing: 2px; margin-top: 0;">SHIPPING PROTOCOL</h2>
+        <p style="color: #ccc; font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px; text-align: left;">Secure your logistics off-chain before signing the transaction.</p>
+        
+        <div style="margin-bottom: 25px; text-align: left;">
+            <div style="background: rgba(0,0,0,0.6); border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <ol style="margin: 0; padding-left: 20px; color: #aaa; font-size: 0.85rem; font-family: 'Inter'; line-height: 1.8;">
+                    <li>Fill out the secure manifest below.</li>
+                    <li>Submit your coordinates.</li>
+                    <li>Click "PAY WITH SKATE" to execute the on-chain transfer.</li>
+                </ol>
+            </div>
+            <div style="width: 100%; height: 400px; overflow: hidden; border-radius: 8px; border: 1px solid var(--accent-cyber-yellow); background: #fff;">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeVslg2A5LvTrT_NYUTpN5DBRIrOfCkprRyHDKQagmg60XTsA/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+            </div>
+        </div>
+        
+        <div style="border-top: 1px solid #333; padding-top: 20px; display: flex; gap: 15px;">
+            <button onclick="window.backToCart()" class="wallet-btn" style="flex: 1; background: transparent; border: 1px solid #888; color: #888;">BACK</button>
+            <button onclick="window.executeSkatePayment()" class="wallet-btn" style="flex: 2; background: var(--accent-cyan); color: #000;">PAY WITH SKATE</button>
+        </div>
+    </div>
+</div>
+
+<div id="remove-category-modal" class="modal-overlay" style="z-index: 2020;">
+    <div class="modal-content" style="max-width: 400px; background: #050a1a; border-color: var(--accent-pink);">
+        <div class="flex justify-between items-center mb-4 border-b border-zinc-800 pb-3">
+            <h3 style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-pink); font-size: 1.2rem;">REMOVE CATEGORY</h3>
+            <button onclick="window.toggleModal('remove-category-modal', false)" class="text-zinc-500 hover:text-white text-xl font-bold cursor-pointer">&times;</button>
+        </div>
+        <form id="remove-category-form" onsubmit="window.handleRemoveCategory(event)" class="space-y-4 text-left">
+            <div>
+                <label class="block text-zinc-400 mb-1 font-mono text-xs">SELECT CATEGORY TO DELETE</label>
+                <select id="remove-category-select" required class="shop-input py-3"></select>
+            </div>
+            <button type="submit" class="wallet-btn" style="width: 100%; background: var(--accent-pink); color: #000; padding: 15px; margin-top: 5px;">DELETE CATEGORY</button>
+        </form>
+    </div>
+</div>
+
+<div id="add-item-modal" class="modal-overlay" style="z-index: 2020;">
+    <div class="modal-content cyber-yellow-frame" style="max-width: 550px; background: #050a1a;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+            <h3 id="add-edit-modal-title" style="font-family:'Orbitron'; font-weight: 900; color:var(--accent-cyber-yellow); font-size: 1.4rem; margin: 0; letter-spacing: 1px;">INJECT INVENTORY</h3>
+            <button onclick="window.toggleModal('add-item-modal', false)" style="background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.2s;">&times;</button>
+        </div>
+        
+        <form id="add-item-form" onsubmit="window.handleAddItem(event)" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            
+            <div>
+                <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">COMPONENT TITLE</label>
+                <input type="text" id="form-title" required style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+            </div>
+            
+            <div>
+                <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">SPECIFICATIONS</label>
+                <textarea id="form-desc" required rows="2" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">$SKATE PRICE</label>
+                    <input type="text" id="form-price" required placeholder="e.g. 2,500.00" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                </div>
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">CATEGORY</label>
+                    <select id="form-category" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';"></select>
+                </div>
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">MEDIA FORMAT</label>
+                    <select id="form-media-type" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                        <option value="image">IPFS Image</option>
+                        <option value="video">IPFS Video</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">CID / SOURCE URL</label>
+                <input type="text" id="form-media-url" required placeholder="https://ipfs.io/ipfs/..." style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+            </div>
+            
+            <div style="background: rgba(255,0,85,0.05); border: 1px solid var(--accent-pink); border-radius: 8px; padding: 15px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-family: 'Orbitron'; font-weight: 900; color: var(--accent-pink); font-size: 0.9rem;">🔒 TOKEN GATE ITEM</span>
+                    <input type="checkbox" id="form-is-gated" onchange="window.toggleGateFields()" style="transform: scale(1.5); accent-color: var(--accent-pink); cursor: pointer; margin-right: 5px;">
+                </div>
+                
+                <div id="gate-fields-container" style="display: none; flex-direction: column; gap: 12px; margin-top: 15px; border-top: 1px dashed var(--accent-pink); padding-top: 15px;">
+                    <div>
+                        <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">WAX TEMPLATE ID REQUIRED</label>
+                        <input type="text" id="form-gate-template" placeholder="e.g. 123456" style="width: 100%; background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                    </div>
+                    <div>
+                        <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">OR REQUIRED DECK TRAIT</label>
+                        <input type="text" id="form-gate-trait" placeholder="e.g. Sovereign Deck v1" style="width: 100%; background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                    </div>
+                    <div>
+                        <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">MARKETPLACE PURCHASE LINK</label>
+                        <input type="text" id="form-gate-link" placeholder="https://wax.atomichub.io/market..." style="width: 100%; background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                    </div>
+                </div>
+            </div>
+            
+            <button id="add-edit-submit-btn" type="submit" class="wallet-btn" style="width: 100%; background: var(--accent-cyber-yellow); color: #000; padding: 15px; margin-top: 10px; font-size: 1.1rem; border-radius: 4px;">DEPLOY TO LEDGER</button>
+        </form>
+    </div>
+</div>
+<!-- ========================================== -->
+<!-- 🛑 END OF WAX COLLAB WEB3 SHOP 🛑          -->
+<!-- ========================================== -->
+
 <footer>
     <div class="footer-inner">
         <div class="footer-brand">POWERED BY DECENTRALIZED PROTOCOLS <br>© 2026 <span>SK8DAO</span> / SK8 PROTOCOL</div>
@@ -1078,6 +1280,9 @@
         </div>
     </div>
 </footer>
+    
+
+    
 <script type="module">
     import { SessionKit } from 'https://esm.sh/@wharfkit/session?bundle';
     import { WebRenderer } from 'https://esm.sh/@wharfkit/web-renderer?bundle';
@@ -1140,6 +1345,18 @@
     let waxUsdPrice = 0.045; 
     let skatePerWax = 7.6897; 
     let sWax = 1 / skatePerWax;
+
+   // === UNIFIED WALLET BUTTON SYNC ===
+window.syncAllWalletButtons = function(session) {
+    const mainBtn = document.getElementById('connect-btn');
+    
+    if (session) {
+        const actorName = session.actor.toString().toUpperCase();
+        if (mainBtn) mainBtn.innerText = actorName;
+    } else {
+        if (mainBtn) mainBtn.innerText = 'CONNECT';
+    }
+};
     
     window.currentUserMaxVotes = 0; 
 
@@ -1162,6 +1379,21 @@
     window.openBrandModal = (brandName) => {
         closeModals();
         document.getElementById('brand-modal-title').innerText = brandName;
+        
+        const desc = document.getElementById('brand-modal-desc');
+        const enterBtn = document.querySelector('#brand-detail-modal .wallet-btn');
+
+        if (brandName === 'WAX ARTIST COLLABS') {
+            desc.innerText = "Deploy $SKATE liquidity tokens for direct real-world custom deck fulfillment. Token-gated checks active.";
+            enterBtn.onclick = () => {
+    closeModals();
+    switchCategory('web3shop'); window.scrollTo(0,0);
+};
+        } else {
+            desc.innerText = "Brand transmission locked. Decrypting protocol data...";
+            enterBtn.onclick = openStoreComingSoon;
+        }
+        
         document.getElementById('brand-detail-modal').style.display = 'flex';
     };
 
@@ -1811,11 +2043,23 @@ if (allActions.length > 0) {
         }
     };
 
-    // --- INITIALIZATION & STATE RECOVERY ---
+   // --- INITIALIZATION & STATE RECOVERY ---
     sessionKit.restore().then(s => { 
         const initialHash = window.location.hash.replace('#', '') || 'home';
-        if (s) { currentSession = s; document.getElementById('connect-btn').innerText = s.actor.toString().toUpperCase(); updateBalances(s.actor.toString()); switchCategory(initialHash); 
-        } else { document.getElementById('vip-ticket-modal').style.display = 'flex'; }
+        if (s) { 
+            currentSession = s; 
+            
+            // FIRE THE UNIFIED SYNC: Updates Main Nav & Shop instantly
+            window.syncAllWalletButtons(s); 
+            
+            updateBalances(s.actor.toString()); 
+            switchCategory(initialHash); 
+        } else { 
+            // ENSURE DEFAULT STATE: Sets everything back to "Connect"
+            window.syncAllWalletButtons(null);
+            
+            document.getElementById('vip-ticket-modal').style.display = 'flex'; 
+        }
     });
 
     // --- STATE SWITCHING ENGINE ---
@@ -1832,7 +2076,7 @@ if (allActions.length > 0) {
         document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
         if(document.getElementById(`nav-${schema}`)) document.getElementById(`nav-${schema}`).classList.add('active');
         
-        const wrappers = ['home-wrapper', 'inventory-wrapper', 'builder-wrapper', 'leaderboard-container', 'clips-wrapper', 'defi-wrapper', 'treasury-wrapper', 'dao-wrapper', 'sk8shop-wrapper', 'incinerator-wrapper', 'lunchbox-wrapper'];
+        const wrappers = ['home-wrapper', 'inventory-wrapper', 'builder-wrapper', 'leaderboard-container', 'clips-wrapper', 'defi-wrapper', 'treasury-wrapper', 'dao-wrapper', 'sk8shop-wrapper', 'incinerator-wrapper', 'lunchbox-wrapper', 'web3-shop-wrapper'];
         wrappers.forEach(w => { const el = document.getElementById(w); if(el) el.style.display = 'none'; });
 
         if (schema === 'home') { document.getElementById('home-wrapper').style.display = 'block';
@@ -1852,6 +2096,8 @@ if (allActions.length > 0) {
      } else if (schema === 'incinerator') { document.getElementById('incinerator-wrapper').style.display = 'block'; window.fetchBurnableInventory();
         } else if (schema === 'lunchbox') { document.getElementById('lunchbox-wrapper').style.display = 'block'; if (currentSession) fetchLunchbox(currentSession.actor.toString());
         } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
+        } else if (schema === 'sk8shop') { document.getElementById('sk8shop-wrapper').style.display = 'block';
+        } else if (schema === 'web3shop') { document.getElementById('web3-shop-wrapper').style.display = 'block';                                  
         } else { document.getElementById('inventory-wrapper').style.display = 'block'; if (currentSession) fetchInventory(currentSession.actor.toString()); }
     };
 
@@ -2439,6 +2685,291 @@ if (allActions.length > 0) {
                 </div>
             </div>`;
         }).join('');
+    };
+    
+ // ==========================================
+    // 🟢 WAX COLLAB WEB3 SHOP ENGINE 🟢
+    // ==========================================
+    const GLOBAL_IPFS_CID = "bafkreifmyx4slnwvkrrm6f7v4vwgcm5s2c6xcsgu3aohf5xuuclggzmrgy"; 
+    const STORAGE_KEY = 'sk8shop_inventory_master'; 
+    const shopAdminWallets = ["ufuau.wam", "skatecoinwax"];
+    let cart = [];
+    let itemsLimit = 12; 
+    let editingItemId = null; 
+    let currentShopCategory = 'ALL'; 
+    window.shopCategories = ['DECKS']; 
+
+    const seedInventory = [{ 
+        id: 1, title: "Sovereign Deck v1", desc: "Hard rock maple featuring holographic laser-etched design parameters. *REQUIRES FOUNDER BADGE TO PURCHASE.*", price: 2500, type: "image", category: "DECKS", src: "https://images.unsplash.com/photo-1547447134-cd3f5c716030?auto=format&fit=crop&w=500&q=80", isGated: true, gateTemplateId: "123456", gateDeckTrait: "Sovereign Deck v1", gateLink: "https://wax.atomichub.io/market?collection_name=skatecoinwax" 
+    }];
+
+    const hydrateInventory = (dataArray) => {
+        return dataArray.map(item => { if (!item.category) item.category = "DECKS"; return item; });
+    };
+
+    window.extractCategories = () => {
+        const uniqueCats = new Set(['DECKS']);
+        window.mockInventory.forEach(item => { if (item.category) uniqueCats.add(item.category.toUpperCase().trim()); });
+        window.shopCategories = Array.from(uniqueCats);
+    };
+
+    window.initShopData = async () => {
+        let finalInventoryData = seedInventory; let loadedFromIPFS = false;
+        if (GLOBAL_IPFS_CID) {
+            try { const res = await fetch(`https://ipfs.io/ipfs/${GLOBAL_IPFS_CID}`); if (res.ok) { finalInventoryData = await res.json(); loadedFromIPFS = true; } } catch(e) {}
+        }
+        if (!loadedFromIPFS) {
+            const savedInvData = localStorage.getItem(STORAGE_KEY); if (savedInvData) finalInventoryData = JSON.parse(savedInvData);
+        }
+        window.mockInventory = hydrateInventory(finalInventoryData);
+        window.extractCategories(); evaluateShopAdminStatus(); window.renderCategoryTabs(); window.updateCategoryDropdown(); window.renderShopGrid();
+    };
+
+    window.initShopData();
+
+    function saveInventoryState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(window.mockInventory)); }
+
+    window.exportToIPFS = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.mockInventory, null, 2));
+        const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "sk8shop_inventory.json");
+        document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
+    };
+
+   function evaluateShopAdminStatus() {
+        const actorName = currentSession ? currentSession.actor.toString() : null;
+        const isAdmin = actorName && shopAdminWallets.includes(actorName);
+        const panel = document.getElementById("admin-panel"); 
+        const display = document.getElementById("admin-wallet-display");
+        
+        if (isAdmin && panel) { 
+            panel.style.display = "block"; 
+            if (display) display.innerText = actorName; 
+        } else if (panel) { 
+            panel.style.display = "none"; 
+        }
+    }
+
+    // Automatically check for Shop Admin status if the user logs in using your normal site button
+    setInterval(() => { evaluateShopAdminStatus(); }, 2000);
+
+    window.renderCategoryTabs = () => {
+        const container = document.getElementById("category-tabs-container"); if (!container) return; container.innerHTML = "";
+        const actorName = currentSession ? currentSession.actor.toString() : null; const isAdmin = actorName && shopAdminWallets.includes(actorName);
+        container.innerHTML += `<button onclick="window.setShopCategory('ALL')" class="wallet-btn" style="background: ${currentShopCategory === 'ALL' ? 'var(--accent-cyan)' : 'transparent'}; color: ${currentShopCategory === 'ALL' ? '#000' : 'var(--accent-cyan)'}; border: 1px solid var(--accent-cyan); padding: 8px 15px; font-size: 0.8rem;">ALL</button>`;
+        window.shopCategories.forEach(cat => {
+            const isActive = currentShopCategory === cat;
+            container.innerHTML += `<button onclick="window.setShopCategory('${cat}')" class="wallet-btn" style="background: ${isActive ? 'var(--accent-cyan)' : 'transparent'}; border: 1px solid var(--accent-cyan); color: ${isActive ? '#000' : 'var(--accent-cyan)'}; padding: 8px 15px; font-size: 0.8rem;">${cat}</button>`;
+        });
+        if (isAdmin) {
+            container.innerHTML += `<button onclick="window.openAddCategoryModal()" class="wallet-btn" style="background: transparent; border: 1px dashed var(--accent-cyber-yellow); color: var(--accent-cyber-yellow); padding: 8px 15px; font-size: 0.8rem;">+ CATEGORY</button>`;
+            container.innerHTML += `<button onclick="window.openRemoveCategoryModal()" class="wallet-btn" style="background: transparent; border: 1px dashed var(--accent-pink); color: var(--accent-pink); padding: 8px 15px; font-size: 0.8rem;">- CATEGORY</button>`;
+        }
+    };
+
+    window.updateCategoryDropdown = () => { const select = document.getElementById("form-category"); if (select) { select.innerHTML = window.shopCategories.map(cat => `<option value="${cat}">${cat}</option>`).join(''); } };
+
+    window.setShopCategory = (cat) => { currentShopCategory = cat; itemsLimit = 12; window.renderCategoryTabs(); window.renderShopGrid(); };
+
+    window.openAddCategoryModal = () => { document.getElementById("add-category-form").reset(); window.toggleModal("add-category-modal", true); };
+
+    window.handleAddCategory = (event) => {
+        event.preventDefault(); const newCat = document.getElementById("new-category-name").value.trim().toUpperCase();
+        if (newCat && !window.shopCategories.includes(newCat)) {
+            window.shopCategories.push(newCat); window.renderCategoryTabs(); window.updateCategoryDropdown();
+            const select = document.getElementById("form-category"); if(select) select.value = newCat;
+        }
+        window.toggleModal("add-category-modal", false); window.openAddModal();
+    };
+
+    window.openRemoveCategoryModal = () => {
+        const select = document.getElementById("remove-category-select"); select.innerHTML = window.shopCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        window.toggleModal("remove-category-modal", true);
+    };
+
+    window.handleRemoveCategory = (event) => {
+        event.preventDefault(); const catToRemove = document.getElementById("remove-category-select").value;
+        if (catToRemove) {
+            if(!confirm(`⚠️ WARNING: Are you sure you want to delete the "${catToRemove}" category? Any existing items in this category will be safely reassigned to "DECKS".`)) return;
+            let inventoryChanged = false;
+            window.mockInventory.forEach(item => { if (item.category === catToRemove) { item.category = "DECKS"; inventoryChanged = true; } });
+            if (inventoryChanged) saveInventoryState(); window.extractCategories();
+            if (currentShopCategory === catToRemove) currentShopCategory = 'ALL';
+            window.renderCategoryTabs(); window.updateCategoryDropdown(); window.renderShopGrid();
+        }
+        window.toggleModal("remove-category-modal", false);
+    };
+
+    window.renderShopGrid = () => {
+        const grid = document.getElementById("products-grid"); grid.innerHTML = "";
+        const filteredInventory = currentShopCategory === 'ALL' ? window.mockInventory : window.mockInventory.filter(i => i.category === currentShopCategory);
+        const visibleItems = filteredInventory.slice(0, itemsLimit);
+        const actorName = currentSession ? currentSession.actor.toString() : null; const isAdmin = actorName && shopAdminWallets.includes(actorName);
+        
+        if (visibleItems.length === 0) { grid.innerHTML = `<h3 style="grid-column: 1/-1; text-align: center; color: #888; font-family: 'Orbitron'; font-weight: 900; margin-top: 40px;">NO ITEMS FOUND</h3>`; }
+
+        visibleItems.forEach((item) => {
+            const card = document.createElement("div"); card.className = "skate-card"; card.style.borderColor = "var(--card-border)"; card.style.background = "var(--bg-panel)";
+            const adminActionsHtml = isAdmin ? `<div style="display: flex; gap: 5px; padding: 10px; background: rgba(255,0,85,0.1); border-top: 1px solid var(--accent-pink);"><button onclick="window.openEditModal(${item.id})" class="wallet-btn" style="flex: 1; background: var(--accent-cyan); color: #000; font-size: 0.75rem; padding: 8px;">✏️ EDIT</button><button onclick="window.removeShopItem(${item.id})" class="wallet-btn" style="flex: 1; background: var(--accent-pink); color: #000; font-size: 0.75rem; padding: 8px;">✖ REMOVE</button></div>` : '';
+            const gatedBadgeHtml = item.isGated ? `<div style="position: absolute; top: 10px; right: 10px; background: var(--accent-pink); color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 0.65rem; padding: 4px 8px; border: 1px solid #000; box-shadow: 2px 2px 0px #000; z-index: 10; transform: rotate(-3deg);">🔒 GATED</div>` : '';
+
+           card.innerHTML = `<div class="img-wrap" style="height: 200px; background: #000; border-bottom: 1px solid rgba(0, 240, 255, 0.2); position: relative;">${gatedBadgeHtml}${item.type === 'video' ? `<video src="${item.src}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>` : `<img src="${item.src}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: contain;">`}</div><div class="card-body" style="padding: 20px; text-align: left;"><h3 style="font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 10px; line-height: 1.2;">${item.title}</h3><p style="font-size: 0.75rem; color: #888; margin-bottom: 15px; font-family: 'Inter';">${item.desc}</p><div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 10px;"><span style="font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; color: var(--accent-gold); white-space: nowrap;">${item.price.toLocaleString()} SKATE</span><button onclick="window.openProductDetail(${item.id})" class="wallet-btn" style="background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.75rem; padding: 8px 16px; clip-path: none; flex-shrink: 0;">BUY</button></div></div>${adminActionsHtml}`;
+            grid.appendChild(card);
+        });
+
+        const loadMoreBtn = document.getElementById("load-more-container");
+        if (filteredInventory.length > itemsLimit) loadMoreBtn.classList.remove("hidden"); else loadMoreBtn.classList.add("hidden");
+    };
+
+    window.expandFeed = () => { itemsLimit += 12; window.renderShopGrid(); };
+
+    window.openAddModal = () => {
+        editingItemId = null; document.getElementById("add-item-form").reset(); document.getElementById("add-edit-modal-title").innerText = "INJECT INVENTORY"; document.getElementById("add-edit-submit-btn").innerText = "DEPLOY TO LEDGER"; document.getElementById("add-edit-submit-btn").style.background = "var(--accent-cyber-yellow)"; document.getElementById('gate-fields-container').style.display = 'none'; window.toggleModal('add-item-modal', true);
+    };
+
+    window.openEditModal = (id) => {
+        const item = window.mockInventory.find(i => i.id === id); if(!item) return; editingItemId = id; 
+        document.getElementById("form-title").value = item.title; document.getElementById("form-desc").value = item.desc; document.getElementById("form-price").value = item.price; document.getElementById("form-category").value = item.category || "DECKS"; document.getElementById("form-media-type").value = item.type; document.getElementById("form-media-url").value = item.src;
+        const isGatedCheckbox = document.getElementById("form-is-gated"); isGatedCheckbox.checked = !!item.isGated;
+        if (item.isGated) { document.getElementById("form-gate-template").value = item.gateTemplateId || ""; document.getElementById("form-gate-trait").value = item.gateDeckTrait || ""; document.getElementById("form-gate-link").value = item.gateLink || ""; } 
+        else { document.getElementById("form-gate-template").value = ""; document.getElementById("form-gate-trait").value = ""; document.getElementById("form-gate-link").value = ""; }
+        window.toggleGateFields(); document.getElementById("add-edit-modal-title").innerText = "EDIT INVENTORY"; document.getElementById("add-edit-submit-btn").innerText = "SAVE CHANGES"; document.getElementById("add-edit-submit-btn").style.background = "var(--accent-cyan)"; window.toggleModal('add-item-modal', true);
+    };
+
+    window.removeShopItem = (id) => {
+        if(!confirm("⚠️ PROTOCOL WARNING: Are you sure you want to remove this item from the inventory ledger?")) return;
+        window.mockInventory = window.mockInventory.filter(item => item.id !== id); saveInventoryState(); window.extractCategories();
+        if (currentShopCategory !== 'ALL' && !window.shopCategories.includes(currentShopCategory)) { currentShopCategory = 'ALL'; }
+        window.renderCategoryTabs(); window.updateCategoryDropdown(); window.renderShopGrid();
+    };
+
+    window.toggleGateFields = () => { const isChecked = document.getElementById('form-is-gated').checked; document.getElementById('gate-fields-container').style.display = isChecked ? 'block' : 'none'; };
+
+    window.handleAddItem = (event) => {
+        event.preventDefault(); const isGated = document.getElementById("form-is-gated").checked;
+        const itemData = { title: document.getElementById("form-title").value, desc: document.getElementById("form-desc").value, price: parseFloat(document.getElementById("form-price").value.replace(/,/g, '').replace(/[^0-9.]/g, '')) || 0, category: document.getElementById("form-category").value, type: document.getElementById("form-media-type").value, src: document.getElementById("form-media-url").value || "https://images.unsplash.com/photo-1547447134-cd3f5c716030?auto=format&fit=crop&w=500&q=80", isGated: isGated, gateTemplateId: isGated ? document.getElementById("form-gate-template").value : null, gateDeckTrait: isGated ? document.getElementById("form-gate-trait").value : null, gateLink: isGated ? document.getElementById("form-gate-link").value : null };
+        if (editingItemId !== null) { const index = window.mockInventory.findIndex(i => i.id === editingItemId); if (index !== -1) { window.mockInventory[index] = { ...window.mockInventory[index], ...itemData }; } } 
+        else { itemData.id = window.mockInventory.length > 0 ? Math.max(...window.mockInventory.map(i => i.id)) + 1 : 1; window.mockInventory.unshift(itemData); }
+        saveInventoryState(); window.extractCategories(); document.getElementById("add-item-form").reset(); document.getElementById('gate-fields-container').style.display = 'none'; window.toggleModal('add-item-modal', false); window.renderCategoryTabs(); window.updateCategoryDropdown(); window.renderShopGrid();
+    };
+
+    window.toggleModal = (modalId, show) => { const modal = document.getElementById(modalId); if (show) { modal.style.display = 'flex'; if(modalId === 'cart-modal') renderCartContents(); } else { modal.style.display = 'none'; } };
+
+  window.openProductDetail = async (id) => {
+        const item = window.mockInventory.find(p => p.id === id); 
+        if(!item) return; 
+
+        // 1. Immediately Draw the Modal with a "Loading" State
+        const content = document.getElementById("detail-modal-content");
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h3 style="font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; color: var(--accent-cyan); text-transform: uppercase; margin: 0;">${item.title}</h3>
+                <button onclick="window.toggleModal('product-detail-modal', false)" style="background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.2s; line-height: 1;">&times;</button>
+            </div>
+            <div style="width: 100%; background: #000; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--card-border); border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; height: 300px;">
+                ${item.isGated ? `<div style="position: absolute; top: 10px; right: 10px; background: var(--accent-pink); color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 0.65rem; padding: 4px 8px; border: 1px solid #000; z-index: 10; transform: rotate(-3deg);">🔒 TOKEN GATED</div>` : ''}
+                ${item.type === 'video' ? `<video src="${item.src}" autoplay loop muted playsinline style="max-height: 95%; max-width: 95%; object-fit: contain;"></video>` : `<img src="${item.src}" style="max-height: 95%; max-width: 95%; object-fit: contain;">`}
+            </div>
+            <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 25px; line-height: 1.6; font-family: 'Inter'; text-align: left;">${item.desc}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px dashed #333; padding-top: 15px;">
+                <span style="font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; color: var(--accent-gold);">${item.price.toLocaleString()} SKATE</span>
+                <div id="dynamic-action-zone" style="flex-grow: 1; max-width: 60%; display: flex; justify-content: flex-end;">
+                    <button disabled class="wallet-btn" style="background: transparent; border: 1px dashed var(--accent-cyan); color: var(--accent-cyan); padding: 12px 20px; font-size: 0.75rem; text-align: center;">
+                        📡 VERIFYING ON-CHAIN CLEARANCE...
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Modal opens instantly. No waiting.
+        window.toggleModal('product-detail-modal', true);
+
+        // 2. Perform the Heavy Blockchain API Checks in the Background
+        const activeActor = currentSession ? currentSession.actor.toString() : null;
+        let actionButtonsHtml = "";
+
+        if (item.isGated) {
+            let userHoldsNFT = false; 
+            if (activeActor) {
+                try {
+                    if (item.gateTemplateId) {
+                        const cleanTemplateId = String(item.gateTemplateId).replace(/#/g, '').trim();
+                        const templateRes = await fetch(`https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=${activeActor}&template_id=${cleanTemplateId}&limit=1`);
+                        const templateJson = await templateRes.json();
+                        if (templateJson.data && templateJson.data.length > 0) { userHoldsNFT = true; }
+                    }
+                    if (!userHoldsNFT && item.gateDeckTrait) {
+                        const boardRes = await fetch(`https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=${activeActor}&collection_name=skatecoinwax&schema_name=skateboards`);
+                        const boardJson = await boardRes.json();
+                        if (boardJson.data) { userHoldsNFT = boardJson.data.some(asset => (asset.data && asset.data.deck === item.gateDeckTrait) || (asset.template && asset.template.immutable_data && asset.template.immutable_data.deck === item.gateDeckTrait)); }
+                    }
+                } catch (e) {
+                    console.error("Token Gate API Check Failed:", e);
+                }
+            }
+            
+            // 3. Resolve State and Update UI Dynamically
+            if (activeActor && userHoldsNFT) { 
+                actionButtonsHtml = `<button onclick="window.addToCart(${item.id})" class="wallet-btn" style="background: var(--accent-gold); color: #000; padding: 12px 30px;">ADD TO CART</button>`; 
+            } else { 
+                actionButtonsHtml = `<div style="display: flex; gap: 10px; width: 100%;"><button disabled class="wallet-btn" style="flex: 1; padding: 12px 10px; font-size: 0.8rem; text-align: center; white-space: normal;">🔒 NFT REQUIRED</button><button onclick="window.open('${item.gateLink}', '_blank')" class="wallet-btn" style="flex: 1; background: var(--accent-pink); color: #000; padding: 12px 10px; font-size: 0.8rem; text-align: center; white-space: normal;">BUY ACCESS NFT</button></div>`; 
+            }
+        } else { 
+            actionButtonsHtml = `<button onclick="window.addToCart(${item.id})" class="wallet-btn" style="background: var(--accent-gold); color: #000; padding: 12px 30px;">ADD TO CART</button>`; 
+        }
+
+        // 4. Inject the final buttons replacing the loader
+        const actionZone = document.getElementById("dynamic-action-zone");
+        if (actionZone) {
+            actionZone.innerHTML = actionButtonsHtml;
+        }
+    };
+
+    window.addToCart = (id) => { const item = window.mockInventory.find(p => p.id === id); if(!item) return; const cartIndex = cart.findIndex(c => c.id === id); if (cartIndex > -1) cart[cartIndex].quantity += 1; else cart.push({ ...item, quantity: 1 }); updateCartMetrics(); window.toggleModal('product-detail-modal', false); window.toggleModal('cart-modal', true); };
+
+    window.removeFromCart = (id) => { cart = cart.filter(c => c.id !== id); updateCartMetrics(); renderCartContents(); };
+
+    function updateCartMetrics() {
+        const count = cart.reduce((t, i) => t + i.quantity, 0); document.getElementById("cart-count").innerText = count;
+        const total = cart.reduce((t, i) => t + (i.price * i.quantity), 0); document.getElementById("cart-total-price").innerText = total.toLocaleString();
+        const nextBtn = document.getElementById("checkout-next-btn"); if(count === 0) { nextBtn.setAttribute("disabled", "true"); } else { nextBtn.removeAttribute("disabled"); }
+    }
+
+   function renderCartContents() {
+            const container = document.getElementById("cart-items-list");
+            container.innerHTML = "";
+            if(cart.length === 0) {
+                container.innerHTML = `<p style="color: #888; font-family: 'Orbitron'; font-size: 0.85rem; text-align: center; padding: 30px 0; border: 1px dashed #333; border-radius: 8px; margin: 0;">Your cart is completely empty.</p>`;
+                return;
+            }
+            cart.forEach(item => {
+                container.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid #333; border-radius: 8px;">
+                        <div style="text-align: left;">
+                            <h4 style="font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; color: #fff; margin: 0 0 5px 0;">${item.title}</h4>
+                            <p style="font-family: 'Inter'; font-weight: bold; font-size: 0.8rem; color: var(--accent-gold); margin: 0;">${item.price.toLocaleString()} SKATE <span style="color: #888; font-weight: normal;">&times; ${item.quantity}</span></p>
+                        </div>
+                        <button onclick="window.removeFromCart(${item.id})" style="font-family: 'Orbitron'; font-weight: 900; font-size: 0.7rem; color: var(--accent-pink); background: rgba(255,0,85,0.1); border: 1px solid var(--accent-pink); cursor: pointer; padding: 8px 12px; border-radius: 4px; transition: 0.2s;">
+                            REMOVE
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+    window.openShippingModal = () => { window.toggleModal('cart-modal', false); window.toggleModal('shipping-modal', true); };
+
+    window.backToCart = () => { window.toggleModal('shipping-modal', false); window.toggleModal('cart-modal', true); };
+
+    window.executeSkatePayment = async () => {
+        if (!currentSession) { alert("Please connect your WAX wallet first!"); window.toggleModal('shipping-modal', false); toggleAuthModal(); return; }
+        const totalCost = cart.reduce((total, item) => total + (item.price * item.quantity), 0); const itemSummaryString = cart.map(i => `${i.title}(x${i.quantity})`).join(', ');
+        const deterministicMemo = `SK8SHOP_ORDER:${itemSummaryString}`.substring(0, 256); const formattedAmt = totalCost.toFixed(4) + " SKATE"; const sender = currentSession.actor.toString();
+        try {
+            const actions = [{ account: 'skatecoinwax', name: 'transfer', authorization: [currentSession.permissionLevel], data: { from: sender, to: 'skatecoinwax', quantity: formattedAmt, memo: deterministicMemo } }];
+            await currentSession.transact({ actions });
+            alert(`🔥 ORDER SECURED 🔥\nYour transaction has been broadcast to the ledger.\nOrder String: ${deterministicMemo}`);
+            cart = []; updateCartMetrics(); window.toggleModal('shipping-modal', false);
+        } catch(e) { console.error(e); alert("Transaction Cancelled or Failed. Please try again."); }
     };
     
 </script>
