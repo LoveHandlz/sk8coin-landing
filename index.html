@@ -2882,15 +2882,15 @@ if (allActions.length > 0) {
 
     window.openAddCategoryModal = () => { document.getElementById("add-category-form").reset(); window.toggleModal("add-category-modal", true); };
 
-    window.handleAddCategory = (event) => {
+   window.handleAddCategory = (event) => {
         event.preventDefault(); const newCat = document.getElementById("new-category-name").value.trim().toUpperCase();
         if (newCat && !window.shopCategories.includes(newCat)) {
             window.shopCategories.push(newCat); window.renderCategoryTabs(); window.updateCategoryDropdown();
             const select = document.getElementById("form-category"); if(select) select.value = newCat;
         }
-        window.toggleModal("add-category-modal", false); window.openAddModal();
+        // Closes the modal peacefully without firing other menus
+        window.toggleModal("add-category-modal", false); 
     };
-
     window.openRemoveCategoryModal = () => {
         const select = document.getElementById("remove-category-select"); select.innerHTML = window.shopCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
         window.toggleModal("remove-category-modal", true);
