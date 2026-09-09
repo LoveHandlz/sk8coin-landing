@@ -1398,6 +1398,56 @@
     import { WalletPluginAnchor } from 'https://esm.sh/@wharfkit/wallet-plugin-anchor?bundle';
     import { WalletPluginWombat } from 'https://esm.sh/@wharfkit/wallet-plugin-wombat?bundle';
 
+        const IPFS_DEAD = [
+        "https://ipfs.io/ipfs/",
+        "https://jade-rapid-flea-523.mypinata.cloud/ipfs/"
+    ];
+    const IPFS_GATES = [
+        "https://ipfs.atomichub.io/ipfs/",
+        "https://gateway.pinata.cloud/ipfs/",
+        "https://ipfs.ninja/ipfs/",
+        "https://w3s.link/ipfs/"
+    ];
+    function rewriteIpfsUrl(url) {
+        if (!url || typeof url !== "string") return url;
+        for (const dead of IPFS_DEAD) {
+            if (url.startsWith(dead)) return IPFS_GATES[0] + url.slice(dead.length);
+        }
+        return url;
+    }
+    function patchIpfsEl(el) {
+        if (!el || !el.getAttribute) return;
+        const v = el.getAttribute("src");
+        const n = rewriteIpfsUrl(v);
+        if (n && n !== v) el.setAttribute("src", n);
+        if (!el.dataset.ipfsHook) {
+            el.dataset.ipfsHook = "1";
+            el.addEventListener("error", () => {
+                const cur = el.getAttribute("src") || "";
+                const parts = cur.split("/ipfs/");
+                if (parts.length < 2) return;
+                const i = Number(el.dataset.gw || 0) + 1;
+                if (i >= IPFS_GATES.length) return;
+                el.dataset.gw = String(i);
+                el.src = IPFS_GATES[i] + parts[1];
+            });
+        }
+    }
+    function scanIpfs(root) {
+        root.querySelectorAll?.("img,video,audio,source").forEach(patchIpfsEl);
+    }
+    new MutationObserver((muts) => {
+        muts.forEach((m) => m.addedNodes.forEach((n) => {
+            if (n.nodeType === 1) { patchIpfsEl(n); scanIpfs(n); }
+        }));
+    }).observe(document.documentElement, { childList: true, subtree: true });
+    scanIpfs(document);
+    const _fetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+        if (typeof input === "string") input = rewriteIpfsUrl(input);
+        return _fetch(input, init);
+    };
+
     const ATOMIC_API = "https://wax.api.atomicassets.io/atomicassets/v1";
     const COLLECTION = "skatecoinwax";
     const WAX_RPC = "https://api.waxsweden.org"; 
@@ -1413,18 +1463,19 @@
     };
     window.selectedBurnAssets = new Map();
 
-    class MetaParser {
+     class MetaParser {
         static getRaw(nft, key) {
             if (nft.data && nft.data[key] !== undefined) return nft.data[key];
             if (nft.template && nft.template.immutable_data && nft.template.immutable_data[key] !== undefined) return nft.template.immutable_data[key];
+            if (nft.template && nft.template.mutable_data && nft.template.mutable_data[key] !== undefined) return nft.template.mutable_data[key];
             return null;
         }
         static getInt(nft, key) { return parseInt(this.getRaw(nft, key)) || 0; }
-        static getString(nft, key, fallback = 'N/A') { 
+        static getString(nft, key, fallback = 'N/A') {
             const val = this.getRaw(nft, key);
-            return val ? String(val).toUpperCase() : fallback; 
+            return val ? String(val).toUpperCase() : fallback;
         }
-        static getImg(nft) { return this.getRaw(nft, 'img') || ''; }
+        static getImg(nft) { return this.getRaw(nft, 'img') || this.getRaw(nft, 'image') || this.getRaw(nft, 'backimg') || ''; }
         static getRarity(nft) { return this.getString(nft, 'rarity', 'COMMON').toLowerCase(); }
         static getDesc(nft) {
             const val = this.getRaw(nft, 'description') || this.getRaw(nft, 'desc');
