@@ -2340,9 +2340,9 @@ if (allActions.length > 0) {
 
             const visualHtml = `
                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;">
-                    <img src="https://ipfs.io/ipfs/${d.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'">
+                    <img src="https://ipfs.io/ipfs/${d.dataset.img}" class="nft-visual-thumbnail" onerror="">
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
-                    <div style="display:flex; gap:4px;"><img src="https://ipfs.io/ipfs/${t1.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${t2.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"></div>
+                    <div style="display:flex; gap:4px;"><img src="https://ipfs.io/ipfs/${t1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.io/ipfs/${t2.dataset.img}" class="nft-visual-thumbnail" onerror=""></div>
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
                     <div style="display:flex; gap:4px;"><img src="https://ipfs.io/ipfs/${w1.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w2.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w3.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w4.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"></div>
                 </div>`;
