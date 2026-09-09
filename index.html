@@ -2344,7 +2344,7 @@ if (allActions.length > 0) {
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
                     <div style="display:flex; gap:4px;"><img src="https://ipfs.atomichub.io/ipfs/${t1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${t2.dataset.img}" class="nft-visual-thumbnail" onerror=""></div>
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
-                    <div style="display:flex; gap:4px;"><img src="https://ipfs.atomichub.io/ipfs/${w1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${w2.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.atomichub.io/ipfs/${w3.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.atomichub.io/ipfs/${w4.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"></div>
+                    <div style="display:flex; gap:4px;"><img src="https://ipfs.atomichub.io/ipfs/${w1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${w2.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${w3.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${w4.dataset.img}" class="nft-visual-thumbnail" onerror=""></div>
                 </div>`;
             document.getElementById('craft-stats-hud').innerHTML = `
                 ${visualHtml}
@@ -2454,7 +2454,7 @@ if (allActions.length > 0) {
                                     <div class="mint-badge" style="${badgeStyle}">#${mN}</div>
                                     <div class="rarity-header-text">${rarity}</div>
                                 </div>
-                                <div class="img-wrap"><img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'"></div>
+                                <div class="img-wrap"><img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror=""></div>
                                 <div class="card-body"><div class="board-name">${n.name}</div>${statHtml}</div>
                                 ${actionHtml}
                             </div>`;
@@ -2512,7 +2512,7 @@ if (allActions.length > 0) {
                         <div class="${cardClass}" style="${borderStyle}" id="burn-card-${assetId}" onclick="window.toggleBurnAsset('${assetId}', ${yieldVal})">
                             <div class="check-indicator" id="burn-check-${assetId}"></div>
                             <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--accent-pink); margin-bottom:5px; text-transform:uppercase;">${rarity}</div>
-                            <img src="https://ipfs.atomichub.io/ipfs/${img}" class="burn-img" onerror="this.style.display='none'">
+                            <img src="https://ipfs.atomichub.io/ipfs/${img}" class="burn-img" onerror="">
                             <div style="font-family:'Orbitron'; font-weight:900; font-size:1rem; color:#fff;">${name}</div>
                             <div class="burn-desc">${desc}</div>
                             <div class="burn-yield">
@@ -2634,7 +2634,7 @@ if (allActions.length > 0) {
                                     <div class="rarity-header-text">${rarity}</div>
                                 </div>
                                 <div class="img-wrap" style="height: 250px; background: rgba(0,0,0,0.8);">
-                                    <img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 90%;">
+                                    <img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="" style="max-height: 90%;">
                                 </div>
                                 <div class="card-body" style="text-align: center; padding: 25px 15px;">
                                     <div class="board-name" style="margin-bottom: 5px; font-size: 1.2rem; color: var(--accent-pink);">${name}</div>
@@ -2822,7 +2822,7 @@ if (allActions.length > 0) {
             if (videoHash) {
                 mediaTag = `<video src="https://ipfs.atomichub.io/ipfs/${videoHash}" autoplay loop muted playsinline style="max-height: 95%; max-width: 95%; object-fit: contain; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.8);"></video>`;
             } else {
-                mediaTag = `<img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 95%; max-width: 95%; object-fit: contain;">`;
+                mediaTag = `<img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="" style="max-height: 95%; max-width: 95%; object-fit: contain;">`;
             }
 
             return `
