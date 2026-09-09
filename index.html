@@ -1346,7 +1346,7 @@
             
             <div>
                 <label style="display: block; color: #888; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px;">CID / SOURCE URL</label>
-                <input type="text" id="form-media-url" required placeholder="https://ipfs.io/ipfs/..." style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
+                <input type="text" id="form-media-url" required placeholder="https://ipfs.atomichub.io/ipfs/..." style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Inter';">
             </div>
             
             <div style="background: rgba(255,0,85,0.05); border: 1px solid var(--accent-pink); border-radius: 8px; padding: 15px; margin-top: 10px;">
@@ -1399,7 +1399,7 @@
     import { WalletPluginWombat } from 'https://esm.sh/@wharfkit/wallet-plugin-wombat?bundle';
 
         const IPFS_DEAD = [
-        "https://ipfs.io/ipfs/",
+        "https://ipfs.atomichub.io/ipfs/",
         "https://jade-rapid-flea-523.mypinata.cloud/ipfs/"
     ];
     const IPFS_GATES = [
@@ -2307,7 +2307,7 @@ if (allActions.length > 0) {
             </div>
             <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                 <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
-                <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;"><img src="https://ipfs.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> 0 $SKATE</div>
+                <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;"><img src="https://ipfs.atomichub.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> 0 $SKATE</div>
             </div>`;
         document.getElementById('initiate-blend-btn').disabled = true;
     }
@@ -2340,11 +2340,11 @@ if (allActions.length > 0) {
 
             const visualHtml = `
                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;">
-                    <img src="https://ipfs.io/ipfs/${d.dataset.img}" class="nft-visual-thumbnail" onerror="">
+                    <img src="https://ipfs.atomichub.io/ipfs/${d.dataset.img}" class="nft-visual-thumbnail" onerror="">
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
-                    <div style="display:flex; gap:4px;"><img src="https://ipfs.io/ipfs/${t1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.io/ipfs/${t2.dataset.img}" class="nft-visual-thumbnail" onerror=""></div>
+                    <div style="display:flex; gap:4px;"><img src="https://ipfs.atomichub.io/ipfs/${t1.dataset.img}" class="nft-visual-thumbnail" onerror=""><img src="https://ipfs.atomichub.io/ipfs/${t2.dataset.img}" class="nft-visual-thumbnail" onerror=""></div>
                     <span style="color: var(--accent-cyan); font-weight: 900; align-self: center;">+</span>
-                    <div style="display:flex; gap:4px;"><img src="https://ipfs.io/ipfs/${w1.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w2.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w3.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.io/ipfs/${w4.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"></div>
+                    <div style="display:flex; gap:4px;"><img src="https://ipfs.atomichub.io/ipfs/${w1.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.atomichub.io/ipfs/${w2.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.atomichub.io/ipfs/${w3.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"><img src="https://ipfs.atomichub.io/ipfs/${w4.dataset.img}" class="nft-visual-thumbnail" onerror="this.style.display='none'"></div>
                 </div>`;
             document.getElementById('craft-stats-hud').innerHTML = `
                 ${visualHtml}
@@ -2356,7 +2356,7 @@ if (allActions.length > 0) {
                 </div>
                 <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border:1px solid var(--accent-gold); border-radius:6px; text-align:center;">
                     <div style="color:var(--accent-gold); font-size:0.6rem; font-family:'Orbitron';">AIRDROP PROJECTED</div>
-                    <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;"><img src="https://ipfs.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> ${rewards.toLocaleString()} $SKATE</div>
+                    <div style="font-family:'Orbitron'; font-weight: 900; font-size:2rem; display:flex; align-items:center; justify-content:center;"><img src="https://ipfs.atomichub.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> ${rewards.toLocaleString()} $SKATE</div>
                 </div>`;
             document.getElementById('initiate-blend-btn').disabled = false;
         } else { resetBuilderStats(); }
@@ -2417,7 +2417,7 @@ if (allActions.length > 0) {
                                 </div>
                             </div>`;
                         
-                        actionHtml = `<div class="claim-zone"><div><div class="reward-skate" style="display:flex; align-items:center;"><img src="https://ipfs.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> ${skateReward.toLocaleString()}</div><div class="reward-wax">≈ ${waxValue} WAX</div></div><button class="wallet-btn" onclick="showErrorModal('Staking expansion coming soon.')" style="padding: 10px 15px;">STAKE</button></div>`;
+                        actionHtml = `<div class="claim-zone"><div><div class="reward-skate" style="display:flex; align-items:center;"><img src="https://ipfs.atomichub.io/ipfs/bafybeifeyjngg5kvmkv56aowt2jad2txdo737yonaor3hcgrroyrqjfx3m" class="skate-icon"> ${skateReward.toLocaleString()}</div><div class="reward-wax">≈ ${waxValue} WAX</div></div><button class="wallet-btn" onclick="showErrorModal('Staking expansion coming soon.')" style="padding: 10px 15px;">STAKE</button></div>`;
                     } else {
                         const brandStr = MetaParser.getString(n, 'brand', 'STOCK'), colorStr = MetaParser.getString(n, 'color', 'STOCK');
                         statHtml = `
@@ -2454,7 +2454,7 @@ if (allActions.length > 0) {
                                     <div class="mint-badge" style="${badgeStyle}">#${mN}</div>
                                     <div class="rarity-header-text">${rarity}</div>
                                 </div>
-                                <div class="img-wrap"><img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'"></div>
+                                <div class="img-wrap"><img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'"></div>
                                 <div class="card-body"><div class="board-name">${n.name}</div>${statHtml}</div>
                                 ${actionHtml}
                             </div>`;
@@ -2512,7 +2512,7 @@ if (allActions.length > 0) {
                         <div class="${cardClass}" style="${borderStyle}" id="burn-card-${assetId}" onclick="window.toggleBurnAsset('${assetId}', ${yieldVal})">
                             <div class="check-indicator" id="burn-check-${assetId}"></div>
                             <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--accent-pink); margin-bottom:5px; text-transform:uppercase;">${rarity}</div>
-                            <img src="https://ipfs.io/ipfs/${img}" class="burn-img" onerror="this.style.display='none'">
+                            <img src="https://ipfs.atomichub.io/ipfs/${img}" class="burn-img" onerror="this.style.display='none'">
                             <div style="font-family:'Orbitron'; font-weight:900; font-size:1rem; color:#fff;">${name}</div>
                             <div class="burn-desc">${desc}</div>
                             <div class="burn-yield">
@@ -2634,7 +2634,7 @@ if (allActions.length > 0) {
                                     <div class="rarity-header-text">${rarity}</div>
                                 </div>
                                 <div class="img-wrap" style="height: 250px; background: rgba(0,0,0,0.8);">
-                                    <img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 90%;">
+                                    <img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 90%;">
                                 </div>
                                 <div class="card-body" style="text-align: center; padding: 25px 15px;">
                                     <div class="board-name" style="margin-bottom: 5px; font-size: 1.2rem; color: var(--accent-pink);">${name}</div>
@@ -2820,9 +2820,9 @@ if (allActions.length > 0) {
             // The Smart Media Router
             let mediaTag = "";
             if (videoHash) {
-                mediaTag = `<video src="https://ipfs.io/ipfs/${videoHash}" autoplay loop muted playsinline style="max-height: 95%; max-width: 95%; object-fit: contain; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.8);"></video>`;
+                mediaTag = `<video src="https://ipfs.atomichub.io/ipfs/${videoHash}" autoplay loop muted playsinline style="max-height: 95%; max-width: 95%; object-fit: contain; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.8);"></video>`;
             } else {
-                mediaTag = `<img src="https://ipfs.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 95%; max-width: 95%; object-fit: contain;">`;
+                mediaTag = `<img src="https://ipfs.atomichub.io/ipfs/${img}" class="skate-img" onerror="this.style.display='none'" style="max-height: 95%; max-width: 95%; object-fit: contain;">`;
             }
 
             return `
@@ -2875,7 +2875,7 @@ if (allActions.length > 0) {
     window.initShopData = async () => {
         let finalInventoryData = seedInventory; let loadedFromIPFS = false;
         if (GLOBAL_IPFS_CID) {
-            try { const res = await fetch(`https://ipfs.io/ipfs/${GLOBAL_IPFS_CID}`); if (res.ok) { finalInventoryData = await res.json(); loadedFromIPFS = true; } } catch(e) {}
+            try { const res = await fetch(`https://ipfs.atomichub.io/ipfs/${GLOBAL_IPFS_CID}`); if (res.ok) { finalInventoryData = await res.json(); loadedFromIPFS = true; } } catch(e) {}
         }
         if (!loadedFromIPFS) {
             const savedInvData = localStorage.getItem(STORAGE_KEY); if (savedInvData) finalInventoryData = JSON.parse(savedInvData);
